@@ -108,7 +108,7 @@ except ImportError as e:
 # Language support
 LANGUAGES = {
     'en': {
-        'title': '🌾 BloomWatch Kenya: Smart Farming with NASA Satellites',
+        'title': 'BloomWatch Kenya: Smart Farming with NASA Satellites',
         'subtitle': 'Empowering Kenyan farmers with real-time crop bloom detection using Sentinel-2, Landsat, and MODIS data',
         'farmer_registration': 'Farmer Registration',
         'dashboard': 'Farm Dashboard',
@@ -126,7 +126,7 @@ LANGUAGES = {
         'farm_analysis': 'Your Farm Analysis'
     },
     'sw': {
-        'title': '🌾 BloomWatch Kenya: Kilimo Cha Kisasa kwa Satelaiti za NASA',
+        'title': 'BloomWatch Kenya: Kilimo Cha Kisasa kwa Satelaiti za NASA',
         'subtitle': 'Kuwawezesha wakulima wa Kenya kupata taarifa za haraka za kuchanua kwa mazao kwa kutumia data za Sentinel-2, Landsat, na MODIS',
         'farmer_registration': 'Usajili wa Mkulima',
         'dashboard': 'Dashibodi ya Shamba',
