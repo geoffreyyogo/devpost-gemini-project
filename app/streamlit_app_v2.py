@@ -55,12 +55,12 @@ except ImportError as e:
 
 try:
     from ndvi_utils_lite import detect_blooms
-    from ee_pipeline_lite import process_exports_for_detection, generate_kenya_demo_data
-except ImportError:
-    st.info("Using fallback data generation")
+    from gee_data_loader import GEEDataLoader
+    gee_loader = GEEDataLoader()
+except ImportError as e:
+    st.warning(f"GEE data loader not available: {e}")
+    gee_loader = None
     def detect_blooms(ts, ari, **kwargs): return [3, 6, 10], np.zeros(12)
-    def process_exports_for_detection(path): return {}
-    def generate_kenya_demo_data(): return np.random.rand(12, 100, 100), np.random.rand(100, 100), {}
 
 try:
     from kenya_crops import KenyaCropCalendar, KENYA_REGIONS

@@ -25,7 +25,22 @@ class MongoDBService:
         )
         
         try:
-            self.client = MongoClient(self.connection_string, serverSelectionTimeoutMS=5000)
+            # Add SSL/TLS parameters for Atlas compatibility in WSL
+            import ssl
+            import certifi
+            
+            # Create custom SSL context for WSL
+            ssl_context = ssl.create_default_context(cafile=certifi.where())
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+            
+            self.client = MongoClient(
+                self.connection_string, 
+                serverSelectionTimeoutMS=5000,
+                tls=True,
+                tlsAllowInvalidCertificates=True,
+                tlsCAFile=certifi.where()
+            )
             # Test connection
             self.client.server_info()
             self.db = self.client['bloomwatch_kenya']
@@ -36,6 +51,11 @@ class MongoDBService:
             self.alerts = self.db['alerts']
             self.ussd_sessions = self.db['ussd_sessions']
             self.bloom_events = self.db['bloom_events']
+            self.crops = self.db['crops']
+            self.regions = self.db['regions']
+            self.message_templates = self.db['message_templates']
+            self.agricultural_advice = self.db['agricultural_advice']
+            self.system_config = self.db['system_config']
             
             # Create indexes
             self._create_indexes()
@@ -45,10 +65,19 @@ class MongoDBService:
             logger.info("Running in demo mode without MongoDB")
             self.client = None
             self.db = None
+            self.farmers = None
+            self.alerts = None
+            self.ussd_sessions = None
+            self.bloom_events = None
+            self.crops = None
+            self.regions = None
+            self.message_templates = None
+            self.agricultural_advice = None
+            self.system_config = None
     
     def _create_indexes(self):
         """Create database indexes for performance"""
-        if not self.db:
+        if self.db is None:
             return
         
         # Farmer indexes
@@ -68,19 +97,35 @@ class MongoDBService:
         self.bloom_events.create_index([('location', '2dsphere')])
         self.bloom_events.create_index('timestamp')
         
+        # Reference data indexes
+        self.crops.create_index('crop_id', unique=True)
+        self.regions.create_index('region_id', unique=True)
+        self.message_templates.create_index('template_id', unique=True)
+        self.message_templates.create_index('category')
+        self.agricultural_advice.create_index([('crop', ASCENDING), ('stage', ASCENDING)])
+        
         logger.info("✓ Database indexes created")
+    
+    def is_connected(self):
+        """Check if MongoDB is connected"""
+        return self.client is not None and self.db is not None
+    
+    def get_db(self):
+        """Get database object"""
+        return self.db
     
     def register_farmer(self, farmer_data: Dict) -> Dict:
         """Register a new farmer or update existing"""
-        if not self.db:
+        if self.db is None:
             return {'success': False, 'message': 'MongoDB not available', 'demo': True}
         
         try:
             # Add metadata
-            farmer_data['created_at'] = datetime.now()
             farmer_data['updated_at'] = datetime.now()
             farmer_data['active'] = True
-            farmer_data['alert_count'] = 0
+            
+            if 'alert_count' not in farmer_data:
+                farmer_data['alert_count'] = 0
             
             # Create geospatial index for location-based queries
             if 'location_lat' in farmer_data and 'location_lon' in farmer_data:
@@ -115,7 +160,7 @@ class MongoDBService:
     
     def get_farmer_by_phone(self, phone: str) -> Optional[Dict]:
         """Get farmer by phone number"""
-        if not self.db:
+        if self.db is None:
             return None
         
         farmer = self.farmers.find_one({'phone': phone})
@@ -125,7 +170,7 @@ class MongoDBService:
     
     def get_farmers_in_radius(self, lat: float, lon: float, radius_km: float = 50) -> List[Dict]:
         """Get farmers within radius using geospatial query"""
-        if not self.db:
+        if self.db is None:
             return []
         
         try:
@@ -157,7 +202,7 @@ class MongoDBService:
     
     def get_farmers_by_crop(self, crop: str, region: str = None) -> List[Dict]:
         """Get farmers growing specific crop, optionally filtered by region"""
-        if not self.db:
+        if self.db is None:
             return []
         
         query = {'crops': crop, 'active': True}
@@ -174,7 +219,7 @@ class MongoDBService:
     
     def log_alert(self, farmer_id: str, alert_data: Dict) -> bool:
         """Log an alert sent to farmer"""
-        if not self.db:
+        if self.db is None:
             return False
         
         try:
@@ -198,16 +243,18 @@ class MongoDBService:
     
     def save_ussd_session(self, session_id: str, session_data: Dict) -> bool:
         """Save or update USSD session data"""
-        if not self.db:
+        if self.db is None:
             return False
         
         try:
-            session_data['session_id'] = session_id
-            session_data['updated_at'] = datetime.now()
+            # Prepare update data without created_at
+            update_data = {k: v for k, v in session_data.items() if k != 'created_at'}
+            update_data['session_id'] = session_id
+            update_data['updated_at'] = datetime.now()
             
             self.ussd_sessions.update_one(
                 {'session_id': session_id},
-                {'$set': session_data, '$setOnInsert': {'created_at': datetime.now()}},
+                {'$set': update_data, '$setOnInsert': {'created_at': datetime.now()}},
                 upsert=True
             )
             
@@ -219,14 +266,14 @@ class MongoDBService:
     
     def get_ussd_session(self, session_id: str) -> Optional[Dict]:
         """Get USSD session data"""
-        if not self.db:
+        if self.db is None:
             return None
         
         return self.ussd_sessions.find_one({'session_id': session_id})
     
     def save_bloom_event(self, event_data: Dict) -> str:
         """Save bloom event detection"""
-        if not self.db:
+        if self.db is None:
             return None
         
         try:
@@ -250,7 +297,7 @@ class MongoDBService:
     
     def get_recent_bloom_events(self, days: int = 7, region: str = None) -> List[Dict]:
         """Get recent bloom events"""
-        if not self.db:
+        if self.db is None:
             return []
         
         query = {'timestamp': {'$gte': datetime.now() - timedelta(days=days)}}
@@ -268,7 +315,7 @@ class MongoDBService:
     
     def get_farmer_statistics(self) -> Dict:
         """Get overall farmer statistics"""
-        if not self.db:
+        if self.db is None:
             return {
                 'total_farmers': 0,
                 'active_farmers': 0,
@@ -306,6 +353,64 @@ class MongoDBService:
         except Exception as e:
             logger.error(f"Error getting statistics: {e}")
             return {}
+    
+    def get_template(self, template_id: str, language: str = 'en') -> Optional[Dict]:
+        """Get message template by ID"""
+        if self.db is None:
+            return None
+        
+        template = self.message_templates.find_one({'template_id': template_id})
+        return template
+    
+    def get_crop_info(self, crop_id: str) -> Optional[Dict]:
+        """Get crop information"""
+        if self.db is None:
+            return None
+        
+        crop = self.crops.find_one({'crop_id': crop_id})
+        if crop:
+            crop['_id'] = str(crop['_id'])
+        return crop
+    
+    def get_region_info(self, region_id: str) -> Optional[Dict]:
+        """Get region information"""
+        if self.db is None:
+            return None
+        
+        region = self.regions.find_one({'region_id': region_id})
+        if region:
+            region['_id'] = str(region['_id'])
+        return region
+    
+    def get_agricultural_advice(self, crop: str, stage: str, language: str = 'en') -> Optional[str]:
+        """Get agricultural advice for crop and stage"""
+        if self.db is None:
+            return None
+        
+        advice = self.agricultural_advice.find_one({'crop': crop, 'stage': stage})
+        if advice:
+            return advice.get(f'advice_{language}', advice.get('advice_en'))
+        return None
+    
+    def get_all_crops(self) -> List[Dict]:
+        """Get all available crops"""
+        if self.db is None:
+            return []
+        
+        crops = list(self.crops.find({}))
+        for crop in crops:
+            crop['_id'] = str(crop['_id'])
+        return crops
+    
+    def get_all_regions(self) -> List[Dict]:
+        """Get all available regions"""
+        if self.db is None:
+            return []
+        
+        regions = list(self.regions.find({}))
+        for region in regions:
+            region['_id'] = str(region['_id'])
+        return regions
     
     def close(self):
         """Close MongoDB connection"""

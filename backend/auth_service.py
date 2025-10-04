@@ -41,7 +41,7 @@ class AuthService:
     
     def register_farmer(self, farmer_data: Dict, password: str) -> Dict:
         """Register new farmer with password"""
-        if not self.mongo.db:
+        if self.mongo.db is None:
             return {'success': False, 'message': 'Database not available', 'demo': True}
         
         # Check if phone already exists
@@ -64,7 +64,7 @@ class AuthService:
     
     def login(self, phone: str, password: str) -> Dict:
         """Authenticate farmer"""
-        if not self.mongo.db:
+        if self.mongo.db is None:
             # Demo mode
             return {
                 'success': True,
@@ -97,7 +97,7 @@ class AuthService:
         }
         
         # Update last login
-        if self.mongo.db:
+        if self.mongo.db is not None:
             self.mongo.farmers.update_one(
                 {'phone': phone},
                 {'$set': {'last_login': datetime.now()}}
@@ -162,8 +162,16 @@ class AuthService:
             }
         
         farmer_id = session.get('farmer_id')
-        if not farmer_id or not self.mongo.db:
+        if not farmer_id or self.mongo.db is None:
             return None
+        
+        from bson import ObjectId
+        # Convert string ID to ObjectId if needed
+        if isinstance(farmer_id, str):
+            try:
+                farmer_id = ObjectId(farmer_id)
+            except:
+                return None
         
         farmer = self.mongo.farmers.find_one({'_id': farmer_id})
         if farmer:
@@ -183,7 +191,15 @@ class AuthService:
         if session.get('demo'):
             return {'success': True, 'message': 'Profile updated (demo mode)', 'demo': True}
         
+        from bson import ObjectId
         farmer_id = session.get('farmer_id')
+        
+        # Convert string ID to ObjectId if needed
+        if isinstance(farmer_id, str):
+            try:
+                farmer_id = ObjectId(farmer_id)
+            except:
+                return {'success': False, 'message': 'Invalid farmer ID'}
         
         # Don't allow updating sensitive fields
         updates.pop('password_hash', None)
@@ -191,7 +207,7 @@ class AuthService:
         updates.pop('phone', None)
         updates['updated_at'] = datetime.now()
         
-        if self.mongo.db:
+        if self.mongo.db is not None:
             self.mongo.farmers.update_one(
                 {'_id': farmer_id},
                 {'$set': updates}
@@ -209,7 +225,16 @@ class AuthService:
         if session.get('demo'):
             return {'success': True, 'message': 'Password changed (demo mode)', 'demo': True}
         
+        from bson import ObjectId
         farmer_id = session.get('farmer_id')
+        
+        # Convert string ID to ObjectId if needed
+        if isinstance(farmer_id, str):
+            try:
+                farmer_id = ObjectId(farmer_id)
+            except:
+                return {'success': False, 'message': 'Invalid farmer ID'}
+        
         farmer = self.mongo.farmers.find_one({'_id': farmer_id})
         
         if not farmer:

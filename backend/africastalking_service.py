@@ -42,8 +42,8 @@ class AfricasTalkingService:
     
     def send_sms(self, phone: str, message: str) -> Dict:
         """Send SMS to farmer"""
-        if not self.sms:
-            logger.info(f"[DEMO] Would send SMS to {phone}: {message}")
+        if not self.sms or not self.api_key:
+            logger.info(f"[DEMO] Would send SMS to {phone}: {message[:50]}...")
             return {'success': True, 'demo': True, 'message': 'Demo mode - SMS not actually sent'}
         
         try:
