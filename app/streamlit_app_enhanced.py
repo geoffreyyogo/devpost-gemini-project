@@ -280,14 +280,12 @@ def get_custom_css(dark_mode=False):
         font-weight: 700;
         margin-bottom: 1rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        animation: fadeInUp 1s ease;
     }}
     
     .hero-section p {{
         font-size: 1.4rem;
         opacity: 0.95;
         margin-bottom: 2rem;
-        animation: fadeInUp 1s ease 0.2s backwards;
     }}
     
     @keyframes fadeInUp {{
@@ -310,7 +308,6 @@ def get_custom_css(dark_mode=False):
         border-left: 6px solid #2E7D32;
         margin-bottom: 1.5rem;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        animation: fadeIn 0.8s ease;
         position: relative;
         overflow: hidden;
         color: {text_dark};
@@ -448,9 +445,7 @@ def get_custom_css(dark_mode=False):
     }}
     
     /* Hide Streamlit branding */
-    #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
-    header {{visibility: hidden;}}
     
     /* Smooth animations */
     @keyframes fadeIn {{
@@ -1205,59 +1200,173 @@ def show_dashboard_tab(farmer):
         
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         
-        # Farm location map with bloom heatmap
-        st.markdown("### 🗺️ Your Farm Location & Nearby Blooms")
+        # NASA Satellite Data Visualization - Full Kenya Map
+        st.markdown("### 🛰️ Kenya Bloom Detection Map (NASA Satellite Data)")
         
+        # Display data source prominently
+        data_source = bloom_data.get('data_source', 'Synthetic (Demo)') if bloom_data else 'Loading...'
+        if 'MODIS' in data_source:
+            st.caption("📡 **Live Data**: MODIS Terra/Aqua (NASA) - 1km resolution, daily coverage")
+        elif 'Landsat' in data_source:
+            st.caption("📡 **Live Data**: Landsat 8/9 (NASA/USGS) - 30m resolution")
+        else:
+            st.caption("📡 **Demo Data**: Simulated Kenya agricultural patterns for demonstration")
+        
+        # Create stable bloom markers using farmer-specific seed to prevent flickering
+        farmer_seed = hash(farmer.get('phone', 'default')) % (2**32)
+        
+        # Initialize or retrieve cached bloom markers for ALL Kenya regions
+        if 'bloom_markers_kenya' not in st.session_state or st.session_state.get('current_farmer') != farmer.get('phone'):
+            np.random.seed(farmer_seed)
+            st.session_state.bloom_markers_kenya = []
+            
+            # Generate bloom markers across all Kenya agricultural regions
+            kenya_regions = {
+                'central': {'lat': -0.9, 'lon': 36.9, 'name': 'Central Kenya'},
+                'rift_valley': {'lat': 0.2, 'lon': 35.8, 'name': 'Rift Valley'},
+                'western': {'lat': 0.5, 'lon': 34.8, 'name': 'Western Kenya'},
+                'eastern': {'lat': -1.5, 'lon': 37.5, 'name': 'Eastern Kenya'},
+                'coast': {'lat': -3.5, 'lon': 39.7, 'name': 'Coastal Kenya'}
+            }
+            
+            # Use actual bloom data if available
+            if bloom_data and 'bloom_hotspots' in bloom_data and bloom_data['bloom_hotspots']:
+                # Distribute real bloom data across regions
+                for idx, hotspot in enumerate(bloom_data['bloom_hotspots']):
+                    region_key = list(kenya_regions.keys())[idx % len(kenya_regions)]
+                    region = kenya_regions[region_key]
+                    st.session_state.bloom_markers_kenya.append({
+                        'lat': region['lat'] + np.random.uniform(-0.15, 0.15),
+                        'lon': region['lon'] + np.random.uniform(-0.15, 0.15),
+                        'intensity': hotspot.get('confidence', 0.7),
+                        'location': region['name'],
+                        'region': region_key,
+                        'data_source': 'NASA Satellite'
+                    })
+            else:
+                # Generate realistic synthetic bloom data across all regions
+                for region_key, region in kenya_regions.items():
+                    # 3-5 bloom events per region
+                    num_blooms = np.random.randint(3, 6)
+                    for i in range(num_blooms):
+                        st.session_state.bloom_markers_kenya.append({
+                            'lat': region['lat'] + np.random.uniform(-0.2, 0.2),
+                            'lon': region['lon'] + np.random.uniform(-0.2, 0.2),
+                            'intensity': np.random.uniform(0.5, 0.95),
+                            'location': region['name'],
+                            'region': region_key,
+                            'data_source': 'Demo'
+                        })
+            
+            st.session_state.current_farmer = farmer.get('phone')
+        
+        # Create Kenya-wide map (centered on Kenya)
         m = folium.Map(
-            location=[farmer.get('location_lat', -1.0), farmer.get('location_lon', 37.0)],
-            zoom_start=11,
+            location=[-0.5, 37.0],  # Center of Kenya
+            zoom_start=7,  # Show full country
             tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
             attr='CartoDB'
         )
         
-        # Add farmer's location
+        # Add Kenya regions as circles
+        farmer_region = farmer.get('region', 'central')
+        region_colors = {
+            'central': '#1B5E20',
+            'rift_valley': '#2E7D32', 
+            'western': '#388E3C',
+            'eastern': '#43A047',
+            'coast': '#4CAF50'
+        }
+        
+        # Draw all Kenya agricultural regions
+        for region_key, region_info in KENYA_REGIONS.items():
+            coords = region_info['coordinates']
+            is_farmer_region = (region_key == farmer_region)
+            
+            # Larger, highlighted circle for farmer's region
+            folium.Circle(
+                location=[coords['lat'], coords['lon']],
+                radius=30000 if is_farmer_region else 20000,  # 30km or 20km radius
+                color=region_colors.get(region_key, '#4CAF50'),
+                fill=True,
+                fillColor=region_colors.get(region_key, '#4CAF50'),
+                fillOpacity=0.3 if is_farmer_region else 0.15,
+                weight=3 if is_farmer_region else 1,
+                popup=f"<b>{region_info.get('counties', [''])[0]}</b><br>"
+                      f"Main crops: {', '.join(region_info['main_crops'][:3])}<br>"
+                      f"{'🏠 YOUR REGION' if is_farmer_region else ''}",
+                tooltip=f"{'🏠 ' if is_farmer_region else ''}{region_key.replace('_', ' ').title()}"
+            ).add_to(m)
+        
+        # Add farmer's farm location (prominent marker)
         folium.Marker(
             [farmer.get('location_lat', -1.0), farmer.get('location_lon', 37.0)],
-            popup=f"<b>{farmer.get('name')}'s Farm</b><br>Crops: {', '.join([c.title() for c in farmer.get('crops', [])[:3]])}",
+            popup=f"<b>🏠 {farmer.get('name')}'s Farm</b><br>"
+                  f"Region: {farmer_region.replace('_', ' ').title()}<br>"
+                  f"Crops: {', '.join([c.title() for c in farmer.get('crops', [])[:3]])}",
             tooltip="Your Farm 🌾",
-            icon=folium.Icon(color='green', icon='home', prefix='fa')
+            icon=folium.Icon(color='darkgreen', icon='home', prefix='fa')
         ).add_to(m)
         
-        # Add actual bloom hotspots if available
-        if bloom_data and 'bloom_hotspots' in bloom_data:
-            for hotspot in bloom_data['bloom_hotspots']:
-                # Use actual hotspot data
-                lat_offset = np.random.uniform(-0.1, 0.1)
-                lon_offset = np.random.uniform(-0.1, 0.1)
-                intensity = hotspot.get('confidence', 0.7)
-                
-                folium.CircleMarker(
-                    [farmer.get('location_lat', -1.0) + lat_offset, farmer.get('location_lon', 37.0) + lon_offset],
-                    radius=8 + intensity * 12,
-                    popup=f"Bloom Event<br>Intensity: {intensity:.2f}<br>Location: {hotspot.get('location', 'Unknown')}",
-                    color='#FF6F00',
-                    fillColor='#FDD835',
-                    fillOpacity=0.6,
-                    weight=2
-                ).add_to(m)
-        else:
-            # Fallback to synthetic markers
-            for i in range(5):
-                lat_offset = np.random.uniform(-0.1, 0.1)
-                lon_offset = np.random.uniform(-0.1, 0.1)
-                intensity = np.random.uniform(0.5, 0.9)
-                
-                folium.CircleMarker(
-                    [farmer.get('location_lat', -1.0) + lat_offset, farmer.get('location_lon', 37.0) + lon_offset],
-                    radius=8 + intensity * 12,
-                    popup=f"Bloom Event<br>Intensity: {intensity:.2f}",
-                    color='#FF6F00',
-                    fillColor='#FDD835',
-                    fillOpacity=0.6,
-                    weight=2
-                ).add_to(m)
+        # Add bloom event markers across Kenya (from cached data)
+        for marker in st.session_state.bloom_markers_kenya:
+            # Color intensity based on confidence
+            if marker['intensity'] > 0.8:
+                color = '#D32F2F'  # High intensity - Red
+                fill_color = '#FF5252'
+            elif marker['intensity'] > 0.6:
+                color = '#F57C00'  # Medium intensity - Orange
+                fill_color = '#FFB74D'
+            else:
+                color = '#FBC02D'  # Low intensity - Yellow
+                fill_color = '#FFEB3B'
+            
+            folium.CircleMarker(
+                [marker['lat'], marker['lon']],
+                radius=6 + marker['intensity'] * 10,
+                popup=f"<b>🌸 Bloom Event</b><br>"
+                      f"Location: {marker['location']}<br>"
+                      f"Intensity: {marker['intensity']:.2%}<br>"
+                      f"Source: {marker['data_source']}<br>"
+                      f"Confidence: {'High' if marker['intensity'] > 0.7 else 'Moderate'}",
+                tooltip=f"Bloom: {marker['intensity']:.0%}",
+                color=color,
+                fillColor=fill_color,
+                fillOpacity=0.7,
+                weight=2
+            ).add_to(m)
         
-        st_folium(m, height=400, use_container_width=True)
+        # Add legend
+        legend_html = '''
+        <div style="position: fixed; bottom: 50px; right: 50px; z-index: 1000;
+                    background-color: white; padding: 10px; border-radius: 8px;
+                    border: 2px solid #2E7D32; font-size: 12px;">
+            <p style="margin: 0 0 5px 0; font-weight: bold;">🌸 Bloom Intensity</p>
+            <p style="margin: 3px 0;"><span style="color: #D32F2F;">●</span> High (>80%)</p>
+            <p style="margin: 3px 0;"><span style="color: #F57C00;">●</span> Medium (60-80%)</p>
+            <p style="margin: 3px 0;"><span style="color: #FBC02D;">●</span> Low (<60%)</p>
+            <p style="margin: 8px 0 3px 0; font-weight: bold;">🏠 Your Region</p>
+            <p style="margin: 3px 0;">Highlighted in green</p>
+        </div>
+        '''
+        m.get_root().html.add_child(folium.Element(legend_html))
+        
+        # Display map
+        st_folium(m, height=450, use_container_width=True, returned_objects=[], key='kenya_bloom_map')
+        
+        # Statistics below map
+        col_stat1, col_stat2, col_stat3 = st.columns(3)
+        with col_stat1:
+            total_blooms = len(st.session_state.bloom_markers_kenya)
+            st.metric("🌸 Total Bloom Events", total_blooms, delta=f"Across Kenya")
+        with col_stat2:
+            farmer_region_blooms = len([m for m in st.session_state.bloom_markers_kenya 
+                                        if m['region'] == farmer_region])
+            st.metric("📍 In Your Region", farmer_region_blooms, delta=f"{farmer_region.replace('_', ' ').title()}")
+        with col_stat3:
+            avg_intensity = np.mean([m['intensity'] for m in st.session_state.bloom_markers_kenya])
+            st.metric("⚡ Avg Intensity", f"{avg_intensity:.0%}", 
+                     delta="High" if avg_intensity > 0.7 else "Moderate")
     
     with col_right:
         # Yield prediction gauge (based on health score)
