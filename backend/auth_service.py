@@ -13,12 +13,38 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Optional imports for smart alerts
+try:
+    from smart_alert_service import SmartAlertService
+    from bloom_processor import BloomProcessor
+    from africastalking_service import AfricasTalkingService
+    SMART_ALERTS_AVAILABLE = True
+except ImportError:
+    SMART_ALERTS_AVAILABLE = False
+    logger.warning("Smart alerts not available - missing dependencies")
+
 class AuthService:
     """Authentication and session management"""
     
-    def __init__(self):
-        self.mongo = MongoDBService()
+    def __init__(self, mongo_service=None):
+        self.mongo = mongo_service if mongo_service is not None else MongoDBService()
         self.sessions = {}  # In-memory sessions (use Redis in production)
+        
+        # Initialize smart alert service if available
+        if SMART_ALERTS_AVAILABLE:
+            try:
+                self.at_service = AfricasTalkingService()
+                self.bloom_processor = BloomProcessor()
+                self.alert_service = SmartAlertService(
+                    mongo_service=self.mongo,
+                    africastalking_service=self.at_service
+                )
+                logger.info("Smart alerts enabled")
+            except Exception as e:
+                logger.warning(f"Could not initialize smart alerts: {e}")
+                self.alert_service = None
+        else:
+            self.alert_service = None
     
     def hash_password(self, password: str, salt: str = None) -> tuple:
         """Hash password with salt"""
@@ -59,6 +85,27 @@ class AuthService:
         
         if result['success']:
             logger.info(f"✓ New farmer registered: {farmer_data['name']}")
+            
+            # Send welcome alert with current bloom status
+            if self.alert_service:
+                try:
+                    logger.info(f"Sending welcome alert to {farmer_data['name']}...")
+                    
+                    # Get current bloom data for farmer's region
+                    bloom_data = self.bloom_processor.detect_bloom_events(farmer_data.get('region', 'kenya'))
+                    
+                    # Send personalized welcome SMS
+                    alert_result = self.alert_service.send_welcome_alert(farmer_data, bloom_data)
+                    
+                    if alert_result['success']:
+                        logger.info(f"✓ Sent {alert_result['alerts_sent']} welcome alerts to {farmer_data['name']}")
+                        result['alerts_sent'] = alert_result['alerts_sent']
+                    else:
+                        logger.warning("Failed to send welcome alerts")
+                        
+                except Exception as e:
+                    logger.error(f"Error sending welcome alert: {e}")
+                    # Don't fail registration if alert fails
         
         return result
     

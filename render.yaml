@@ -1,0 +1,86 @@
+# Render Blueprint for BloomWatch Kenya
+# Complete deployment configuration
+
+services:
+  # Main Web Application (Streamlit)
+  - type: web
+    name: bloomwatch-web
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app/streamlit_app_enhanced.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGODB_URI
+        sync: false
+      - key: AFRICASTALKING_USERNAME
+        sync: false
+      - key: AFRICASTALKING_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+    healthCheckPath: /
+
+  # Admin Dashboard (Streamlit)
+  - type: web
+    name: bloomwatch-admin
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app/admin_dashboard.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGODB_URI
+        sync: false
+      - key: AFRICASTALKING_USERNAME
+        sync: false
+      - key: AFRICASTALKING_API_KEY
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+    healthCheckPath: /
+
+  # USSD API (Flask)
+  - type: web
+    name: bloomwatch-ussd
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && gunicorn ussd_api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: MONGODB_URI
+        sync: false
+      - key: AFRICASTALKING_USERNAME
+        sync: false
+      - key: AFRICASTALKING_API_KEY
+        sync: false
+      - key: FLASK_ENV
+        value: production
+    healthCheckPath: /health
+
+  # MongoDB (if not using Atlas)
+  # - type: pserv
+  #   name: bloomwatch-mongodb
+  #   env: docker
+  #   plan: free
+  #   dockerfilePath: ./Dockerfile.mongo
+  #   disk:
+  #     name: mongodb-data
+  #     mountPath: /data/db
+  #     sizeGB: 1
+
+databases:
+  # Note: Render free tier doesn't include MongoDB
+  # Use MongoDB Atlas (free tier) instead
+  # Add connection string to MONGODB_URI env var
+

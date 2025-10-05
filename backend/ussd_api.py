@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 at_service = AfricasTalkingService()
 
-@app.route('/ussd', methods=['POST'])
+@app.route('/ussd', methods=['POST','GET'])
 def ussd_callback():
     """
     USSD callback endpoint for Africa's Talking

@@ -1,0 +1,78 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║       🌾 BloomWatch Kenya - USSD with ngrok Quick Start               ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+📋 STEP 1: Install ngrok
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+./setup_ngrok.sh
+
+📋 STEP 2: Get ngrok Auth Token
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Sign up: https://dashboard.ngrok.com/signup
+2. Get token: https://dashboard.ngrok.com/get-started/your-authtoken
+3. Configure:
+   ngrok config add-authtoken YOUR_TOKEN_HERE
+
+📋 STEP 3: Start USSD API + ngrok
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+./start_ussd_with_ngrok.sh
+
+🌐 You'll see output like:
+   USSD Callback URL: https://abc123.ngrok-free.app/ussd
+
+📋 STEP 4: Configure Africa's Talking
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Go to: https://account.africastalking.com/apps/sandbox/ussd
+2. Set Callback URL: https://YOUR_NGROK_URL/ussd
+3. Save
+
+📋 STEP 5: Test USSD Registration
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Option A: Web Test Interface
+   http://localhost:5000/test-ussd
+
+Option B: Real Phone
+   Dial: *384*1234# (or your USSD code)
+
+📊 MONITORING URLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• ngrok Dashboard:  http://localhost:4040
+• USSD Test Page:   http://localhost:5000/test-ussd
+• Health Check:     http://localhost:5000/health
+• Farmer Stats:     http://localhost:5000/stats
+
+🛑 TO STOP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Press Ctrl+C in the terminal
+
+📱 USSD FLOW EXAMPLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Farmer dials: *384*1234#
+
+1. Welcome screen → Select language (1=English, 2=Swahili)
+2. Enter name → Type: John Kamau
+3. Select region → Choose: 1 (Central Kenya)
+4. Select crops → Type: 1,2 (Maize, Beans)
+5. Select alert language → Choose: 1 (English)
+6. ✅ Registration complete!
+
+💡 TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• ngrok URL changes every restart (free plan)
+• Keep terminal open while testing
+• Monitor requests at http://localhost:4040
+• Check farmer registrations at http://localhost:5000/stats
+
+📚 FULL DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+See: NGROK_USSD_SETUP.md
+
+🆘 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Port 5000 busy: lsof -ti:5000 | xargs kill -9
+• ngrok not found: ./setup_ngrok.sh
+• Auth error: ngrok config add-authtoken YOUR_TOKEN
+• Check logs: tail -f /tmp/ngrok.log
+
+═══════════════════════════════════════════════════════════════════════════
+

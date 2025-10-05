@@ -30,18 +30,22 @@ class GEEDataLoader:
         if export_dir is None:
             # Try multiple possible export directories
             possible_dirs = [
-                '../data/exports',
-                './data/exports',
                 '/home/yogo/bloom-detector/data/exports',
-                os.path.join(os.path.dirname(__file__), '..', 'data', 'exports')
+                os.path.join(os.path.dirname(__file__), '..', 'data', 'exports'),
+                './data/exports',
+                '../data/exports',
             ]
             for d in possible_dirs:
-                if os.path.exists(d):
-                    export_dir = d
-                    break
+                abs_path = os.path.abspath(d)
+                if os.path.exists(abs_path):
+                    # Check if it actually has .tif files
+                    tif_files = [f for f in os.listdir(abs_path) if f.endswith('.tif')]
+                    if tif_files:
+                        export_dir = abs_path
+                        break
             
             if export_dir is None:
-                export_dir = '../data/exports'
+                export_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'exports'))
                 os.makedirs(export_dir, exist_ok=True)
         
         self.export_dir = export_dir
@@ -81,25 +85,22 @@ class GEEDataLoader:
     
     def get_available_exports(self) -> Dict[str, list]:
         """List all available GEE exports"""
+        # Only track datasets we actually use (no Sentinel-2 to avoid memory issues)
         available = {
-            'sentinel2_ndvi': [],
-            'landsat_ndvi': [],
             'landsat_ari': [],
             'modis_ndvi': [],
-            'viirs_ndvi': []
+            'ndvi_anomaly': []
         }
         
         if not os.path.exists(self.export_dir):
             logger.warning(f"Export directory not found: {self.export_dir}")
             return available
         
-        # Scan for exported files
+        # Scan for exported files - only load the datasets we need
         patterns = {
-            'sentinel2_ndvi': ['*sentinel*ndvi*.tif', '*s2*ndvi*.tif'],
-            'landsat_ndvi': ['*landsat*ndvi*.tif', '*l8*ndvi*.tif', '*l9*ndvi*.tif'],
             'landsat_ari': ['*landsat*ari*.tif', '*l8*ari*.tif', '*l9*ari*.tif'],
             'modis_ndvi': ['*modis*ndvi*.tif', '*mod13*.tif'],
-            'viirs_ndvi': ['*viirs*ndvi*.tif', '*vnp13*.tif']
+            'ndvi_anomaly': ['*anomaly*.tif', '*ndvi_anomaly*.tif']
         }
         
         for data_type, pattern_list in patterns.items():
@@ -116,42 +117,33 @@ class GEEDataLoader:
         return available
     
     def load_kenya_data(self) -> Dict[str, np.ndarray]:
-        """Load Kenya-specific exported data"""
+        """Load Kenya-specific exported data (MODIS NDVI, Landsat ARI, NDVI Anomaly only)"""
         data = {}
         
-        # Try to load NDVI data (prefer Sentinel-2 for Kenya)
+        # Load only the three datasets we need (no Sentinel to avoid memory issues)
         available = self.get_available_exports()
         
-        # Load Sentinel-2 NDVI (best for Kenya - 10m resolution)
-        if available['sentinel2_ndvi']:
-            ndvi = self.load_geotiff(available['sentinel2_ndvi'][0])
-            if ndvi is not None:
-                data['ndvi'] = ndvi
-                data['source'] = 'Sentinel-2'
-                logger.info("Using Sentinel-2 NDVI data")
-        
-        # Fallback to Landsat NDVI
-        if 'ndvi' not in data and available['landsat_ndvi']:
-            ndvi = self.load_geotiff(available['landsat_ndvi'][0])
-            if ndvi is not None:
-                data['ndvi'] = ndvi
-                data['source'] = 'Landsat'
-                logger.info("Using Landsat NDVI data")
-        
-        # Fallback to MODIS NDVI
-        if 'ndvi' not in data and available['modis_ndvi']:
+        # Load MODIS NDVI (primary data source)
+        if available['modis_ndvi']:
             ndvi = self.load_geotiff(available['modis_ndvi'][0])
             if ndvi is not None:
                 data['ndvi'] = ndvi
                 data['source'] = 'MODIS'
                 logger.info("Using MODIS NDVI data")
         
-        # Load ARI data (for flower detection)
+        # Load Landsat ARI (for flower detection)
         if available['landsat_ari']:
             ari = self.load_geotiff(available['landsat_ari'][0])
             if ari is not None:
                 data['ari'] = ari
                 logger.info("Loaded Landsat ARI data")
+        
+        # Load NDVI Anomaly (for bloom detection)
+        if available['ndvi_anomaly']:
+            anomaly = self.load_geotiff(available['ndvi_anomaly'][0])
+            if anomaly is not None:
+                data['anomaly'] = anomaly
+                logger.info("Loaded NDVI Anomaly data (MODIS-based)")
         
         # If no data loaded, generate synthetic Kenya data
         if 'ndvi' not in data:
@@ -219,7 +211,8 @@ class GEEDataLoader:
         """Load time series data if available"""
         available = self.get_available_exports()
         
-        files = available.get(f'modis_{data_type}', []) or available.get(f'landsat_{data_type}', [])
+        # Only look for MODIS NDVI time series
+        files = available.get('modis_ndvi', [])
         
         if not files:
             logger.warning(f"No time series data found for {data_type}")
@@ -243,10 +236,9 @@ class GEEDataLoader:
         
         info = {
             'export_directory': self.export_dir,
-            'has_sentinel2': len(available['sentinel2_ndvi']) > 0,
-            'has_landsat': len(available['landsat_ndvi']) > 0,
-            'has_modis': len(available['modis_ndvi']) > 0,
-            'has_ari': len(available['landsat_ari']) > 0,
+            'has_landsat_ari': len(available['landsat_ari']) > 0,
+            'has_modis_ndvi': len(available['modis_ndvi']) > 0,
+            'has_anomaly': len(available['ndvi_anomaly']) > 0,
             'total_files': sum(len(files) for files in available.values()),
             'available_data': available
         }
@@ -264,10 +256,9 @@ if __name__ == "__main__":
     info = loader.get_data_info()
     print(f"\n📁 Export Directory: {info['export_directory']}")
     print(f"📊 Total Files: {info['total_files']}")
-    print(f"✓ Sentinel-2: {info['has_sentinel2']}")
-    print(f"✓ Landsat: {info['has_landsat']}")
-    print(f"✓ MODIS: {info['has_modis']}")
-    print(f"✓ ARI Data: {info['has_ari']}")
+    print(f"🛰️  Landsat ARI: {info['has_landsat_ari']}")
+    print(f"🛰️  MODIS NDVI: {info['has_modis_ndvi']}")
+    print(f"📊 NDVI Anomaly: {info['has_anomaly']}")
     
     # Load Kenya data
     print("\n🌾 Loading Kenya Data...")
@@ -293,5 +284,7 @@ if __name__ == "__main__":
         print("1. Run gee/gee_bloom_detector.js in GEE Code Editor")
         print("2. Export data to Google Drive")
         print("3. Download to data/exports/")
+
+
 
 

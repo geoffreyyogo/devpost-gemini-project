@@ -34,15 +34,35 @@ class MongoDBService:
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
             
+            # Increased timeouts for WSL2 DNS resolution issues
             self.client = MongoClient(
                 self.connection_string, 
-                serverSelectionTimeoutMS=5000,
+                serverSelectionTimeoutMS=30000,  # Increased from 5s to 30s
+                connectTimeoutMS=30000,  # 30 seconds for initial connection
+                socketTimeoutMS=30000,   # 30 seconds for socket operations
                 tls=True,
                 tlsAllowInvalidCertificates=True,
-                tlsCAFile=certifi.where()
+                tlsCAFile=certifi.where(),
+                retryWrites=True,  # Enable retry writes
+                retryReads=True,   # Enable retry reads
+                maxPoolSize=10,
+                minPoolSize=1
             )
-            # Test connection
-            self.client.server_info()
+            # Test connection with retry
+            max_retries = 3
+            retry_count = 0
+            while retry_count < max_retries:
+                try:
+                    self.client.server_info()
+                    break
+                except Exception as e:
+                    retry_count += 1
+                    if retry_count >= max_retries:
+                        raise e
+                    logger.warning(f"MongoDB connection attempt {retry_count} failed, retrying...")
+                    import time
+                    time.sleep(2)
+            
             self.db = self.client['bloomwatch_kenya']
             logger.info("✓ Connected to MongoDB successfully")
             
@@ -113,6 +133,18 @@ class MongoDBService:
     def get_db(self):
         """Get database object"""
         return self.db
+    
+    def get_farmers_collection(self):
+        """Get farmers collection"""
+        return self.farmers
+    
+    def get_sessions_collection(self):
+        """Get USSD sessions collection"""
+        return self.ussd_sessions
+    
+    def get_alerts_collection(self):
+        """Get alerts collection"""
+        return self.alerts
     
     def register_farmer(self, farmer_data: Dict) -> Dict:
         """Register a new farmer or update existing"""
@@ -417,8 +449,49 @@ class MongoDBService:
         if self.client:
             self.client.close()
             logger.info("MongoDB connection closed")
+    
+    def get_recent_alerts(self, limit: int = 50) -> List[Dict]:
+        """Get recent alerts"""
+        if self.db is None:
+            return []
+        
+        try:
+            alerts = list(self.alerts.find().sort('sent_at', -1).limit(limit))
+            return alerts
+        except Exception as e:
+            logger.error(f"Error getting recent alerts: {e}")
+            return []
+    
+    def delete_farmer(self, farmer_id: str) -> bool:
+        """Delete a farmer by ID"""
+        if self.db is None:
+            return False
+        
+        try:
+            from bson import ObjectId
+            result = self.farmers.delete_one({'_id': ObjectId(farmer_id)})
+            return result.deleted_count > 0
+        except Exception as e:
+            logger.error(f"Error deleting farmer: {e}")
+            return False
+    
+    def get_recent_registrations(self, days: int = 7, limit: int = 10) -> List[Dict]:
+        """Get recent farmer registrations"""
+        if self.db is None:
+            return []
+        
+        try:
+            cutoff_date = (datetime.now() - timedelta(days=days)).isoformat()
+            farmers = list(
+                self.farmers.find({
+                    'registered_at': {'$gte': cutoff_date}
+                }).sort('registered_at', -1).limit(limit)
+            )
+            return farmers
+        except Exception as e:
+            logger.error(f"Error getting recent registrations: {e}")
+            return []
 
-# Demo/Testing
 if __name__ == "__main__":
     print("🌾 BloomWatch Kenya - MongoDB Service Test")
     print("=" * 60)

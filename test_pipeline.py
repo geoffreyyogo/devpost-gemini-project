@@ -60,16 +60,17 @@ print("-" * 70)
 try:
     from backend.gee_data_loader import GEEDataLoader
     
-    loader = GEEDataLoader()
+    loader = GEEDataLoader(export_dir='data/exports')
     info = loader.get_data_info()
     
     print(f"✅ Data Loader: READY")
     print(f"   📁 Export Dir: {info['export_directory']}")
     print(f"   📊 Total Files: {info['total_files']}")
-    print(f"   🛰️  Sentinel-2: {'✓' if info['has_sentinel2'] else '✗'}")
-    print(f"   🛰️  Landsat: {'✓' if info['has_landsat'] else '✗'}")
+    print(f"   🛰️  Sentinel-2 NDVI: {'✓' if info['has_sentinel2'] else '✗'}")
+    print(f"   🛰️  Sentinel-2 ARI: {'✓' if info.get('has_sentinel2_ari', False) else '✗'}")
+    print(f"   🛰️  Landsat NDVI: {'✓' if info['has_landsat'] else '✗'}")
+    print(f"   🛰️  Landsat ARI: {'✓' if info.get('has_landsat_ari', False) else '✗'}")
     print(f"   🛰️  MODIS: {'✓' if info['has_modis'] else '✗'}")
-    print(f"   🌸 ARI Data: {'✓' if info['has_ari'] else '✗'}")
     
     # Try loading data
     kenya_data = loader.load_kenya_data()
@@ -91,7 +92,7 @@ print("-" * 70)
 try:
     from backend.bloom_processor import BloomProcessor
     
-    processor = BloomProcessor()
+    processor = BloomProcessor(data_dir='data/exports')
     results = processor.detect_bloom_events('kenya')
     
     print(f"✅ Bloom Processor: WORKING")
