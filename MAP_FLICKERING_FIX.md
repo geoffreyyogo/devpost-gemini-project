@@ -77,3 +77,4 @@ October 5, 2025
 - `app/streamlit_app_enhanced.py` (main fix)
 - Session state variables: `bloom_markers`, `current_farmer`
 
+

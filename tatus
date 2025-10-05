@@ -1,0 +1,5 @@
+[33med56fe5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix Render deployment: specify Python 3.11.9 and update dependencies
+[33m0d6e3ab[m Add requirements.txt and update runtime.txt for Render deployment
+[33m0ef5105[m Applied fixes to the farmer dashboard map
+[33mbd0d6e3[m Ready for deployment
+[33mabc8a02[m USSD Integration

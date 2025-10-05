@@ -814,3 +814,4 @@ By combining NASA's Earth observation satellites with accessible mobile technolo
 *Empowering farmers with satellite technology*
 
 
+

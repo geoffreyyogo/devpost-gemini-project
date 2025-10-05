@@ -1,10 +1,10 @@
 # Render Blueprint for BloomWatch Kenya
-# Complete deployment configuration
+# Unified deployment configuration - Single Web App + API Backend
 
 services:
-  # Main Web Application (Streamlit)
+  # Main Web Application (Streamlit - with Farmer Portal + Admin Dashboard)
   - type: web
-    name: bloomwatch-web
+    name: bloomwatch-app
     env: python
     region: oregon
     plan: free
@@ -18,33 +18,15 @@ services:
         sync: false
       - key: AFRICASTALKING_API_KEY
         sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: SECRET_KEY
         generateValue: true
     healthCheckPath: /
 
-  # Admin Dashboard (Streamlit)
+  # USSD/SMS API Backend (Flask)
   - type: web
-    name: bloomwatch-admin
-    env: python
-    region: oregon
-    plan: free
-    branch: main
-    buildCommand: pip install -r requirements.txt
-    startCommand: streamlit run app/admin_dashboard.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
-    envVars:
-      - key: MONGODB_URI
-        sync: false
-      - key: AFRICASTALKING_USERNAME
-        sync: false
-      - key: AFRICASTALKING_API_KEY
-        sync: false
-      - key: ADMIN_PASSWORD
-        sync: false
-    healthCheckPath: /
-
-  # USSD API (Flask)
-  - type: web
-    name: bloomwatch-ussd
+    name: bloomwatch-api
     env: python
     region: oregon
     plan: free
