@@ -15,6 +15,7 @@ xarray==2024.6.0
 pandas==2.1.4
 
 # Web Frameworks
+# Streamlit 1.36.0 required for st.dialog support (added in 1.31.0)
 streamlit==1.36.0
 streamlit-folium==0.15.0
 flask==3.0.0

@@ -3739,42 +3739,119 @@ def show_profile_tab(farmer):
         </div>
         """, unsafe_allow_html=True)
 
-@st.dialog("🌿 Chat with Flora AI")
 def show_flora_chat_modal():
-    """Show Flora AI chat modal"""
-    # Demo mode warning
-    st.warning("""
-        **📝 Demo Mode:** This is a demonstration because the OpenAI API key is not configured. 
-        In the full version, Flora would provide personalized farming advice based on your location and crops.
-    """)
+    """Show Flora AI chat modal - backward compatible implementation"""
     
-    # Flora's greeting
-    st.success("""
-        **Flora:** Jambo! I'm Flora, your AI farming assistant. How can I help you with your crops today?
-    """)
-    
-    st.markdown("---")
-    
-    # Feature list
-    st.markdown("""
-        *In the full version, I would analyze your farm data, weather patterns, and provide personalized advice for:*
+    # Check if st.dialog is available (Streamlit >= 1.31.0)
+    if hasattr(st, 'dialog'):
+        # Use the modern dialog decorator
+        @st.dialog("🌿 Chat with Flora AI")
+        def _show_dialog():
+            # Demo mode warning
+            st.warning("""
+                **📝 Demo Mode:** This is a demonstration because the OpenAI API key is not configured. 
+                In the full version, Flora would provide personalized farming advice based on your location and crops.
+            """)
+            
+            # Flora's greeting
+            st.success("""
+                **Flora:** Jambo! I'm Flora, your AI farming assistant. How can I help you with your crops today?
+            """)
+            
+            st.markdown("---")
+            
+            # Feature list
+            st.markdown("""
+                *In the full version, I would analyze your farm data, weather patterns, and provide personalized advice for:*
+                
+                - 🌱 **Optimal planting times** - Based on weather and soil conditions
+                - 💧 **Irrigation schedules** - Water management recommendations
+                - 🌾 **Pest and disease management** - Early detection and prevention
+                - 📊 **Harvest predictions** - Yield forecasting and planning
+                - 🌦️ **Weather-based recommendations** - Real-time agricultural advice
+            """)
+            
+            st.markdown("---")
+            
+            # Close instruction
+            st.info("👆 Click outside this dialog or press ESC to close")
+            
+            # Close button
+            if st.button("Close", key="flora_close_btn", type="primary", use_container_width=True):
+                st.session_state.flora_chat = False
+                st.rerun()
         
-        - 🌱 **Optimal planting times** - Based on weather and soil conditions
-        - 💧 **Irrigation schedules** - Water management recommendations
-        - 🌾 **Pest and disease management** - Early detection and prevention
-        - 📊 **Harvest predictions** - Yield forecasting and planning
-        - 🌦️ **Weather-based recommendations** - Real-time agricultural advice
-    """)
-    
-    st.markdown("---")
-    
-    # Close instruction
-    st.info("👆 Click outside this dialog or press ESC to close")
-    
-    # Close button
-    if st.button("Close", key="flora_close_btn", type="primary", use_container_width=True):
-        st.session_state.flora_chat = False
-        st.rerun()
+        _show_dialog()
+    else:
+        # Fallback for older Streamlit versions - use modal-style container
+        st.markdown("""
+        <style>
+        .flora-modal-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 9999;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .flora-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9998;
+        }
+        </style>
+        <div class="flora-modal-backdrop"></div>
+        """, unsafe_allow_html=True)
+        
+        # Modal content container
+        with st.container():
+            st.markdown('<div class="flora-modal-container">', unsafe_allow_html=True)
+            
+            st.title("🌿 Chat with Flora AI")
+            
+            # Demo mode warning
+            st.warning("""
+                **📝 Demo Mode:** This is a demonstration because the OpenAI API key is not configured. 
+                In the full version, Flora would provide personalized farming advice based on your location and crops.
+            """)
+            
+            # Flora's greeting
+            st.success("""
+                **Flora:** Jambo! I'm Flora, your AI farming assistant. How can I help you with your crops today?
+            """)
+            
+            st.markdown("---")
+            
+            # Feature list
+            st.markdown("""
+                *In the full version, I would analyze your farm data, weather patterns, and provide personalized advice for:*
+                
+                - 🌱 **Optimal planting times** - Based on weather and soil conditions
+                - 💧 **Irrigation schedules** - Water management recommendations
+                - 🌾 **Pest and disease management** - Early detection and prevention
+                - 📊 **Harvest predictions** - Yield forecasting and planning
+                - 🌦️ **Weather-based recommendations** - Real-time agricultural advice
+            """)
+            
+            st.markdown("---")
+            
+            # Close button
+            if st.button("Close", key="flora_close_btn", type="primary", use_container_width=True):
+                st.session_state.flora_chat = False
+                st.rerun()
+            
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # Main app router
 def main():
