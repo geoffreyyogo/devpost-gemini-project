@@ -34,7 +34,21 @@ try:
     LOTTIE_AVAILABLE = True
 except ImportError:
     LOTTIE_AVAILABLE = False
-    st.info("💡 Install streamlit-lottie for enhanced animations: pip install streamlit-lottie")
+
+# Try to import OpenAI for Flora chatbot
+try:
+    import openai
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+
+# Import PIL for image handling
+try:
+    from PIL import Image
+    import io
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 
 # Import services with fallbacks
 try:
@@ -307,10 +321,32 @@ def get_custom_css(dark_mode=False):
         box-shadow: {shadow_md};
         border-left: 6px solid #2E7D32;
         margin-bottom: 1.5rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
         color: {text_dark};
+    }}
+    
+    .stat-card:hover {{
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: {shadow_lg};
+        border-left-width: 8px;
+    }}
+    
+    .stat-card::before {{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(46,125,50,0.05) 0%, rgba(102,187,106,0.05) 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }}
+    
+    .stat-card:hover::before {{
+        opacity: 1;
     }}
     
     .stat-card h2 {{
@@ -336,6 +372,31 @@ def get_custom_css(dark_mode=False):
         text-align: center;
         border: 2px solid transparent;
         color: {text_dark};
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }}
+    
+    .feature-card:hover {{
+        transform: translateY(-10px);
+        box-shadow: {shadow_lg};
+        border: 2px solid #2E7D32;
+    }}
+    
+    .feature-card::after {{
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #2E7D32 0%, #66BB6A 50%, #81C784 100%);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }}
+    
+    .feature-card:hover::after {{
+        transform: scaleX(1);
     }}
     
     .feature-card h3, .feature-card p {{
@@ -344,20 +405,35 @@ def get_custom_css(dark_mode=False):
     
     /* Buttons with gradient and animation */
     .stButton > button {{
-        background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 0.85rem 2.5rem !important;
-        font-size: 1.1rem !important;
+        background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
+        color: #2E7D32 !important;
+        border: 2px solid rgba(255,255,255,0.8) !important;
+        padding: 1rem 2.5rem !important;
+        font-size: 1.2rem !important;
         border-radius: 50px !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         transition: all 0.3s ease !important;
-        box-shadow: {shadow_sm} !important;
+        box-shadow: 
+            0 8px 16px rgba(0,0,0,0.2),
+            0 4px 8px rgba(0,0,0,0.15),
+            inset 0 -2px 4px rgba(0,0,0,0.1),
+            inset 0 2px 4px rgba(255,255,255,0.9) !important;
     }}
     
     .stButton > button:hover {{
-        transform: translateY(-3px) !important;
-        box-shadow: {shadow_md} !important;
+        transform: translateY(-4px) !important;
+        box-shadow: 
+            0 12px 24px rgba(0,0,0,0.3),
+            0 6px 12px rgba(0,0,0,0.2),
+            inset 0 -2px 4px rgba(0,0,0,0.1),
+            inset 0 2px 4px rgba(255,255,255,0.9) !important;
+    }}
+    
+    .stButton > button:active {{
+        transform: translateY(-1px) !important;
+        box-shadow: 
+            0 4px 8px rgba(0,0,0,0.2),
+            inset 0 2px 4px rgba(0,0,0,0.2) !important;
     }}
     
     /* Form inputs - FIXED */
@@ -414,6 +490,12 @@ def get_custom_css(dark_mode=False):
         padding: 1.5rem !important;
         border-radius: 16px !important;
         box-shadow: {shadow_sm} !important;
+        transition: all 0.3s ease !important;
+    }}
+    
+    [data-testid="stMetric"]:hover {{
+        transform: translateY(-5px) !important;
+        box-shadow: {shadow_md} !important;
     }}
     
     [data-testid="stMetricLabel"] {{
@@ -471,6 +553,271 @@ def get_custom_css(dark_mode=False):
         0%, 100% {{ transform: scale(1); }}
         50% {{ transform: scale(1.05); }}
     }}
+    
+    /* Scroll fade-in animations */
+    @keyframes scrollFadeIn {{
+        from {{
+            opacity: 0;
+            transform: translateY(40px);
+        }}
+        to {{
+            opacity: 1;
+            transform: translateY(0);
+        }}
+    }}
+    
+    .scroll-animate {{
+        animation: scrollFadeIn 0.8s ease-out forwards;
+        opacity: 0;
+    }}
+    
+    .scroll-animate-delay-1 {{
+        animation: scrollFadeIn 0.8s ease-out 0.1s forwards;
+        opacity: 0;
+    }}
+    
+    .scroll-animate-delay-2 {{
+        animation: scrollFadeIn 0.8s ease-out 0.2s forwards;
+        opacity: 0;
+    }}
+    
+    .scroll-animate-delay-3 {{
+        animation: scrollFadeIn 0.8s ease-out 0.3s forwards;
+        opacity: 0;
+    }}
+    
+    .scroll-animate-delay-4 {{
+        animation: scrollFadeIn 0.8s ease-out 0.4s forwards;
+        opacity: 0;
+    }}
+    
+    .scroll-animate-delay-5 {{
+        animation: scrollFadeIn 0.8s ease-out 0.5s forwards;
+        opacity: 0;
+    }}
+    
+    /* Slide from left */
+    @keyframes slideFromLeft {{
+        from {{
+            opacity: 0;
+            transform: translateX(-50px);
+        }}
+        to {{
+            opacity: 1;
+            transform: translateX(0);
+        }}
+    }}
+    
+    .slide-left {{
+        animation: slideFromLeft 0.8s ease-out forwards;
+        opacity: 0;
+    }}
+    
+    /* Slide from right */
+    @keyframes slideFromRight {{
+        from {{
+            opacity: 0;
+            transform: translateX(50px);
+        }}
+        to {{
+            opacity: 1;
+            transform: translateX(0);
+        }}
+    }}
+    
+    .slide-right {{
+        animation: slideFromRight 0.8s ease-out forwards;
+        opacity: 0;
+    }}
+    
+    /* Mobile-First Responsive Design */
+    @media (max-width: 768px) {{
+        .hero-section h1 {{
+            font-size: 2rem !important;
+        }}
+        
+        .hero-section h2 {{
+            font-size: 1.5rem !important;
+        }}
+        
+        .hero-section p {{
+            font-size: 1rem !important;
+        }}
+        
+        .stat-card h2 {{
+            font-size: 2rem !important;
+        }}
+        
+        .stat-card p {{
+            font-size: 0.9rem !important;
+        }}
+        
+        .feature-card {{
+            padding: 1rem !important;
+            margin-bottom: 1rem;
+        }}
+        
+        .stButton > button {{
+            padding: 0.7rem 1.5rem !important;
+            font-size: 0.95rem !important;
+        }}
+    }}
+    
+    /* Kenyan Cultural Design Elements */
+    .kenya-pattern {{
+        background: linear-gradient(
+            135deg,
+            #2E7D32 0%,     /* Deep green - Kenyan landscape */
+            #558B2F 25%,    /* Olive green - agriculture */
+            #9E9D24 50%,    /* Savanna gold */
+            #F57C00 75%,    /* Sunset orange */
+            #D32F2F 100%    /* Maasai red */
+        );
+        background-size: 400% 400%;
+        animation: kenyaGradient 15s ease infinite;
+    }}
+    
+    @keyframes kenyaGradient {{
+        0%, 100% {{ background-position: 0% 50%; }}
+        50% {{ background-position: 100% 50%; }}
+    }}
+    
+    /* Kenyan flag colors accent */
+    .kenya-accent {{
+        border-top: 4px solid #000000;      /* Black */
+        border-left: 4px solid #BB0000;     /* Red */
+        border-bottom: 4px solid #006600;   /* Green */
+    }}
+    
+    /* Safari/Maasai inspired patterns */
+    .pattern-dots {{
+        background-image: radial-gradient(circle, rgba(139,69,19,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }}
+    
+    /* High contrast for accessibility (low-literacy users) */
+    .high-contrast-text {{
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        line-height: 1.8;
+    }}
+    
+    /* Touch-friendly buttons for mobile */
+    @media (max-width: 768px) {{
+        .stButton > button {{
+            min-height: 48px;
+            min-width: 120px;
+        }}
+        
+        /* Larger tap targets for rural users with basic phones */
+        button, a, input, select {{
+            min-height: 44px !important;
+        }}
+    }}
+    
+    /* Loading states with African patterns */
+    @keyframes africanPulse {{
+        0%, 100% {{ 
+            transform: scale(1); 
+            box-shadow: 0 0 0 0 rgba(46,125,50,0.7);
+        }}
+        50% {{ 
+            transform: scale(1.05); 
+            box-shadow: 0 0 0 15px rgba(46,125,50,0);
+        }}
+    }}
+    
+    .pulse-african {{
+        animation: africanPulse 2s infinite;
+    }}
+    
+    /* Section wrappers for animations */
+    .section-wrapper {{
+        margin: 3rem 0;
+        padding: 2rem 0;
+    }}
+    
+    /* Card grid animations */
+    .card-grid {{
+        display: grid;
+        gap: 1.5rem;
+    }}
+    
+    /* Enhanced section headings */
+    .section-heading {{
+        text-align: center;
+        color: #2E7D32;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        animation: scrollFadeIn 0.8s ease-out forwards;
+    }}
+    
+    /* Image hover effects */
+    img {{
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }}
+    
+    img:hover {{
+        transform: scale(1.05);
+        box-shadow: {shadow_lg} !important;
+    }}
+    
+    /* Enhanced expander hover */
+    .streamlit-expanderHeader:hover {{
+        background: linear-gradient(135deg, rgba(46,125,50,0.1), rgba(102,187,106,0.1)) !important;
+        transform: translateX(5px);
+    }}
+    
+    /* Flora chat card styling */
+    .flora-card {{
+        background: {bg_white};
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: {shadow_md};
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }}
+    
+    .flora-card:hover {{
+        transform: translateY(-5px);
+        box-shadow: {shadow_lg};
+        border: 2px solid #81C784;
+    }}
+    
+    /* Testimonial card enhancements */
+    .testimonial-card {{
+        background: {bg_white};
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: {shadow_sm};
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 4px solid #2E7D32;
+        position: relative;
+        overflow: hidden;
+    }}
+    
+    .testimonial-card:hover {{
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: {shadow_lg};
+        border-left-width: 6px;
+    }}
+    
+    .testimonial-card::before {{
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(135deg, rgba(46,125,50,0.03), rgba(102,187,106,0.03));
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+    }}
+    
+    .testimonial-card:hover::before {{
+        top: -100%;
+        right: -100%;
+    }}
 </style>
 """
 
@@ -488,7 +835,9 @@ def init_session_state():
         'show_success': False,
         'success_message': '',
         'show_error': False,
-        'error_message': ''
+        'error_message': '',
+        'flora_chat_history': [],
+        'show_flora_demo': False
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -640,11 +989,1055 @@ def show_notification(message, type='success'):
     elif type == 'warning':
         st.warning(f"⚠️ {message}", icon="⚠️")
 
+# ==================== LANDING PAGE SECTIONS ====================
+
+def show_hero_section():
+    """Section 1: Hero section with Swahili tagline and CTAs"""
+    # Hero container with background
+    st.markdown("""
+    <style>
+    /* Enhanced hero section styling */
+    .hero-section-v2 {
+        position: relative;
+        min-height: 650px;
+        background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 50%, #81C784 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 8s ease infinite;
+        border-radius: 24px;
+        margin-bottom: -380px;
+        padding: 4rem 2rem 28rem 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    
+    .hero-section-v2::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200') center/cover;
+        opacity: 0.15;
+        border-radius: 24px;
+    }
+    
+    .hero-content-v2 {
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Floating buttons container */
+    .hero-floating-cta {
+        position: relative;
+        z-index: 100;
+        margin-top: -360px;
+        padding: 0 2rem 2rem 2rem;
+    }
+    
+    /* Enhanced button styling with 3D effect */
+    .floating-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        margin: 0.5rem;
+        background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        color: #2E7D32;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 50px;
+        text-decoration: none;
+        box-shadow: 
+            0 8px 16px rgba(0,0,0,0.2),
+            0 4px 8px rgba(0,0,0,0.15),
+            inset 0 -2px 4px rgba(0,0,0,0.1),
+            inset 0 2px 4px rgba(255,255,255,0.9);
+        border: 2px solid rgba(255,255,255,0.8);
+        transition: all 0.3s ease;
+        text-align: center;
+        cursor: pointer;
+    }
+    
+    .floating-button:hover {
+        transform: translateY(-4px);
+        box-shadow: 
+            0 12px 24px rgba(0,0,0,0.3),
+            0 6px 12px rgba(0,0,0,0.2),
+            inset 0 -2px 4px rgba(0,0,0,0.1),
+            inset 0 2px 4px rgba(255,255,255,0.9);
+    }
+    
+    .floating-button:active {
+        transform: translateY(-1px);
+        box-shadow: 
+            0 4px 8px rgba(0,0,0,0.2),
+            inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* USSD floating box with 3D effect */
+    .ussd-floating-box {
+        background: linear-gradient(145deg, #ffffff, #f5f5f5);
+        padding: 1.5rem;
+        border-radius: 20px;
+        margin-top: 1.5rem;
+        box-shadow: 
+            0 12px 32px rgba(0,0,0,0.25),
+            0 6px 16px rgba(0,0,0,0.15),
+            inset 0 -3px 6px rgba(0,0,0,0.1),
+            inset 0 3px 6px rgba(255,255,255,0.9);
+        border: 3px solid rgba(255,255,255,0.9);
+        text-align: center;
+    }
+    </style>
+    
+    <div class="hero-section-v2">
+        <div class="hero-content-v2">
+            <h1 style="text-align: center; font-size: 3.5rem; margin-bottom: 1rem; color: white; 
+                       text-shadow: 3px 3px 6px rgba(0,0,0,0.3);">
+                🌾 Welcome to BloomWatch Kenya
+            </h1>
+            <h2 style="text-align: center; font-size: 2.2rem; margin-top: 1rem; color: white;
+                       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                Track Maua, Master Ukulima
+            </h2>
+            <p style="text-align: center; font-size: 1.3rem; margin-top: 1.5rem; color: white;
+                      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
+                Use NASA satellite data and Flora, our AI MauaMentor, to monitor blooming and climate for better harvests.
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Floating CTA container
+    st.markdown('<div class="hero-floating-cta">', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    
+    with col2:
+        # Custom styled buttons
+        col_a, col_b = st.columns(2)
+        
+        with col_a:
+            if st.button("🚀 Get Started", key='hero_get_started', use_container_width=True):
+                st.session_state.page = 'register'
+                st.rerun()
+        
+        with col_b:
+            if st.button("🔐 Log In", key='hero_login', use_container_width=True):
+                st.session_state.page = 'login'
+                st.rerun()
+        
+        # USSD floating box
+        st.markdown("""
+        <div class="ussd-floating-box">
+            <p style="color: #2E7D32; font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 600;">
+                📱 You can also register by dialing:
+            </p>
+            <h2 style="color: #2E7D32; font-size: 3rem; margin: 0.5rem 0; 
+                       letter-spacing: 0.15em; font-weight: bold; 
+                       text-shadow: 2px 2px 4px rgba(46,125,50,0.2);">
+                *384*42434#
+            </h2>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
+def show_why_bloomwatch():
+    """Section 1.5: Why BloomWatch Kenya - NASA satellites and features"""
+    st.markdown("<div class='scroll-animate-delay-1'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>🌟 Why BloomWatch Kenya?</h2>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card" style="text-align: center; padding: 2rem; min-height: 400px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🛰️</div>
+            <h3 style="color: #2E7D32; margin-bottom: 1.5rem;">NASA Satellites</h3>
+            <div style="text-align: left; padding: 0 1rem;">
+                <p style="margin: 1rem 0;"><b>📡 Sentinel-2</b><br>
+                   <small>10m resolution • High precision</small></p>
+                <p style="margin: 1rem 0;"><b>📡 Landsat 8/9</b><br>
+                   <small>30m resolution • 40+ year history</small></p>
+                <p style="margin: 1rem 0;"><b>📡 MODIS</b><br>
+                   <small>1km resolution • Daily coverage</small></p>
+            </div>
+            <div style="margin-top: 2rem; padding: 1rem; background: #E8F5E9; border-radius: 8px;">
+                <p style="margin: 0; font-size: 0.9rem;"><b>Datasets Used:</b></p>
+                <p style="margin: 0.5rem 0; font-size: 0.85rem;">
+                    • Landsat ARI (Anthocyanin)<br>
+                    • MODIS NDVI (Vegetation)<br>
+                    • NDVI Anomaly Detection<br>
+                    • Sentinel-2 ARI<br>
+                    • Sentinel-2 NDVI
+                </p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card" style="text-align: center; padding: 2rem; min-height: 400px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+            <h3 style="color: #2E7D32; margin-bottom: 1.5rem;">USSD & SMS Alerts</h3>
+            <div style="text-align: left; padding: 0 1rem;">
+                <p style="margin: 1rem 0;"><b>✅ Works on ANY phone</b><br>
+                   <small>Feature phones supported</small></p>
+                <p style="margin: 1rem 0;"><b>✅ No internet required</b><br>
+                   <small>USSD works offline</small></p>
+                <p style="margin: 1rem 0;"><b>✅ Instant SMS alerts</b><br>
+                   <small>Bloom notifications in < 30s</small></p>
+                <p style="margin: 1rem 0;"><b>✅ Bilingual support</b><br>
+                   <small>English & Kiswahili</small></p>
+            </div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #E3F2FD; border-radius: 8px;">
+                <p style="margin: 0; font-weight: bold; font-size: 1.2rem;">Dial: *384*42434#</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="feature-card" style="text-align: center; padding: 2rem; min-height: 400px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+            <h3 style="color: #2E7D32; margin-bottom: 1.5rem;">AI-Powered Chatbot</h3>
+            <div style="text-align: left; padding: 0 1rem;">
+                <p style="margin: 1rem 0;"><b>🌺 Meet Flora</b><br>
+                   <small>Your MauaMentor AI assistant</small></p>
+                <p style="margin: 1rem 0;"><b>🌱 Planting advice</b><br>
+                   <small>When & what to plant</small></p>
+                <p style="margin: 1rem 0;"><b>🌸 Bloom predictions</b><br>
+                   <small>Optimal timing guidance</small></p>
+                <p style="margin: 1rem 0;"><b>🌦️ Climate adaptation</b><br>
+                   <small>Weather-smart strategies</small></p>
+            </div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #F3E5F5; border-radius: 8px;">
+                <p style="margin: 0; font-weight: bold;">Powered by GPT-4</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+def show_kenya_climate_map():
+    """Section 2: Interactive Kenya map with live climate data"""
+    st.markdown("<div class='scroll-animate'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>🗺️ Kenya Live Climate & Bloom Data</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><b>Real-time agricultural insights powered by NASA satellite technology</b></p>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Create comprehensive Kenya map with scroll wheel zoom disabled
+    m = folium.Map(
+        location=[-0.5, 37.0],
+        zoom_start=6,
+        tiles='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        attr='CartoDB',
+        scrollWheelZoom=False  # Disable scroll wheel zoom
+    )
+    
+    # Kenya regions with climate data
+    kenya_climate_regions = {
+        'Nakuru': {'lat': -0.303, 'lon': 36.08, 'bloom': '80%', 'temp': '24°C', 'humidity': '60%', 'rainfall': '15mm'},
+        'Eldoret': {'lat': 0.514, 'lon': 35.27, 'bloom': '75%', 'temp': '22°C', 'humidity': '55%', 'rainfall': '20mm'},
+        'Kisii': {'lat': -0.677, 'lon': 34.78, 'bloom': '70%', 'temp': '23°C', 'humidity': '70%', 'rainfall': '25mm'},
+        'Kitale': {'lat': 1.015, 'lon': 35.00, 'bloom': '65%', 'temp': '21°C', 'humidity': '58%', 'rainfall': '18mm'},
+        'Nyeri': {'lat': -0.420, 'lon': 36.95, 'bloom': '85%', 'temp': '19°C', 'humidity': '65%', 'rainfall': '30mm'},
+        'Kericho': {'lat': -0.368, 'lon': 35.28, 'bloom': '90%', 'temp': '18°C', 'humidity': '75%', 'rainfall': '35mm'},
+        'Machakos': {'lat': -1.522, 'lon': 37.26, 'bloom': '60%', 'temp': '25°C', 'humidity': '50%', 'rainfall': '10mm'},
+        'Mombasa': {'lat': -4.043, 'lon': 39.66, 'bloom': '55%', 'temp': '28°C', 'humidity': '80%', 'rainfall': '5mm'},
+        'Kiambu': {'lat': -1.171, 'lon': 36.83, 'bloom': '82%', 'temp': '20°C', 'humidity': '62%', 'rainfall': '28mm'},
+        'Embu': {'lat': -0.531, 'lon': 37.45, 'bloom': '78%', 'temp': '21°C', 'humidity': '60%', 'rainfall': '22mm'}
+    }
+    
+    # Add markers with climate data
+    for county, data in kenya_climate_regions.items():
+        # Color code by bloom intensity
+        bloom_pct = int(data['bloom'].rstrip('%'))
+        if bloom_pct >= 80:
+            color = 'darkgreen'
+            icon_color = 'green'
+        elif bloom_pct >= 60:
+            color = 'orange'
+            icon_color = 'orange'
+        else:
+            color = 'red'
+            icon_color = 'red'
+        
+        popup_html = f"""
+        <div style="font-family: Arial; min-width: 200px;">
+            <h4 style="margin: 0 0 10px 0; color: #2E7D32;">{county}</h4>
+            <p style="margin: 5px 0;"><b>🌸 Blooming:</b> {data['bloom']}</p>
+            <p style="margin: 5px 0;"><b>🌡️ Temperature:</b> {data['temp']}</p>
+            <p style="margin: 5px 0;"><b>💧 Humidity:</b> {data['humidity']}</p>
+            <p style="margin: 5px 0;"><b>🌧️ Rainfall:</b> {data['rainfall']}</p>
+        </div>
+        """
+        
+        folium.Marker(
+            [data['lat'], data['lon']],
+            popup=folium.Popup(popup_html, max_width=300),
+            tooltip=f"{county}: {data['bloom']} bloom",
+            icon=folium.Icon(color=color, icon='leaf', prefix='fa')
+        ).add_to(m)
+        
+        # Add circle marker for bloom intensity
+        folium.CircleMarker(
+            [data['lat'], data['lon']],
+            radius=bloom_pct / 8,
+            color=icon_color,
+            fill=True,
+            fillColor=icon_color,
+            fillOpacity=0.3,
+            weight=2
+        ).add_to(m)
+    
+    # Display map
+    st_folium(m, height=500, use_container_width=True, returned_objects=[], key='climate_map')
+    
+    # Climate summary stats
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("🌸 Avg Bloom Level", "73%", delta="+5%")
+    with col2:
+        st.metric("🌡️ Avg Temperature", "22°C", delta="+1°C")
+    with col3:
+        st.metric("💧 Avg Humidity", "63%", delta="-2%")
+    with col4:
+        st.metric("🌧️ Total Rainfall", "208mm", delta="+15mm")
+    
+    # CTA for map exploration
+    col_cta1, col_cta2, col_cta3 = st.columns([1, 2, 1])
+    with col_cta2:
+        if st.button("📊 Explore Your Region's Data", key='explore_region', use_container_width=True):
+            st.info("🔐 Please log in to access personalized regional data and alerts!")
+
+def show_flora_chatbot_section():
+    """Section 3: Flora AI-powered chatbot showcase"""
+    st.markdown("<div class='scroll-animate-delay-1'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>🌺 Meet Flora - Your AI MauaMentor</h2>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    col_left, col_right = st.columns([1, 1])
+    
+    with col_left:
+        st.markdown("""
+        <div class="feature-card" style="text-align: left; padding: 2rem;">
+            <h3 style="color: #2E7D32; margin-bottom: 1rem;">🤖 Flora, Your Agricultural AI Assistant</h3>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+                Flora uses advanced AI to provide <b>instant agricultural guidance</b>:
+            </p>
+            <ul style="font-size: 1rem; line-height: 2;">
+                <li>🌱 <b>Planting advice</b> tailored to your region</li>
+                <li>🌸 <b>Bloom predictions</b> for optimal timing</li>
+                <li>🌦️ <b>Climate adaptation</b> strategies</li>
+                <li>🌾 <b>Crop health</b> monitoring guidance</li>
+                <li>🗣️ Available in <b>English & Kiswahili</b></li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("💬 Chat with Flora Now", key='try_flora', use_container_width=True):
+            st.session_state.show_flora_demo = not st.session_state.show_flora_demo
+    
+    with col_right:
+        # Mock chatbot interface
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); 
+                    padding: 1.5rem; border-radius: 16px; min-height: 400px;">
+            <div style="background: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                <p style="margin: 0; color: #666;"><b>You:</b> When should I plant maize in Nyeri?</p>
+            </div>
+            <div style="background: #2E7D32; color: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                <p style="margin: 0;"><b>🌺 Flora:</b> Great question! In Nyeri, the best time to plant maize is during the long rains season (March-April). The current soil moisture is optimal, and temperatures are favorable at 19°C. I recommend planting hybrid varieties for your altitude.</p>
+            </div>
+            <div style="background: white; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                <p style="margin: 0; color: #666;"><b>You:</b> Is it blooming in Kitale now?</p>
+            </div>
+            <div style="background: #2E7D32; color: white; border-radius: 12px; padding: 1rem;">
+                <p style="margin: 0;"><b>🌺 Flora:</b> Yes! Kitale is showing 65% bloom activity for maize. This is a good sign for pollination. Ensure adequate irrigation and watch for pest activity during this critical stage.</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Live Flora demo (if OpenAI is available)
+    if st.session_state.show_flora_demo:
+        st.markdown("---")
+        st.markdown("### 💬 Try Flora Live!")
+        
+        if OPENAI_AVAILABLE and os.getenv('OPENAI_API_KEY'):
+            user_query = st.text_input("Ask Flora anything about farming:", 
+                                       placeholder="e.g., What crops grow best in Nakuru?",
+                                       key='flora_input')
+            
+            if st.button("Send to Flora", key='send_flora'):
+                if user_query:
+                    with st.spinner("🌺 Flora is thinking..."):
+                        try:
+                            response = get_flora_response(user_query)
+                            st.success(f"**🌺 Flora says:** {response}")
+                        except Exception as e:
+                            st.error(f"Flora is currently unavailable: {e}")
+                else:
+                    st.warning("Please enter a question for Flora")
+        else:
+            st.info("🔑 **Flora AI Demo**: To activate Flora, set your OpenAI API key in the `.env` file with `OPENAI_API_KEY=your_key_here`")
+            st.caption("Flora will provide personalized agricultural advice powered by GPT-4")
+
+def get_flora_response(user_query):
+    """Get response from Flora using OpenAI API"""
+    try:
+        client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        
+        system_prompt = """You are Flora, an AI agricultural assistant for BloomWatch Kenya. 
+        You help Kenyan smallholder farmers with:
+        - Planting advice based on Kenya's agricultural calendar
+        - Bloom predictions and crop monitoring
+        - Climate adaptation strategies
+        - Pest and disease management
+        
+        Provide practical, actionable advice in simple language. Reference Kenyan regions, 
+        crops (maize, beans, coffee, tea, wheat), and seasons (long rains, short rains).
+        Be encouraging and supportive. Keep responses under 150 words."""
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_query}
+            ],
+            max_tokens=200,
+            temperature=0.7
+        )
+        
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"I'm having trouble connecting right now. Please try again later. (Error: {str(e)})"
+
+def show_stat_counters():
+    """Section 4: Animated statistics counters"""
+    st.markdown("<div class='scroll-animate-delay-2'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>📊 BloomWatch Kenya Impact</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><b>Empowering thousands of farmers across Kenya</b></p>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="stat-card" style="text-align: center;">
+            <div style="font-size: 3rem;">👨‍🌾</div>
+            <h2 style="color: #2E7D32; font-size: 3.5rem; margin: 1rem 0;">500+</h2>
+            <p style="font-size: 1.2rem; font-weight: 600;">Farmers Registered</p>
+            <p style="color: #666; font-size: 0.9rem;">Across Central Kenya</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="stat-card" style="text-align: center;">
+            <div style="font-size: 3rem;">📈</div>
+            <h2 style="color: #F57C00; font-size: 3.5rem; margin: 1rem 0;">25%</h2>
+            <p style="font-size: 1.2rem; font-weight: 600;">Avg Yield Increase</p>
+            <p style="color: #666; font-size: 0.9rem;">Validated with farmers</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="stat-card" style="text-align: center;">
+            <div style="font-size: 3rem;">🗺️</div>
+            <h2 style="color: #1976D2; font-size: 3.5rem; margin: 1rem 0;">47</h2>
+            <p style="font-size: 1.2rem; font-weight: 600;">Counties Covered</p>
+            <p style="color: #666; font-size: 0.9rem;">Nationwide reach</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="stat-card" style="text-align: center;">
+            <div style="font-size: 3rem;">💰</div>
+            <h2 style="color: #388E3C; font-size: 3.5rem; margin: 1rem 0;">$500</h2>
+            <p style="font-size: 1.2rem; font-weight: 600;">Extra Income/Season</p>
+            <p style="color: #666; font-size: 0.9rem;">Per farmer average</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Additional Kenya-specific stats
+    col_a, col_b, col_c = st.columns(3)
+    
+    with col_a:
+        st.info("**70%** of Kenyan farmers rely on rain-fed agriculture")
+    with col_b:
+        st.success("**10-20%** yield improvement with phenology data")
+    with col_c:
+        st.warning("**98%** mobile phone penetration in Kenya")
+
+def show_testimonials_section():
+    """Section 5: Farmer testimonials and success stories"""
+    st.markdown("<div class='scroll-animate-delay-3'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>💬 Farmer Success Stories</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><b>Real farmers, real results across Kenya's diverse regions</b></p>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card" style="text-align: center; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">👨‍🌾</div>
+            <h3 style="color: #2E7D32;">Jane Wanjiru</h3>
+            <p style="color: #666; margin-bottom: 1rem;"><b>Maize Farmer - Nakuru</b></p>
+            <p style="font-style: italic; line-height: 1.8;">
+                "BloomWatch helped me plant at the right time, and my maize yield doubled! 
+                The SMS alerts in Kiswahili made it so easy to understand."
+            </p>
+            <p style="color: #F57C00; font-weight: bold; margin-top: 1rem;">⭐⭐⭐⭐⭐</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card" style="text-align: center; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">☕</div>
+            <h3 style="color: #2E7D32;">Peter Kamau</h3>
+            <p style="color: #666; margin-bottom: 1rem;"><b>Coffee Farmer - Kericho</b></p>
+            <p style="font-style: italic; line-height: 1.8;">
+                "The bloom alerts helped me time my coffee harvest perfectly. 
+                I upgraded from Grade B to Grade A beans and got 40% better prices!"
+            </p>
+            <p style="color: #F57C00; font-weight: bold; margin-top: 1rem;">⭐⭐⭐⭐⭐</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="feature-card" style="text-align: center; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🌾</div>
+            <h3 style="color: #2E7D32;">Mary Atieno</h3>
+            <p style="color: #666; margin-bottom: 1rem;"><b>Vegetable Grower - Machakos</b></p>
+            <p style="font-style: italic; line-height: 1.8;">
+                "Flora taught me about intercropping and climate patterns. 
+                I prevented 20% crop loss with timely fungicide application!"
+            </p>
+            <p style="color: #F57C00; font-weight: bold; margin-top: 1rem;">⭐⭐⭐⭐⭐</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Featured farmer spotlight
+    st.markdown("### 🌟 Featured Farmer: John Odhiambo")
+    col_img, col_story = st.columns([1, 2])
+    
+    with col_img:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #2E7D32, #66BB6A); 
+                    padding: 3rem; border-radius: 16px; text-align: center;">
+            <div style="font-size: 6rem;">👨‍🌾</div>
+            <h4 style="color: white; margin-top: 1rem;">John Odhiambo</h4>
+            <p style="color: white;">Eldoret, Kenya</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_story:
+        st.markdown("""
+        **"From Struggling to Thriving: My BloomWatch Journey"**
+        
+        John Odhiambo, a smallholder wheat farmer in Eldoret, was struggling with unpredictable 
+        harvests due to climate variability. After joining BloomWatch in March 2024:
+        
+        - 📊 Increased wheat yield from 2.5 to 3.8 tons per acre (52% improvement)
+        - 💰 Earned an extra KSh 45,000 ($350) per season
+        - 🌧️ Optimized irrigation timing based on satellite rainfall data
+        - 🌾 Reduced fertilizer waste by 30% through precision timing
+        
+        > *"The USSD system works perfectly on my basic phone. I get alerts before every rain, 
+        > and Flora helps me understand what the data means. BloomWatch changed my life!"*
+        """)
+
+def show_ussd_phone_section():
+    """Section 6: Phone screen with animated USSD functionality"""
+    st.markdown("<div class='scroll-animate-delay-4'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2rem;'>📱 Access BloomWatch on ANY Phone</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><b>No smartphone needed! Use USSD for instant updates</b></p>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    col_left, col_center, col_right = st.columns([1, 1, 1])
+    
+    with col_left:
+        st.markdown("""
+        <div class="feature-card" style="text-align: left; padding: 2rem;">
+            <h3 style="color: #2E7D32; margin-bottom: 1rem;">📞 How USSD Works</h3>
+            <p style="font-size: 1.1rem; line-height: 2;">
+                <b>Step 1:</b> Dial <span style="color: #F57C00; font-size: 1.3rem;">*384*42434#</span><br>
+                <b>Step 2:</b> Select language (English/Kiswahili)<br>
+                <b>Step 3:</b> Enter your name and region<br>
+                <b>Step 4:</b> Choose crops you grow<br>
+                <b>Step 5:</b> Receive instant SMS alerts!
+            </p>
+            <p style="margin-top: 1.5rem; padding: 1rem; background: #E8F5E9; border-radius: 8px;">
+                <b>✅ Works on feature phones</b><br>
+                <b>✅ No internet required</b><br>
+                <b>✅ Registration takes < 2 minutes</b><br>
+                <b>✅ Free for all farmers</b>
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_center:
+        # Phone mockup using components for proper rendering
+        import streamlit.components.v1 as components
+        
+        phone_html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+            </style>
+        </head>
+        <body>
+            <div style="text-align: center;">
+                <div style="background: linear-gradient(135deg, #212121, #424242); 
+                            border-radius: 32px; padding: 1.5rem; display: inline-block;
+                            box-shadow: 0 12px 40px rgba(0,0,0,0.4); width: 320px;">
+                    
+                    <div style="background: white; border-radius: 24px; padding: 2rem 1.5rem; min-height: 500px;">
+                        
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="background: #E0E0E0; height: 8px; width: 80px; 
+                                        border-radius: 4px; margin: 0 auto 1.5rem;"></div>
+                            <p style="color: #666; font-size: 0.75rem; margin: 0.3rem 0;">📶 Safaricom</p>
+                            <p style="color: #000; font-weight: bold; font-size: 1.1rem; margin: 0.5rem 0;">Dialing...</p>
+                        </div>
+                        
+                        <div style="background: #F5F5F5; padding: 1.2rem; border-radius: 12px; margin-bottom: 1rem;">
+                            <p style="color: #2E7D32; font-size: 1.6rem; font-weight: bold; 
+                                      text-align: center; letter-spacing: 0.12em; margin: 0; font-family: monospace;">
+                                *384*42434#
+                            </p>
+                        </div>
+                        
+                        <div style="background: #E8F5E9; padding: 1.2rem; border-radius: 12px; 
+                                    text-align: left; margin-bottom: 1rem; min-height: 180px;">
+                            <p style="color: #000; font-size: 0.85rem; line-height: 1.8; margin: 0;">
+                                <b style="color: #2E7D32;">🌾 BloomWatch Kenya</b><br>
+                                Karibu! Welcome!<br><br>
+                                Select language:<br>
+                                1. English<br>
+                                2. Kiswahili
+                            </p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1rem;">
+                            <div style="background: #E0E0E0; padding: 1rem; border-radius: 8px; 
+                                        text-align: center; font-weight: bold; font-size: 1.1rem;">1</div>
+                            <div style="background: #E0E0E0; padding: 1rem; border-radius: 8px; 
+                                        text-align: center; font-weight: bold; font-size: 1.1rem;">2</div>
+                            <div style="background: #E0E0E0; padding: 1rem; border-radius: 8px; 
+                                        text-align: center; font-weight: bold; font-size: 1.1rem;">3</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <div style="background: #616161; height: 45px; width: 45px; 
+                                    border-radius: 50%; margin: 0 auto; 
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        components.html(phone_html, height=700)
+    
+    with col_right:
+        st.markdown("""
+        <div class="feature-card" style="text-align: left; padding: 2rem;">
+            <h3 style="color: #2E7D32; margin-bottom: 1rem;">💬 Sample SMS Alert</h3>
+            <div style="background: #E3F2FD; padding: 1.5rem; border-radius: 12px; 
+                        border-left: 4px solid #1976D2;">
+                <p style="margin: 0; font-size: 0.85rem; color: #666;">+254-700-BLOOM</p>
+                <p style="margin: 0.5rem 0 0 0; line-height: 1.8; color: #000;">
+                    <b>🌸 BloomWatch Alert</b><br><br>
+                    Habari Jane! Maize blooming detected in Nakuru (2.3km from your farm).<br><br>
+                    <b>Intensity:</b> 85% (High)<br>
+                    <b>Action:</b> Optimal time for pollination management. 
+                    Ensure adequate moisture.<br><br>
+                    <b>Weather:</b> 24°C, 60% humidity<br><br>
+                    Reply HELP for tips. - Flora 🌺
+                </p>
+            </div>
+            <p style="margin-top: 1rem; text-align: center; color: #666;">
+                <small>⚡ Delivered in < 30 seconds</small>
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+def show_pictures_carousel():
+    """Section 7: Auto-rotating agricultural pictures carousel"""
+    st.markdown("<div class='scroll-animate-delay-5'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2rem;'>🖼️ Celebrating Kenyan Agriculture</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'><b>From our farms to yours - the beauty of ukulima</b></p>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Using online images from Unsplash (Kenya agriculture)
+    images = [
+        {
+            'url': 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200',
+            'caption': '🌾 Maize fields in Rift Valley - Track bloom timing for optimal harvest',
+        },
+        {
+            'url': 'https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?w=1200',
+            'caption': '☕ Coffee blooms in Central Kenya - Premium Grade A quality',
+        },
+        {
+            'url': 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200',
+            'caption': '🍃 Tea plantations in Kericho - Year-round monitoring',
+        },
+        {
+            'url': 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1200',
+            'caption': '🌻 Diverse crops thriving with NASA satellite insights',
+        },
+        {
+            'url': 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200',
+            'caption': '🏔️ Mount Kenya backdrop - Agriculture meets innovation',
+        },
+        {
+            'url': 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=1200',
+            'caption': '👨‍🌾 Kenyan farmers - The heart of BloomWatch',
+        }
+    ]
+    
+    # Initialize carousel index in session state
+    if 'carousel_index' not in st.session_state:
+        st.session_state.carousel_index = 0
+        st.session_state.last_rotation = time.time()
+    
+    # Auto-rotate every 4 seconds
+    current_time = time.time()
+    if current_time - st.session_state.last_rotation > 4:
+        st.session_state.carousel_index = (st.session_state.carousel_index + 1) % len(images)
+        st.session_state.last_rotation = current_time
+    
+    # Display current image with styling
+    current_image = images[st.session_state.carousel_index]
+    
+    st.markdown("""
+    <style>
+    .carousel-container-v2 {
+        max-width: 1200px;
+        margin: 2rem auto;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        position: relative;
+    }
+    .carousel-caption-v2 {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+        color: white;
+        padding: 2rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Container for image
+    st.markdown('<div class="carousel-container-v2">', unsafe_allow_html=True)
+    st.image(current_image['url'], use_container_width=True)
+    st.markdown(f'<div class="carousel-caption-v2">{current_image["caption"]}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Indicators
+    cols = st.columns(len(images))
+    for idx, col in enumerate(cols):
+        with col:
+            if idx == st.session_state.carousel_index:
+                st.markdown(f"<div style='text-align: center; color: #2E7D32; font-size: 1.5rem;'>●</div>", unsafe_allow_html=True)
+            else:
+                if st.button("○", key=f"img_{idx}", use_container_width=True):
+                    st.session_state.carousel_index = idx
+                    st.session_state.last_rotation = time.time()
+                    st.rerun()
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Auto-refresh mechanism for carousel rotation
+    # Add a placeholder that triggers refresh
+    placeholder = st.empty()
+    if current_time - st.session_state.last_rotation > 3.5:
+        placeholder.empty()  # Trigger a refresh
+        time.sleep(0.5)
+        st.rerun()
+    
+    # Image grid alternative
+    st.markdown("### 🌾 More from Kenyan Farms")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400') center/cover; 
+                    height: 200px; border-radius: 16px; position: relative;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; 
+                        background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
+                <p style="color: white; margin: 0; font-weight: bold;">Maize Blooming</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: url('https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?w=400') center/cover; 
+                    height: 200px; border-radius: 16px; position: relative;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; 
+                        background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
+                <p style="color: white; margin: 0; font-weight: bold;">Coffee Harvest</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400') center/cover; 
+                    height: 200px; border-radius: 16px; position: relative;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; 
+                        background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
+                <p style="color: white; margin: 0; font-weight: bold;">Tea Plantations</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+def show_footer():
+    """Section 8: Comprehensive footer with links and social proof"""
+    st.markdown("---")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        ### 🌾 BloomWatch Kenya
+        
+        Empowering smallholder farmers with NASA satellite technology for 
+        better harvests and food security.
+        
+        **Growing Kenya's Future** 🇰🇪
+        """)
+    
+    with col2:
+        st.markdown("""
+        ### 🔗 Quick Links
+        
+        - [📱 Download Android App](#)
+        - [🍎 Download iOS App](#)
+        - [📞 USSD Guide](#)
+        - [📧 Contact Us](#)
+        - [🔒 Privacy Policy](#)
+        - [📋 Terms of Service](#)
+        """)
+    
+    with col3:
+        st.markdown("""
+        ### 🤝 Partners & Tech
+        
+        - **NASA Space Apps Challenge**
+        - **Digital Earth Africa**
+        - **Dash Insights**
+        - **Africa's Talking**
+        - **Google Earth Engine**
+        - **MongoDB Atlas**
+        """)
+    
+    with col4:
+        st.markdown("""
+        ### 📱 Connect With Us
+        
+        - **🐦 X (Twitter):** @BloomWatchKE
+        - **📘 Facebook:** /BloomWatchKenya
+        - **📧 Email:** hello@bloomwatch.ke
+        - **📞 Support:** +254-700-BLOOM
+        
+        **💻 GitHub:**  
+        [geoffreyyogo/bloom-detector](https://github.com/geoffreyyogo/bloom-detector)
+        """)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Partner logos row - using components for proper rendering
+    import streamlit.components.v1 as components
+    
+    logos_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { 
+                margin: 0; 
+                padding: 20px; 
+                font-family: 'Inter', Arial, sans-serif; 
+            }
+            .logo-container {
+                text-align: center;
+                padding: 2rem;
+                background: rgba(46,125,50,0.05);
+                border-radius: 16px;
+            }
+            .powered-by-text {
+                color: #666;
+                margin-bottom: 2rem;
+                font-weight: bold;
+                font-size: 1.2rem;
+            }
+            .logos-grid {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2.5rem;
+                flex-wrap: wrap;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            .logo-item {
+                padding: 1rem;
+                transition: transform 0.3s ease;
+                cursor: pointer;
+            }
+            .logo-item:hover {
+                transform: scale(1.1);
+            }
+            .logo-img {
+                height: 60px;
+                object-fit: contain;
+            }
+            .logo-text {
+                text-align: center;
+            }
+            .logo-text h3 {
+                margin: 0;
+                font-weight: bold;
+                color: #2E7D32;
+                font-size: 1.1rem;
+            }
+            .logo-text p {
+                margin: 0;
+                font-size: 0.75rem;
+                color: #666;
+            }
+            .ksa-bg {
+                background: white;
+                padding: 0.5rem;
+                border-radius: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="logo-container">
+            <p class="powered-by-text">POWERED BY</p>
+            <div class="logos-grid">
+                
+                <!-- NASA -->
+                <div class="logo-item">
+                    <img src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg" 
+                         alt="NASA" class="logo-img">
+                </div>
+                
+                <!-- Digital Earth Africa -->
+                <div class="logo-item">
+                    <img src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png" 
+                         alt="Digital Earth Africa" class="logo-img">
+                </div>
+                
+                <!-- Google Earth Engine -->
+                <div class="logo-item">
+                    <img src="https://earthengine.google.com/static/images/earth_engine_logo.png" 
+                         alt="Google Earth Engine" class="logo-img">
+                </div>
+                
+                <!-- ESRI -->
+                <div class="logo-item">
+                    <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png" 
+                         alt="ESRI" style="height: 50px; object-fit: contain;">
+                </div>
+                
+                <!-- KALRO -->
+                <div class="logo-item">
+                    <img src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp" 
+                         alt="KALRO" class="logo-img">
+                </div>
+                
+                <!-- Kenya Space Agency -->
+                <div class="logo-item">
+                    <div class="ksa-bg">
+                        <img src="https://ksa.go.ke/assets/images/ksa-logo-new.png-web2-207x165.png" 
+                             alt="Kenya Space Agency" style="height: 55px; object-fit: contain;">
+                    </div>
+                </div>
+                
+                <!-- MESPT -->
+                <div class="logo-item">
+                    <img src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png" 
+                         alt="MESPT" class="logo-img">
+                </div>
+                
+                <!-- Africa's Talking -->
+                <div class="logo-item">
+                    <img src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png" 
+                         alt="Africa's Talking" style="height: 50px; object-fit: contain;">
+                </div>
+                
+                <!-- RIIS -->
+                <div class="logo-item">
+                    <img src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png" 
+                         alt="RIIS" class="logo-img">
+                </div>
+                
+                <!-- University of Nairobi -->
+                <div class="logo-item">
+                    <img src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png" 
+                         alt="University of Nairobi" class="logo-img">
+                </div>
+                
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    components.html(logos_html, height=300)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Copyright and challenge info
+    st.markdown("""
+    <div style="text-align: center; padding: 1.5rem; color: #666;">
+        <p style="margin: 0.5rem 0;">
+            © 2025 BloomWatch Kenya | NASA Space Apps Challenge 2025
+        </p>
+        <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+            Built with ❤️ for Kenyan farmers | Powered by Earth Observation Data
+        </p>
+        <p style="margin: 0.5rem 0; font-size: 0.85rem;">
+            🌾 Track Maua, Master Ukulima 🌾
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
 def landing_page():
-    """Enhanced landing page with hero section and animations"""
+    """Comprehensive landing page with 8 major sections optimized for Kenyan farmers"""
     
     # Top navigation bar
     col_logo, col_space, col_dark, col_lang = st.columns([2, 4, 1, 1])
+    
+    with col_logo:
+        st.markdown("### 🌾 **BloomWatch Kenya**")
     
     with col_dark:
         if st.button("🌙" if not st.session_state.dark_mode else "☀️", key='dark_mode_toggle'):
@@ -660,163 +2053,48 @@ def landing_page():
         )
         st.session_state.language = 'en' if lang_option == 'English' else 'sw'
     
-    # Hero section with animation
-    st.markdown(f"""
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1>🌾 {t('welcome')}</h1>
-            <p>{t('tagline')}</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # ========== SECTION 1: HERO SECTION ==========
+    show_hero_section()
     
-    # Lottie animation for satellite
-    if LOTTIE_AVAILABLE:
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            lottie_satellite = load_lottie_url(LOTTIE_URLS['satellite'])
-            if lottie_satellite:
-                st_lottie(lottie_satellite, height=200, key="hero_satellite")
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    # Statistics cards with animation
-    st.markdown(f"### {t('statistics')}")
+    # ========== SECTION 2: KENYAN MAP WITH LIVE CLIMATE DATA ==========
+    show_kenya_climate_map()
     
-    col1, col2, col3, col4 = st.columns(4)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    with col1:
-        st.markdown(f"""
-        <div class="stat-card">
-            <div class="icon">👨‍🌾</div>
-            <h2>1,247+</h2>
-            <p>{t('farmers_registered')}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # ========== SECTION 3: WHY BLOOMWATCH KENYA ==========
+    show_why_bloomwatch()
     
-    with col2:
-        st.markdown(f"""
-        <div class="stat-card">
-            <div class="icon">📈</div>
-            <h2>32%</h2>
-            <p>{t('yield_increase')}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    with col3:
-        st.markdown(f"""
-        <div class="stat-card">
-            <div class="icon">🔔</div>
-            <h2>856</h2>
-            <p>{t('alerts_sent')}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # ========== SECTION 3: FLORA AI CHATBOT SHOWCASE ==========
+    show_flora_chatbot_section()
     
-    with col4:
-        st.markdown(f"""
-        <div class="stat-card">
-            <div class="icon">🗺️</div>
-            <h2>5</h2>
-            <p>Regions Covered</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    # ========== SECTION 4: STAT COUNTERS ==========
+    show_stat_counters()
     
-    # Call to action buttons
-    col1, col2, col3 = st.columns([1, 2, 1])
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    with col2:
-        col_a, col_b = st.columns(2)
-        
-        with col_a:
-            if st.button(f"🚀 {t('get_started')}", key='get_started', use_container_width=True):
-                st.session_state.page = 'register'
-                st.rerun()
-        
-        with col_b:
-            if st.button(f"👤 {t('login')}", key='login_nav', use_container_width=True):
-                st.session_state.page = 'login'
-                st.rerun()
+    # ========== SECTION 5: TESTIMONIALS ==========
+    show_testimonials_section()
     
-    st.markdown("---")
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    # Features section
-    st.markdown(f"## {t('features_title')}")
+    # ========== SECTION 6: PHONE SCREEN WITH USSD ==========
+    show_ussd_phone_section()
     
-    col1, col2, col3, col4 = st.columns(4)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    with col1:
-        st.markdown(f"""
-        <div class="feature-card">
-            <div class="icon">🛰️</div>
-            <h3>{t('feature_1')}</h3>
-            <p>{t('feature_1_desc')}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # ========== SECTION 7: AGRICULTURAL PICTURES CAROUSEL ==========
+    show_pictures_carousel()
     
-    with col2:
-        st.markdown(f"""
-        <div class="feature-card">
-            <div class="icon">📱</div>
-            <h3>{t('feature_2')}</h3>
-            <p>{t('feature_2_desc')}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     
-    with col3:
-        st.markdown(f"""
-        <div class="feature-card">
-            <div class="icon">📅</div>
-            <h3>{t('feature_3')}</h3>
-            <p>{t('feature_3_desc')}</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        st.markdown(f"""
-        <div class="feature-card">
-            <div class="icon">💰</div>
-            <h3>{t('feature_4')}</h3>
-            <p>{t('feature_4_desc')}</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # Testimonials
-    st.markdown(f"## {t('testimonials')}")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.info("""
-        **John Kamau - Kiambu** 🌾
-        
-        *"BloomWatch helped me increase my maize yield by 25%! The SMS alerts are perfect."*
-        
-        *"BloomWatch ilinisaidia kuongeza mavuno yangu ya mahindi kwa 25%!"*
-        """)
-    
-    with col2:
-        st.success("""
-        **Mary Wanjiku - Nyeri** ☕
-        
-        *"The coffee bloom alerts helped me prepare for harvest. Amazing service!"*
-        
-        *"Arifa za kuchanua kwa kahawa ziliniwezesha kujiandaa kwa mavuno."*
-        """)
-    
-    with col3:
-        st.warning("""
-        **Peter Mwangi - Nakuru** 🌻
-        
-        *"Free satellite data for my small farm? This is revolutionary!"*
-        
-        *"Data za satelaiti bure kwa shamba langu? Hii ni mapinduzi!"*
-        """)
-    
-    # Footer
-    st.markdown("---")
-    st.markdown(f"<p style='text-align: center; color: var(--text-light);'>{t('footer')}</p>", unsafe_allow_html=True)
+    # ========== SECTION 8: FOOTER ==========
+    show_footer()
 
 def login_page():
     """Enhanced login page with Lottie animation"""
@@ -1921,4 +3199,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

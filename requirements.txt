@@ -43,3 +43,10 @@ bcrypt==4.1.2
 pytest==8.2.2
 pytest-cov==4.1.0
 
+# AI/ML for Flora Chatbot
+openai==1.54.3
+
+# Animations & Enhanced UI
+streamlit-lottie==0.0.5
+Pillow==10.4.0
+
