@@ -49,82 +49,8 @@ try:
 except ImportError:
     PIL_AVAILABLE = False
 
-# Streamlit compatibility helpers
-def safe_st_image(image, **kwargs):
-    """Wrapper for st.image that handles version compatibility"""
-    try:
-        # Try new parameter first (Streamlit >= 1.30)
-        if 'use_container_width' in kwargs:
-            st.image(image, **kwargs)
-        else:
-            st.image(image, use_column_width=kwargs.pop('use_column_width', False), **kwargs)
-    except TypeError:
-        # Fall back to old parameter (Streamlit < 1.30)
-        if 'use_container_width' in kwargs:
-            kwargs['use_column_width'] = kwargs.pop('use_container_width')
-        st.image(image, **kwargs)
-
-# Monkey-patch st.button, st.plotly_chart, st.dataframe to handle use_container_width gracefully
-original_button = st.button
-original_plotly_chart = st.plotly_chart
-original_dataframe = st.dataframe
-original_form_submit_button = st.form_submit_button
-
-def safe_button(*args, **kwargs):
-    try:
-        return original_button(*args, **kwargs)
-    except TypeError as e:
-        if 'use_container_width' in str(e):
-            kwargs.pop('use_container_width', None)
-            return original_button(*args, **kwargs)
-        raise
-
-def safe_plotly_chart(*args, **kwargs):
-    try:
-        return original_plotly_chart(*args, **kwargs)
-    except TypeError as e:
-        if 'use_container_width' in str(e):
-            kwargs.pop('use_container_width', None)
-            return original_plotly_chart(*args, **kwargs)
-        raise
-
-def safe_dataframe(*args, **kwargs):
-    try:
-        return original_dataframe(*args, **kwargs)
-    except TypeError as e:
-        if 'use_container_width' in str(e):
-            kwargs.pop('use_container_width', None)
-            return original_dataframe(*args, **kwargs)
-        raise
-
-def safe_form_submit_button(*args, **kwargs):
-    try:
-        return original_form_submit_button(*args, **kwargs)
-    except TypeError as e:
-        if 'use_container_width' in str(e):
-            kwargs.pop('use_container_width', None)
-            return original_form_submit_button(*args, **kwargs)
-        raise
-
-st.button = safe_button
-st.plotly_chart = safe_plotly_chart
-st.dataframe = safe_dataframe
-st.form_submit_button = safe_form_submit_button
-
-# Import streamlit-folium and wrap it
-from streamlit_folium import st_folium as original_st_folium
-
-def safe_st_folium(*args, **kwargs):
-    try:
-        return original_st_folium(*args, **kwargs)
-    except TypeError as e:
-        if 'use_container_width' in str(e):
-            kwargs.pop('use_container_width', None)
-            return original_st_folium(*args, **kwargs)
-        raise
-
-# Replace the import in the global scope
-st_folium = safe_st_folium
+# Import streamlit-folium  
+from streamlit_folium import st_folium
 
 # Import services with fallbacks
 try:
@@ -298,9 +224,35 @@ def get_custom_css(dark_mode=False):
     /* Import Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap');
     
+    /* Hide Streamlit toolbar */
+    header[data-testid="stHeader"] {{
+        display: none !important;
+    }}
+    
+    #MainMenu {{
+        visibility: hidden !important;
+    }}
+    
+    footer {{
+        visibility: hidden !important;
+    }}
+    
+    .stDeployButton {{
+        display: none !important;
+    }}
+    
     /* Global styles */
     * {{
         font-family: 'Inter', 'Poppins', sans-serif;
+    }}
+    
+    /* Cursor pointer for interactive elements */
+    button, a, select {{
+        cursor: pointer !important;
+    }}
+    
+    input, textarea {{
+        cursor: text !important;
     }}
     
     html, body, [data-testid="stAppViewContainer"], .main {{
@@ -479,13 +431,45 @@ def get_custom_css(dark_mode=False):
         color: {text_dark};
     }}
     
+    /* Impact cards - Enhanced styling */
+    .impact-card {{
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: linear-gradient(145deg, {bg_white}, #f8f9fa) !important;
+    }}
+    
+    .impact-card:hover {{
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(46,125,50,0.15) !important;
+    }}
+    
+    .impact-card .icon-wrapper {{
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+    
+    .impact-card:hover .icon-wrapper {{
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(46,125,50,0.4) !important;
+    }}
+    
+    .impact-card h2 {{
+        transition: all 0.3s ease;
+    }}
+    
+    .impact-card:hover h2 {{
+        transform: scale(1.05);
+        text-shadow: 0 2px 10px rgba(46,125,50,0.2);
+    }}
+    
     /* Buttons with gradient and animation */
     .stButton > button {{
         background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
         color: #2E7D32 !important;
         border: 2px solid rgba(255,255,255,0.8) !important;
-        padding: 1rem 2.5rem !important;
-        font-size: 1.2rem !important;
+        padding: 0.75rem 1.5rem !important;
+        font-size: 1.1rem !important;
         border-radius: 50px !important;
         font-weight: 700 !important;
         transition: all 0.3s ease !important;
@@ -496,7 +480,170 @@ def get_custom_css(dark_mode=False):
             inset 0 2px 4px rgba(255,255,255,0.9) !important;
     }}
     
-    .stButton > button:hover {{
+    /* Large CTA buttons */
+    div[data-testid="column"] > div > div > .stButton > button[kind="primary"],
+    .hero-section .stButton > button,
+    .stButton.large-button > button {{
+        padding: 1rem 2.5rem !important;
+        font-size: 1.2rem !important;
+        min-width: 200px !important;
+        max-width: 280px !important;
+        display: block !important;
+    }}
+    
+    /* Small header buttons (dark mode toggle) */
+    button[key="dark_mode_toggle"],
+    button[aria-label*="dark_mode"] {{
+        padding: 0.5rem 1rem !important;
+        font-size: 1.5rem !important;
+        min-width: unset !important;
+        width: 100% !important;
+    }}
+    
+    /* Header selectbox (language selector) */
+    [data-testid="column"]:has(select) .stSelectbox {{
+        margin-top: 0 !important;
+    }}
+    
+    [data-testid="column"]:has(select) .stSelectbox > div {{
+        margin-bottom: 0 !important;
+    }}
+    
+    /* Compact selectbox styling */
+    div[data-baseweb="select"] {{
+        min-height: auto !important;
+    }}
+    
+    div[data-baseweb="select"] > div {{
+        padding: 0.5rem !important;
+        font-size: 0.95rem !important;
+        min-height: auto !important;
+        width: 100% !important;
+    }}
+    
+    /* Language selector specific styling - target by key */
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) {{
+        width: 100% !important;
+        min-width: 150px !important;
+        max-width: 200px !important;
+    }}
+    
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] {{
+        width: 100% !important;
+        min-width: 150px !important;
+        max-width: 200px !important;
+        background-color: {'#2d2d2d' if dark_mode else '#ffffff'} !important;
+        border: 1px solid {'#555555' if dark_mode else '#cccccc'} !important;
+        overflow: visible !important;
+    }}
+    
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] > div {{
+        width: 100% !important;
+        min-width: 150px !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        white-space: nowrap !important;
+        color: {'#ffffff' if dark_mode else '#000000'} !important;
+        padding: 0.5rem 0.75rem !important;
+    }}
+    
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] input {{
+        width: 100% !important;
+        min-width: 150px !important;
+        max-width: 200px !important;
+        text-overflow: unset !important;
+        overflow: visible !important;
+        color: {'#ffffff' if dark_mode else '#000000'} !important;
+        background-color: transparent !important;
+        padding: 0 !important;
+    }}
+    
+    /* Language selector text visibility */
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] span {{
+        color: {'#ffffff' if dark_mode else '#000000'} !important;
+        font-weight: 500 !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+    }}
+    
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] svg {{
+        fill: {'#ffffff' if dark_mode else '#000000'} !important;
+        flex-shrink: 0 !important;
+    }}
+    
+    /* Ensure the selected value is visible */
+    div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] div[role="combobox"] {{
+        color: {'#ffffff' if dark_mode else '#000000'} !important;
+        background-color: transparent !important;
+        width: 100% !important;
+        min-width: 150px !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        white-space: nowrap !important;
+    }}
+    
+    /* Fix the parent column width */
+    [data-testid="column"]:has(div[data-testid="stSelectbox"]:has(select[key="lang_select"])) {{
+        min-width: 150px !important;
+        max-width: 200px !important;
+        flex: 0 0 auto !important;
+    }}
+    
+    /* Ensure columns have proper spacing */
+    [data-testid="column"] {{
+        padding: 0 0.5rem !important;
+    }}
+    
+    /* Center main CTA buttons in hero and other sections */
+    .hero-section .stButton,
+    div.stButton:has(button:not([key="dark_mode_toggle"])):not(:has(button[key="back_from_login"])):not(:has(button[key="back_from_register"])) {{
+        display: flex !important;
+        justify-content: center !important;
+    }}
+    
+    /* Carousel navigation buttons */
+    button[key="carousel_prev"],
+    button[key="carousel_next"] {{
+        background: rgba(46, 125, 50, 0.3) !important;
+        color: transparent !important;
+        font-size: 2rem !important;
+        padding: 1rem !important;
+        border-radius: 50% !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        min-width: 60px !important;
+        height: 60px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+        cursor: pointer !important;
+    }}
+    
+    button[key="carousel_prev"]:hover,
+    button[key="carousel_next"]:hover {{
+        background: rgba(46, 125, 50, 0.9) !important;
+        color: white !important;
+        transform: scale(1.15) !important;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.4) !important;
+        border-color: rgba(255, 255, 255, 0.9) !important;
+        cursor: pointer !important;
+    }}
+    
+    button[key="carousel_prev"]:active,
+    button[key="carousel_next"]:active {{
+        transform: scale(0.95) !important;
+        cursor: pointer !important;
+    }}
+    
+    /* Container for carousel navigation buttons - simple centering */
+    [data-testid="column"]:has(button[key="carousel_prev"]) .stButton,
+    [data-testid="column"]:has(button[key="carousel_next"]) .stButton {{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }}
+    
+    .stButton > button:hover:not([key="carousel_prev"]):not([key="carousel_next"]) {{
         transform: translateY(-4px) !important;
         box-shadow: 
             0 12px 24px rgba(0,0,0,0.3),
@@ -505,7 +652,7 @@ def get_custom_css(dark_mode=False):
             inset 0 2px 4px rgba(255,255,255,0.9) !important;
     }}
     
-    .stButton > button:active {{
+    .stButton > button:active:not([key="carousel_prev"]):not([key="carousel_next"]) {{
         transform: translateY(-1px) !important;
         box-shadow: 
             0 4px 8px rgba(0,0,0,0.2),
@@ -536,6 +683,26 @@ def get_custom_css(dark_mode=False):
     .stSelectbox label, .stTextInput label, .stMultiSelect label {{
         color: {text_dark} !important;
         font-weight: 600 !important;
+    }}
+    
+    /* Selectbox and button cursor */
+    .stSelectbox select, 
+    .stSelectbox div[data-baseweb="select"],
+    .stSelectbox div[data-baseweb="select"] > div,
+    .stButton button {{
+        cursor: pointer !important;
+    }}
+    
+    /* Remove text cursor from selectbox input (prevents blinking cursor) */
+    .stSelectbox div[data-baseweb="select"] input {{
+        cursor: pointer !important;
+        caret-color: transparent !important;
+    }}
+    
+    /* Make language selector non-editable */
+    [data-testid="column"]:has([aria-label="Language"]) .stSelectbox input {{
+        pointer-events: none !important;
+        cursor: pointer !important;
     }}
     
     /* Tabs styling */
@@ -894,6 +1061,43 @@ def get_custom_css(dark_mode=False):
         top: -100%;
         right: -100%;
     }}
+    
+    /* Floating Flora Chat Icon */
+    .flora-chat-fab {{
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 60px !important;
+        height: 60px !important;
+        background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%) !important;
+        border-radius: 50% !important;
+        border: none !important;
+        box-shadow: 0 4px 20px rgba(46,125,50,0.4) !important;
+        cursor: pointer !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s ease !important;
+        font-size: 24px !important;
+        color: white !important;
+    }}
+    
+    .flora-chat-fab:hover {{
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 0 8px 25px rgba(46,125,50,0.6) !important;
+        background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%) !important;
+    }}
+    
+    .flora-chat-fab:active {{
+        transform: translateY(-1px) scale(1.02) !important;
+    }}
+    
+    .flora-chat-icon {{
+        width: 28px !important;
+        height: 28px !important;
+        fill: white !important;
+    }}
 </style>
 """
 
@@ -913,7 +1117,9 @@ def init_session_state():
         'show_error': False,
         'error_message': '',
         'flora_chat_history': [],
-        'show_flora_demo': False
+        'show_flora_demo': False,
+        'flora_chat': False,
+        'close_flora': False
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -1168,7 +1374,7 @@ def show_hero_section():
         <div class="hero-content-v2">
             <h1 style="text-align: center; font-size: 3.5rem; margin-bottom: 1rem; color: white; 
                        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);">
-                🌾 Welcome to BloomWatch Kenya
+                Welcome to BloomWatch Kenya
             </h1>
             <h2 style="text-align: center; font-size: 2.2rem; margin-top: 1rem; color: white;
                        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
@@ -1192,12 +1398,12 @@ def show_hero_section():
         col_a, col_b = st.columns(2)
         
         with col_a:
-            if st.button("🚀 Get Started", key='hero_get_started', use_container_width=True):
+            if st.button("🚀 Get Started", key='hero_get_started'):
                 st.session_state.page = 'register'
                 st.rerun()
         
         with col_b:
-            if st.button("🔐 Log In", key='hero_login', use_container_width=True):
+            if st.button("🔐 Log In", key='hero_login'):
                 st.session_state.page = 'login'
                 st.rerun()
         
@@ -1205,7 +1411,10 @@ def show_hero_section():
         st.markdown("""
         <div class="ussd-floating-box">
             <p style="color: #2E7D32; font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 600;">
-                📱 You can also register by dialing:
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#2E7D32" style="display: inline; vertical-align: middle; margin-right: 8px;">
+                    <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+                </svg>
+                You can also register by dialing:
             </p>
             <h2 style="color: #2E7D32; font-size: 3rem; margin: 0.5rem 0; 
                        letter-spacing: 0.15em; font-weight: bold; 
@@ -1255,7 +1464,11 @@ def show_why_bloomwatch():
     with col2:
         st.markdown("""
         <div class="feature-card" style="text-align: center; padding: 2rem; min-height: 400px;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="#2E7D32">
+                    <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+                </svg>
+            </div>
             <h3 style="color: #2E7D32; margin-bottom: 1.5rem;">USSD & SMS Alerts</h3>
             <div style="text-align: left; padding: 0 1rem;">
                 <p style="margin: 1rem 0;"><b>✅ Works on ANY phone</b><br>
@@ -1276,7 +1489,11 @@ def show_why_bloomwatch():
     with col3:
         st.markdown("""
         <div class="feature-card" style="text-align: center; padding: 2rem; min-height: 400px;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="#2E7D32">
+                    <path d="M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z"/>
+                </svg>
+            </div>
             <h3 style="color: #2E7D32; margin-bottom: 1.5rem;">AI-Powered Chatbot</h3>
             <div style="text-align: left; padding: 0 1rem;">
                 <p style="margin: 1rem 0;"><b>🌺 Meet Flora</b><br>
@@ -1367,7 +1584,7 @@ def show_kenya_climate_map():
         ).add_to(m)
     
     # Display map
-    st_folium(m, height=500, use_container_width=True, returned_objects=[], key='climate_map')
+    st_folium(m, height=500, width=None, returned_objects=[], key='climate_map')
     
     # Climate summary stats
     col1, col2, col3, col4 = st.columns(4)
@@ -1384,7 +1601,7 @@ def show_kenya_climate_map():
     # CTA for map exploration
     col_cta1, col_cta2, col_cta3 = st.columns([1, 2, 1])
     with col_cta2:
-        if st.button("📊 Explore Your Region's Data", key='explore_region', use_container_width=True):
+        if st.button("📊 Explore Your Region's Data", key='explore_region'):
             st.info("🔐 Please log in to access personalized regional data and alerts!")
 
 def show_flora_chatbot_section():
@@ -1398,7 +1615,12 @@ def show_flora_chatbot_section():
     with col_left:
         st.markdown("""
         <div class="feature-card" style="text-align: left; padding: 2rem;">
-            <h3 style="color: #2E7D32; margin-bottom: 1rem;">🤖 Flora, Your Agricultural AI Assistant</h3>
+            <h3 style="color: #2E7D32; margin-bottom: 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#2E7D32" style="display: inline; vertical-align: middle; margin-right: 8px;">
+                    <path d="M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z"/>
+                </svg>
+                Flora, Your Agricultural AI Assistant
+            </h3>
             <p style="font-size: 1.1rem; line-height: 1.8;">
                 Flora uses advanced AI to provide <b>instant agricultural guidance</b>:
             </p>
@@ -1412,7 +1634,7 @@ def show_flora_chatbot_section():
         </div>
         """, unsafe_allow_html=True)
         
-        if st.button("💬 Chat with Flora Now", key='try_flora', use_container_width=True):
+        if st.button("💬 Chat with Flora Now", key='try_flora'):
             st.session_state.show_flora_demo = not st.session_state.show_flora_demo
     
     with col_right:
@@ -1492,7 +1714,7 @@ def get_flora_response(user_query):
 def show_stat_counters():
     """Section 4: Animated statistics counters"""
     st.markdown("<div class='scroll-animate-delay-2'>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>📊 BloomWatch Kenya Impact</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>BloomWatch Kenya Expected Impact</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'><b>Empowering thousands of farmers across Kenya</b></p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
     
@@ -1500,60 +1722,79 @@ def show_stat_counters():
     
     with col1:
         st.markdown("""
-        <div class="stat-card" style="text-align: center;">
-            <div style="font-size: 3rem;">👨‍🌾</div>
-            <h2 style="color: #2E7D32; font-size: 3.5rem; margin: 1rem 0;">500+</h2>
-            <p style="font-size: 1.2rem; font-weight: 600;">Farmers Registered</p>
-            <p style="color: #666; font-size: 0.9rem;">Across Central Kenya</p>
+        <div class="feature-card impact-card" style="text-align: center; padding: 2.5rem 2rem;">
+            <div class="icon-wrapper" style="background: linear-gradient(135deg, #2E7D32, #66BB6A); 
+                 width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1.5rem; 
+                 display: flex; align-items: center; justify-content: center;
+                 box-shadow: 0 4px 15px rgba(46,125,50,0.3);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <h2 style="color: #2E7D32; font-size: 3.5rem; margin: 0.5rem 0; font-weight: 700;">5,000+</h2>
+            <p style="font-size: 1.2rem; font-weight: 600; color: #333; margin: 0.5rem 0;">Farmers Registered</p>
+            <p style="color: #666; font-size: 0.9rem; margin: 0;">Across Central Kenya</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div class="stat-card" style="text-align: center;">
-            <div style="font-size: 3rem;">📈</div>
-            <h2 style="color: #F57C00; font-size: 3.5rem; margin: 1rem 0;">25%</h2>
-            <p style="font-size: 1.2rem; font-weight: 600;">Avg Yield Increase</p>
-            <p style="color: #666; font-size: 0.9rem;">Validated with farmers</p>
+        <div class="feature-card impact-card" style="text-align: center; padding: 2.5rem 2rem;">
+            <div class="icon-wrapper" style="background: linear-gradient(135deg, #F57C00, #FFB74D); 
+                 width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1.5rem; 
+                 display: flex; align-items: center; justify-content: center;
+                 box-shadow: 0 4px 15px rgba(245,124,0,0.3);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            <h2 style="color: #F57C00; font-size: 3.5rem; margin: 0.5rem 0; font-weight: 700;">30%</h2>
+            <p style="font-size: 1.2rem; font-weight: 600; color: #333; margin: 0.5rem 0;">Avg Yield Increase</p>
+            <p style="color: #666; font-size: 0.9rem; margin: 0;">Validated with farmers</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
-        <div class="stat-card" style="text-align: center;">
-            <div style="font-size: 3rem;">🗺️</div>
-            <h2 style="color: #1976D2; font-size: 3.5rem; margin: 1rem 0;">47</h2>
-            <p style="font-size: 1.2rem; font-weight: 600;">Counties Covered</p>
-            <p style="color: #666; font-size: 0.9rem;">Nationwide reach</p>
+        <div class="feature-card impact-card" style="text-align: center; padding: 2.5rem 2rem;">
+            <div class="icon-wrapper" style="background: linear-gradient(135deg, #1976D2, #64B5F6); 
+                 width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1.5rem; 
+                 display: flex; align-items: center; justify-content: center;
+                 box-shadow: 0 4px 15px rgba(25,118,210,0.3);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </div>
+            <h2 style="color: #1976D2; font-size: 3.5rem; margin: 0.5rem 0; font-weight: 700;">47</h2>
+            <p style="font-size: 1.2rem; font-weight: 600; color: #333; margin: 0.5rem 0;">Counties Covered</p>
+            <p style="color: #666; font-size: 0.9rem; margin: 0;">Nationwide reach</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col4:
         st.markdown("""
-        <div class="stat-card" style="text-align: center;">
-            <div style="font-size: 3rem;">💰</div>
-            <h2 style="color: #388E3C; font-size: 3.5rem; margin: 1rem 0;">$500</h2>
-            <p style="font-size: 1.2rem; font-weight: 600;">Extra Income/Season</p>
-            <p style="color: #666; font-size: 0.9rem;">Per farmer average</p>
+        <div class="feature-card impact-card" style="text-align: center; padding: 2.5rem 2rem;">
+            <div class="icon-wrapper" style="background: linear-gradient(135deg, #388E3C, #81C784); 
+                 width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1.5rem; 
+                 display: flex; align-items: center; justify-content: center;
+                 box-shadow: 0 4px 15px rgba(56,142,60,0.3);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+            </div>
+            <h2 style="color: #388E3C; font-size: 3.5rem; margin: 0.5rem 0; font-weight: 700;">$500</h2>
+            <p style="font-size: 1.2rem; font-weight: 600; color: #333; margin: 0.5rem 0;">Extra Income/Season</p>
+            <p style="color: #666; font-size: 0.9rem; margin: 0;">Per farmer average</p>
         </div>
         """, unsafe_allow_html=True)
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Additional Kenya-specific stats
-    col_a, col_b, col_c = st.columns(3)
-    
-    with col_a:
-        st.info("**70%** of Kenyan farmers rely on rain-fed agriculture")
-    with col_b:
-        st.success("**10-20%** yield improvement with phenology data")
-    with col_c:
-        st.warning("**98%** mobile phone penetration in Kenya")
 
 def show_testimonials_section():
     """Section 5: Farmer testimonials and success stories"""
     st.markdown("<div class='scroll-animate-delay-3'>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>💬 Farmer Success Stories</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>👥 Farmer Success Stories</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'><b>Real farmers, real results across Kenya's diverse regions</b></p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
     
@@ -1562,7 +1803,7 @@ def show_testimonials_section():
     with col1:
         st.markdown("""
         <div class="feature-card" style="text-align: center; padding: 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">👨‍🌾</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem;">👤</div>
             <h3 style="color: #2E7D32;">Jane Wanjiru</h3>
             <p style="color: #666; margin-bottom: 1rem;"><b>Maize Farmer - Nakuru</b></p>
             <p style="font-style: italic; line-height: 1.8;">
@@ -1576,7 +1817,7 @@ def show_testimonials_section():
     with col2:
         st.markdown("""
         <div class="feature-card" style="text-align: center; padding: 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">☕</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem;">👤</div>
             <h3 style="color: #2E7D32;">Peter Kamau</h3>
             <p style="color: #666; margin-bottom: 1rem;"><b>Coffee Farmer - Kericho</b></p>
             <p style="font-style: italic; line-height: 1.8;">
@@ -1590,7 +1831,7 @@ def show_testimonials_section():
     with col3:
         st.markdown("""
         <div class="feature-card" style="text-align: center; padding: 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">🌾</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem;">👤</div>
             <h3 style="color: #2E7D32;">Mary Atieno</h3>
             <p style="color: #666; margin-bottom: 1rem;"><b>Vegetable Grower - Machakos</b></p>
             <p style="font-style: italic; line-height: 1.8;">
@@ -1608,23 +1849,37 @@ def show_testimonials_section():
     col_img, col_story = st.columns([1, 2])
     
     with col_img:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #2E7D32, #66BB6A); 
-                    padding: 3rem; border-radius: 16px; text-align: center;">
-            <div style="font-size: 6rem;">👨‍🌾</div>
-            <h4 style="color: white; margin-top: 1rem;">John Odhiambo</h4>
-            <p style="color: white;">Eldoret, Kenya</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # Display John's image
+        try:
+            john_img_path = os.path.join(os.path.dirname(__file__), '..', 'public', 'John_Kisumu.png')
+            if os.path.exists(john_img_path):
+                st.image(john_img_path, use_container_width=True)
+            else:
+                st.markdown("""
+                <div style="background: linear-gradient(135deg, #2E7D32, #66BB6A); 
+                            padding: 3rem; border-radius: 16px; text-align: center;">
+                    <div style="font-size: 6rem;">👨‍🌾</div>
+                    <h4 style="color: white; margin-top: 1rem;">John Odhiambo</h4>
+                    <p style="color: white;">Kisumu, Kenya</p>
+                </div>
+                """, unsafe_allow_html=True)
+        except:
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #2E7D32, #66BB6A); 
+                        padding: 3rem; border-radius: 16px; text-align: center;">
+                <div style="font-size: 6rem;">👨‍🌾</div>
+                <h4 style="color: white; margin-top: 1rem;">John Odhiambo</h4>
+                <p style="color: white;">Kisumu, Kenya</p>
+            </div>
+            """, unsafe_allow_html=True)
     
     with col_story:
         st.markdown("""
-        **"From Struggling to Thriving: My BloomWatch Journey"**
+        **John Odhiambo is a smallholder maize farmer from Kisumu, Kenya.**
         
-        John Odhiambo, a smallholder wheat farmer in Eldoret, was struggling with unpredictable 
-        harvests due to climate variability. After joining BloomWatch in March 2024:
+        After joining BloomWatch in March 2024:
         
-        - 📊 Increased wheat yield from 2.5 to 3.8 tons per acre (52% improvement)
+        - 📊 Increased maize yield from 2.5 to 3.8 tons per acre (52% improvement)
         - 💰 Earned an extra KSh 45,000 ($350) per season
         - 🌧️ Optimized irrigation timing based on satellite rainfall data
         - 🌾 Reduced fertilizer waste by 30% through precision timing
@@ -1636,7 +1891,14 @@ def show_testimonials_section():
 def show_ussd_phone_section():
     """Section 6: Phone screen with animated USSD functionality"""
     st.markdown("<div class='scroll-animate-delay-4'>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2rem;'>📱 Access BloomWatch on ANY Phone</h2>", unsafe_allow_html=True)
+    st.markdown("""
+    <h2 style='text-align: center; color: #2E7D32; font-size: 2rem;'>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="#2E7D32" style="display: inline; vertical-align: middle; margin-right: 12px;">
+            <path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
+        </svg>
+        Access BloomWatch on ANY Phone
+    </h2>
+    """, unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'><b>No smartphone needed! Use USSD for instant updates</b></p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
     
@@ -1754,10 +2016,10 @@ def show_ussd_phone_section():
         """, unsafe_allow_html=True)
 
 def show_pictures_carousel():
-    """Section 7: Auto-rotating agricultural pictures carousel"""
+    """Section 7: Auto-rotating agricultural pictures carousel with navigation arrows"""
     st.markdown("<div class='scroll-animate-delay-5'>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2rem;'>🖼️ Celebrating Kenyan Agriculture</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'><b>From our farms to yours - the beauty of ukulima</b></p>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2rem; margin-bottom: 0.5rem;'>🖼️ Celebrating Kenyan Agriculture</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; margin-bottom: 1rem;'><b>From our farms to yours - the beauty of ukulima</b></p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
     
     # Using online images from Unsplash (Kenya agriculture)
@@ -1767,7 +2029,7 @@ def show_pictures_carousel():
             'caption': '🌾 Maize fields in Rift Valley - Track bloom timing for optimal harvest',
         },
         {
-            'url': 'https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?w=1200',
+            'url': 'https://www.greenlife.co.ke/wp-content/uploads/2022/04/Coffee-Feeding-Greenlife.jpg',
             'caption': '☕ Coffee blooms in Central Kenya - Premium Grade A quality',
         },
         {
@@ -1793,24 +2055,28 @@ def show_pictures_carousel():
         st.session_state.carousel_index = 0
         st.session_state.last_rotation = time.time()
     
-    # Auto-rotate every 4 seconds
-    current_time = time.time()
-    if current_time - st.session_state.last_rotation > 4:
-        st.session_state.carousel_index = (st.session_state.carousel_index + 1) % len(images)
-        st.session_state.last_rotation = current_time
-    
-    # Display current image with styling
+    # Display current image with styling and navigation
     current_image = images[st.session_state.carousel_index]
     
     st.markdown("""
     <style>
+    .carousel-wrapper {
+        max-width: 1000px;
+        margin: 0.5rem auto;
+        position: relative;
+    }
     .carousel-container-v2 {
-        max-width: 1200px;
-        margin: 2rem auto;
         border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 8px 32px rgba(0,0,0,0.15);
         position: relative;
+        max-height: 600px;
+    }
+    .carousel-container-v2 img {
+        width: 100%;
+        height: 600px;
+        object-fit: cover;
+        display: block;
     }
     .carousel-caption-v2 {
         position: absolute;
@@ -1824,35 +2090,74 @@ def show_pictures_carousel():
         font-weight: 600;
         text-align: center;
     }
+    .carousel-dots {
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .carousel-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ccc;
+        margin: 0 6px;
+        transition: all 0.3s ease;
+    }
+    .carousel-dot-active {
+        background: #2E7D32;
+        width: 14px;
+        height: 14px;
+    }
     </style>
     """, unsafe_allow_html=True)
     
-    # Container for image
-    st.markdown('<div class="carousel-container-v2">', unsafe_allow_html=True)
-    safe_st_image(current_image['url'], use_container_width=True)
-    st.markdown(f'<div class="carousel-caption-v2">{current_image["caption"]}</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Carousel with side-by-side navigation
+    carousel_col1, carousel_col2, carousel_col3 = st.columns([1, 10, 1])
     
-    # Indicators
-    cols = st.columns(len(images))
-    for idx, col in enumerate(cols):
-        with col:
+    # Left arrow button
+    with carousel_col1:
+        st.markdown('<div style="display: flex; align-items: flex-start; padding-top: 250px; min-height: 600px;">', unsafe_allow_html=True)
+        if st.button("◀", key="carousel_prev", help="Previous image"):
+            st.session_state.carousel_index = (st.session_state.carousel_index - 1) % len(images)
+            st.session_state.last_rotation = time.time()
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Main image container
+    with carousel_col2:
+        st.markdown('<div class="carousel-wrapper">', unsafe_allow_html=True)
+        st.markdown('<div class="carousel-container-v2">', unsafe_allow_html=True)
+        st.image(current_image['url'], use_container_width=True)
+        st.markdown(f'<div class="carousel-caption-v2">{current_image["caption"]}</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Dots indicator (non-clickable)
+        dots_html = '<div class="carousel-dots">'
+        for idx in range(len(images)):
             if idx == st.session_state.carousel_index:
-                st.markdown(f"<div style='text-align: center; color: #2E7D32; font-size: 1.5rem;'>●</div>", unsafe_allow_html=True)
+                dots_html += '<span class="carousel-dot carousel-dot-active"></span>'
             else:
-                if st.button("○", key=f"img_{idx}", use_container_width=True):
-                    st.session_state.carousel_index = idx
-                    st.session_state.last_rotation = time.time()
-                    st.rerun()
+                dots_html += '<span class="carousel-dot"></span>'
+        dots_html += '</div>'
+        st.markdown(dots_html, unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Right arrow button
+    with carousel_col3:
+        st.markdown('<div style="display: flex; align-items: flex-start; padding-top: 250px; min-height: 600px;">', unsafe_allow_html=True)
+        if st.button("▶", key="carousel_next", help="Next image"):
+            st.session_state.carousel_index = (st.session_state.carousel_index + 1) % len(images)
+            st.session_state.last_rotation = time.time()
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Auto-refresh mechanism for carousel rotation
-    # Add a placeholder that triggers refresh
-    placeholder = st.empty()
-    if current_time - st.session_state.last_rotation > 3.5:
-        placeholder.empty()  # Trigger a refresh
-        time.sleep(0.5)
+    # Auto-refresh mechanism for carousel rotation - check time again
+    time_elapsed = time.time() - st.session_state.last_rotation
+    if time_elapsed > 3.0:
+        st.session_state.carousel_index = (st.session_state.carousel_index + 1) % len(images)
+        st.session_state.last_rotation = time.time()
         st.rerun()
     
     # Image grid alternative
@@ -1872,7 +2177,7 @@ def show_pictures_carousel():
     
     with col2:
         st.markdown("""
-        <div style="background: url('https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?w=400') center/cover; 
+        <div style="background: url('https://www.greenlife.co.ke/wp-content/uploads/2022/04/Coffee-Feeding-Greenlife.jpg') center/cover; 
                     height: 200px; border-radius: 16px; position: relative;">
             <div style="position: absolute; bottom: 0; left: 0; right: 0; 
                         background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
@@ -1894,56 +2199,216 @@ def show_pictures_carousel():
 
 def show_footer():
     """Section 8: Comprehensive footer with links and social proof"""
+    
+    # Add custom CSS for footer
+    st.markdown("""
+    <style>
+    .footer-section {
+        background: linear-gradient(135deg, rgba(46,125,50,0.05), rgba(102,187,106,0.05));
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        margin-top: 2rem;
+    }
+    .footer-logo {
+        margin-bottom: 1.5rem;
+    }
+    .footer-heading {
+        color: #2E7D32;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .footer-link {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.5rem 0;
+        color: #555;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+    .footer-link:hover {
+        color: #2E7D32;
+        transform: translateX(5px);
+        font-weight: 600;
+    }
+    .footer-link svg {
+        transition: all 0.3s ease;
+    }
+    .footer-link:hover svg {
+        transform: scale(1.2);
+        stroke: #2E7D32;
+    }
+    .footer-text {
+        color: #666;
+        line-height: 1.8;
+        margin: 1rem 0;
+    }
+    .footer-badge {
+        background: linear-gradient(135deg, #2E7D32, #66BB6A);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 1rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='footer-section'>", unsafe_allow_html=True)
     st.markdown("---")
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.markdown("""
-        ### 🌾 BloomWatch Kenya
+        # Display logo
+        try:
+            logo_path = os.path.join(os.path.dirname(__file__), '..', 'public', 'BloomWatch.png')
+            if os.path.exists(logo_path):
+                st.image(logo_path, width=180)
+            else:
+                st.markdown("### BloomWatch Kenya")
+        except:
+            st.markdown("### BloomWatch Kenya")
         
+        st.markdown("""
+        <p class="footer-text">
         Empowering smallholder farmers with NASA satellite technology for 
         better harvests and food security.
-        
-        **Growing Kenya's Future** 🇰🇪
-        """)
+        </p>
+        <div class="footer-badge">🇰🇪 Growing Kenya's Future</div>
+        """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        ### 🔗 Quick Links
+        <div class="footer-heading">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            Quick Links
+        </div>
+        """, unsafe_allow_html=True)
         
-        - [📱 Download Android App](#)
-        - [🍎 Download iOS App](#)
-        - [📞 USSD Guide](#)
-        - [📧 Contact Us](#)
-        - [🔒 Privacy Policy](#)
-        - [📋 Terms of Service](#)
-        """)
+        st.markdown("""
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            Download Android App
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+            </svg>
+            Download iOS App
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            USSD Guide
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            Contact Us
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Privacy Policy
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Terms of Service
+        </a>
+        """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
-        ### 🤝 Partners & Tech
-        
-        - **NASA Space Apps Challenge**
-        - **Digital Earth Africa**
-        - **Dash Insights**
-        - **Africa's Talking**
-        - **Google Earth Engine**
-        - **MongoDB Atlas**
-        """)
+        <div class="footer-heading">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Partners & Tech
+        </div>
+        <p class="footer-text" style="line-height: 2;">
+            <b>• NASA Space Apps Challenge</b><br>
+            <b>• Digital Earth Africa</b><br>
+            <b>• Dash Insights</b><br>
+            <b>• Africa's Talking</b><br>
+            <b>• Google Earth Engine</b><br>
+            <b>• MongoDB Atlas</b>
+        </p>
+        """, unsafe_allow_html=True)
     
     with col4:
         st.markdown("""
-        ### 📱 Connect With Us
+        <div class="footer-heading">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+            </svg>
+            Connect With Us
+        </div>
+        """, unsafe_allow_html=True)
         
-        - **🐦 X (Twitter):** @BloomWatchKE
-        - **📘 Facebook:** /BloomWatchKenya
-        - **📧 Email:** hello@bloomwatch.ke
-        - **📞 Support:** +254-700-BLOOM
-        
-        **💻 GitHub:**  
-        [geoffreyyogo/bloom-detector](https://github.com/geoffreyyogo/bloom-detector)
-        """)
+        st.markdown("""
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+            </svg>
+            <b>X (Twitter):</b> @BloomWatchKE
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+            <b>Facebook:</b> /BloomWatchKenya
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <b>Email:</b> hello@bloomwatch.ke
+        </a>
+        <a href="#" class="footer-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <b>Support:</b> +254-700-BLOOM
+        </a>
+        <a href="https://github.com/geoffreyyogo/bloom-detector" class="footer-link" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+            <b>GitHub:</b> geoffreyyogo/bloom-detector
+        </a>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("</div>", unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -2109,11 +2574,30 @@ def show_footer():
 def landing_page():
     """Comprehensive landing page with 8 major sections optimized for Kenyan farmers"""
     
-    # Top navigation bar
-    col_logo, col_space, col_dark, col_lang = st.columns([2, 4, 1, 1])
+    # Top navigation bar with better spacing
+    st.markdown("""
+    <style>
+    /* Header alignment */
+    .header-row {{
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+    
+    col_logo, col_space, col_dark, col_lang = st.columns([3, 3, 1.5, 1.5])
     
     with col_logo:
-        st.markdown("### 🌾 **BloomWatch Kenya**")
+        # Display logo image
+        try:
+            logo_path = os.path.join(os.path.dirname(__file__), '..', 'public', 'BloomWatch.png')
+            if os.path.exists(logo_path):
+                st.image(logo_path, width=120)
+            else:
+                st.markdown("### 🌾 **BloomWatch Kenya**")
+        except:
+            st.markdown("### 🌾 **BloomWatch Kenya**")
     
     with col_dark:
         if st.button("🌙" if not st.session_state.dark_mode else "☀️", key='dark_mode_toggle'):
@@ -2121,13 +2605,23 @@ def landing_page():
             st.rerun()
     
     with col_lang:
-        lang_option = st.selectbox(
-            '',
-            ['English', 'Kiswahili'],
+        # Language selector with full names
+        lang_options = ["English", "Kiswahili"]
+        current_index = 0 if st.session_state.language == 'en' else 1
+        
+        selected_lang = st.selectbox(
+            'Language',
+            options=lang_options,
+            index=current_index,
             key='lang_select',
             label_visibility='collapsed'
         )
-        st.session_state.language = 'en' if lang_option == 'English' else 'sw'
+        
+        # Update language only if it changed
+        new_lang = 'en' if selected_lang == "English" else 'sw'
+        if new_lang != st.session_state.language:
+            st.session_state.language = new_lang
+            st.rerun()
     
     # ========== SECTION 1: HERO SECTION ==========
     show_hero_section()
@@ -2206,10 +2700,10 @@ def login_page():
             col_a, col_b = st.columns(2)
             
             with col_a:
-                submit = st.form_submit_button(f"🔐 {t('login_button')}", use_container_width=True)
+                submit = st.form_submit_button(f"🔐 {t('login_button')}")
             
             with col_b:
-                register = st.form_submit_button("📝 Register Instead", use_container_width=True)
+                register = st.form_submit_button("📝 Register Instead")
             
             if register:
                 st.session_state.page = 'register'
@@ -2318,10 +2812,10 @@ def register_page():
             col_a, col_b = st.columns(2)
             
             with col_a:
-                submit = st.form_submit_button(f"✓ {t('register_button')}", use_container_width=True)
+                submit = st.form_submit_button(f"✓ {t('register_button')}")
             
             with col_b:
-                login_instead = st.form_submit_button("🔐 Login Instead", use_container_width=True)
+                login_instead = st.form_submit_button("🔐 Login Instead")
             
             if login_instead:
                 st.session_state.page = 'login'
@@ -2393,7 +2887,7 @@ def dashboard_page():
         st.session_state.language = 'en' if lang_option == 'English' else 'sw'
     
     with col4:
-        if st.button(f"🚪 {t('logout')}", key='logout_button', use_container_width=True):
+        if st.button(f"🚪 {t('logout')}", key='logout_button'):
             auth_service.logout(st.session_state.session_token)
             st.session_state.authenticated = False
             st.session_state.session_token = None
@@ -2552,7 +3046,7 @@ def show_dashboard_tab(farmer):
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
         fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.05)')
         
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig, config={'displayModeBar': False})
         
         # NASA Satellite Data Visualization - Full Kenya Map
         st.markdown("### 🛰️ Kenya Bloom Detection Map (NASA Satellite Data)")
@@ -2706,7 +3200,7 @@ def show_dashboard_tab(farmer):
         m.get_root().html.add_child(folium.Element(legend_html))
         
         # Display map
-        st_folium(m, height=450, use_container_width=True, returned_objects=[], key='kenya_bloom_map')
+        st_folium(m, height=450, width=None, returned_objects=[], key='kenya_bloom_map')
         
         # Statistics below map
         col_stat1, col_stat2, col_stat3 = st.columns(3)
@@ -2759,7 +3253,7 @@ def show_dashboard_tab(farmer):
             font={'family': 'Inter, Poppins'}
         )
         
-        st.plotly_chart(fig_gauge, use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(fig_gauge, config={'displayModeBar': False})
         
         # Weather widget (placeholder)
         st.markdown("### 🌤️ Weather Forecast")
@@ -2772,7 +3266,7 @@ def show_dashboard_tab(farmer):
         }
         
         df_weather = pd.DataFrame(weather_data)
-        st.dataframe(df_weather, use_container_width=True, hide_index=True)
+        st.dataframe(df_weather, hide_index=True)
         
         # Expected blooms (use actual data)
         st.markdown("### 🌸 Expected Blooms This Month")
@@ -2799,13 +3293,13 @@ def show_dashboard_tab(farmer):
         # Quick actions
         st.markdown("### ⚡ Quick Actions")
         
-        if st.button("📊 View Detailed Report", use_container_width=True):
+        if st.button("📊 View Detailed Report"):
             st.info("Detailed report feature coming soon!")
         
-        if st.button("📞 Contact Agronomist", use_container_width=True):
+        if st.button("📞 Contact Agronomist"):
             st.info("Agronomist hotline: +254-700-BLOOM")
         
-        if st.button("📚 View Farming Tips", use_container_width=True):
+        if st.button("📚 View Farming Tips"):
             st.info("Access farming guides and best practices")
 
 def show_calendar_tab(farmer):
@@ -2891,7 +3385,7 @@ def show_calendar_tab(farmer):
                     legend=dict(orientation="h", yanchor="top", y=-0.2)
                 )
                 
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+                st.plotly_chart(fig, config={'displayModeBar': False})
     
     st.markdown("---")
     
@@ -2985,7 +3479,7 @@ def show_alerts_tab(farmer):
                 help="When to receive daily summary alerts"
             )
         
-        if st.button("💾 Save Alert Settings", use_container_width=True):
+        if st.button("💾 Save Alert Settings"):
             show_notification("✅ Alert settings saved successfully!", 'success')
             time.sleep(0.5)
     
@@ -3102,15 +3596,15 @@ def show_alerts_tab(farmer):
             col_a, col_b, col_c = st.columns(3)
             
             with col_a:
-                if st.button("📍 View on Map", key=f"map_{i}", use_container_width=True):
+                if st.button("📍 View on Map", key=f"map_{i}"):
                     st.info("Opening map view...")
             
             with col_b:
-                if st.button("📊 Full Report", key=f"report_{i}", use_container_width=True):
+                if st.button("📊 Full Report", key=f"report_{i}"):
                     st.info("Generating detailed report...")
             
             with col_c:
-                if st.button("🔕 Dismiss", key=f"dismiss_{i}", use_container_width=True):
+                if st.button("🔕 Dismiss", key=f"dismiss_{i}"):
                     st.success("Alert dismissed")
     
     st.markdown("---")
@@ -3166,7 +3660,7 @@ def show_profile_tab(farmer):
                     format_func=lambda x: x.title()
                 )
                 
-                if st.form_submit_button("💾 Update Profile", use_container_width=True):
+                if st.form_submit_button("💾 Update Profile"):
                     # Update farmer data (in production, this would update the database)
                     st.session_state.farmer_data['name'] = new_name
                     st.session_state.farmer_data['email'] = new_email
@@ -3198,17 +3692,17 @@ def show_profile_tab(farmer):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🔄 Refresh Data", use_container_width=True):
+        if st.button("🔄 Refresh Data"):
             with st.spinner("Refreshing..."):
                 time.sleep(1)
                 show_notification("Data refreshed successfully!", 'success')
     
     with col2:
-        if st.button("📥 Download Report", use_container_width=True):
+        if st.button("📥 Download Report"):
             st.info("Generating PDF report...")
     
     with col3:
-        if st.button("🗑️ Delete Account", use_container_width=True):
+        if st.button("🗑️ Delete Account"):
             st.warning("⚠️ This action cannot be undone!")
     
     st.markdown("---")
@@ -3245,12 +3739,112 @@ def show_profile_tab(farmer):
         </div>
         """, unsafe_allow_html=True)
 
+@st.dialog("🌿 Chat with Flora AI")
+def show_flora_chat_modal():
+    """Show Flora AI chat modal"""
+    # Demo mode warning
+    st.warning("""
+        **📝 Demo Mode:** This is a demonstration because the OpenAI API key is not configured. 
+        In the full version, Flora would provide personalized farming advice based on your location and crops.
+    """)
+    
+    # Flora's greeting
+    st.success("""
+        **Flora:** Jambo! I'm Flora, your AI farming assistant. How can I help you with your crops today?
+    """)
+    
+    st.markdown("---")
+    
+    # Feature list
+    st.markdown("""
+        *In the full version, I would analyze your farm data, weather patterns, and provide personalized advice for:*
+        
+        - 🌱 **Optimal planting times** - Based on weather and soil conditions
+        - 💧 **Irrigation schedules** - Water management recommendations
+        - 🌾 **Pest and disease management** - Early detection and prevention
+        - 📊 **Harvest predictions** - Yield forecasting and planning
+        - 🌦️ **Weather-based recommendations** - Real-time agricultural advice
+    """)
+    
+    st.markdown("---")
+    
+    # Close instruction
+    st.info("👆 Click outside this dialog or press ESC to close")
+    
+    # Close button
+    if st.button("Close", key="flora_close_btn", type="primary", use_container_width=True):
+        st.session_state.flora_chat = False
+        st.rerun()
+
 # Main app router
 def main():
     """Main application router with smooth transitions"""
     
     # Apply CSS based on dark mode setting
     st.markdown(get_custom_css(st.session_state.dark_mode), unsafe_allow_html=True)
+    
+    # Inject CSS for floating button styling - ONLY target the flora chat button
+    st.markdown("""
+    <style>
+    /* Position ONLY the container that has the flora chat button marker */
+    .element-container:has(#flora-chat-button-marker) {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+        width: auto !important;
+        margin: 0 !important;
+    }
+    
+    /* Style ONLY the button that comes after the marker */
+    .element-container:has(#flora-chat-button-marker) + .element-container button {
+        width: 60px !important;
+        height: 60px !important;
+        min-height: 60px !important;
+        background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%) !important;
+        border-radius: 50% !important;
+        border: none !important;
+        box-shadow: 0 4px 20px rgba(46,125,50,0.4) !important;
+        font-size: 28px !important;
+        color: white !important;
+        transition: all 0.3s ease !important;
+        padding: 0 !important;
+    }
+    
+    .element-container:has(#flora-chat-button-marker) + .element-container button:hover {
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 0 8px 25px rgba(46,125,50,0.6) !important;
+        background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%) !important;
+    }
+    
+    .element-container:has(#flora-chat-button-marker) + .element-container button:active {
+        transform: translateY(-1px) scale(1.02) !important;
+    }
+    
+    /* Position the button container */
+    .element-container:has(#flora-chat-button-marker) + .element-container {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+    }
+    
+    /* Hide the marker itself */
+    #flora-chat-button-marker {
+        display: none !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Create a unique marker for the flora chat button
+    st.markdown('<div id="flora-chat-button-marker"></div>', unsafe_allow_html=True)
+    if st.button("💬", key="flora_chat_fab", help="Chat with Flora AI"):
+        st.session_state.flora_chat = True
+        st.rerun()
+    
+    # Handle Flora chat modal
+    if 'flora_chat' in st.session_state and st.session_state.flora_chat:
+        show_flora_chat_modal()
     
     # Check authentication
     if st.session_state.authenticated and st.session_state.session_token:
