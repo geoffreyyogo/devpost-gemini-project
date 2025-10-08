@@ -7,7 +7,6 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import folium
-from streamlit_folium import st_folium
 import numpy as np
 import pandas as pd
 import os
@@ -49,6 +48,83 @@ try:
     PIL_AVAILABLE = True
 except ImportError:
     PIL_AVAILABLE = False
+
+# Streamlit compatibility helpers
+def safe_st_image(image, **kwargs):
+    """Wrapper for st.image that handles version compatibility"""
+    try:
+        # Try new parameter first (Streamlit >= 1.30)
+        if 'use_container_width' in kwargs:
+            st.image(image, **kwargs)
+        else:
+            st.image(image, use_column_width=kwargs.pop('use_column_width', False), **kwargs)
+    except TypeError:
+        # Fall back to old parameter (Streamlit < 1.30)
+        if 'use_container_width' in kwargs:
+            kwargs['use_column_width'] = kwargs.pop('use_container_width')
+        st.image(image, **kwargs)
+
+# Monkey-patch st.button, st.plotly_chart, st.dataframe to handle use_container_width gracefully
+original_button = st.button
+original_plotly_chart = st.plotly_chart
+original_dataframe = st.dataframe
+original_form_submit_button = st.form_submit_button
+
+def safe_button(*args, **kwargs):
+    try:
+        return original_button(*args, **kwargs)
+    except TypeError as e:
+        if 'use_container_width' in str(e):
+            kwargs.pop('use_container_width', None)
+            return original_button(*args, **kwargs)
+        raise
+
+def safe_plotly_chart(*args, **kwargs):
+    try:
+        return original_plotly_chart(*args, **kwargs)
+    except TypeError as e:
+        if 'use_container_width' in str(e):
+            kwargs.pop('use_container_width', None)
+            return original_plotly_chart(*args, **kwargs)
+        raise
+
+def safe_dataframe(*args, **kwargs):
+    try:
+        return original_dataframe(*args, **kwargs)
+    except TypeError as e:
+        if 'use_container_width' in str(e):
+            kwargs.pop('use_container_width', None)
+            return original_dataframe(*args, **kwargs)
+        raise
+
+def safe_form_submit_button(*args, **kwargs):
+    try:
+        return original_form_submit_button(*args, **kwargs)
+    except TypeError as e:
+        if 'use_container_width' in str(e):
+            kwargs.pop('use_container_width', None)
+            return original_form_submit_button(*args, **kwargs)
+        raise
+
+st.button = safe_button
+st.plotly_chart = safe_plotly_chart
+st.dataframe = safe_dataframe
+st.form_submit_button = safe_form_submit_button
+
+# Import streamlit-folium and wrap it
+from streamlit_folium import st_folium as original_st_folium
+
+def safe_st_folium(*args, **kwargs):
+    try:
+        return original_st_folium(*args, **kwargs)
+    except TypeError as e:
+        if 'use_container_width' in str(e):
+            kwargs.pop('use_container_width', None)
+            return original_st_folium(*args, **kwargs)
+        raise
+
+# Replace the import in the global scope
+st_folium = safe_st_folium
 
 # Import services with fallbacks
 try:
@@ -1753,7 +1829,7 @@ def show_pictures_carousel():
     
     # Container for image
     st.markdown('<div class="carousel-container-v2">', unsafe_allow_html=True)
-    st.image(current_image['url'], use_container_width=True)
+    safe_st_image(current_image['url'], use_container_width=True)
     st.markdown(f'<div class="carousel-caption-v2">{current_image["caption"]}</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
     

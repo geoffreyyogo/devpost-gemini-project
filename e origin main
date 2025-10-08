@@ -1,0 +1,3 @@
+[33mb4ceedf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Fix: Update Streamlit and dependencies for Render deployment
+[33me858a23[m Minor Fixes and UI Improvements
+[33m834bab3[m Unified deployment: single URL with multipage streamlit app
