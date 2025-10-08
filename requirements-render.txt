@@ -1,8 +1,10 @@
 # BloomWatch Kenya - Render Deployment Requirements
 # Complete dependencies for production deployment
+# Python 3.11.x required
 
 # Core Web Framework
-streamlit==1.29.0
+streamlit==1.36.0
+streamlit-folium==0.15.0
 flask==3.0.0
 gunicorn==21.2.0
 
@@ -15,25 +17,35 @@ bcrypt==4.1.2
 python-dotenv==1.0.0
 
 # Africa's Talking Integration
-africastalking==1.2.7
+africastalking==1.2.6
 requests==2.31.0
 
 # Data Processing
-numpy==1.24.3
+numpy==1.26.4
 pandas==2.1.4
-scipy==1.11.4
+scipy==1.13.1
 
-# Satellite Data (optional - large dependencies)
-# rasterio==1.3.9  # Uncomment if using GeoTIFF files
+# Geospatial
+folium==0.17.0
+geopandas==0.14.0
 
 # Visualization
-plotly==5.18.0
-matplotlib==3.8.2
+plotly==5.22.0
 
 # Utilities
 python-dateutil==2.8.2
 
+# Animations & Enhanced UI
+streamlit-lottie==0.0.5
+Pillow==10.4.0
+
+# AI/ML for Flora Chatbot
+openai==1.54.3
+
+# Earth Engine (optional)
+earthengine-api==0.1.418
+
 # Testing (development only)
-pytest==7.4.3
+pytest==8.2.2
 pytest-cov==4.1.0
 
