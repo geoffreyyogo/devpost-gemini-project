@@ -699,6 +699,9 @@ def get_custom_css(dark_mode=False):
         font-size: 0.95rem !important;
         min-height: auto !important;
         width: 100% !important;
+        line-height: 1.5 !important;
+        display: flex !important;
+        align-items: center !important;
     }}
     
     /* Language selector specific styling - target by key */
@@ -725,6 +728,9 @@ def get_custom_css(dark_mode=False):
         white-space: nowrap !important;
         color: {'#ffffff' if dark_mode else '#000000'} !important;
         padding: 0.5rem 0.75rem !important;
+        line-height: 1.5 !important;
+        display: flex !important;
+        align-items: center !important;
     }}
     
     div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] input {{
@@ -736,6 +742,7 @@ def get_custom_css(dark_mode=False):
         color: {'#ffffff' if dark_mode else '#000000'} !important;
         background-color: transparent !important;
         padding: 0 !important;
+        line-height: 1.5 !important;
     }}
     
     /* Language selector text visibility */
@@ -745,6 +752,7 @@ def get_custom_css(dark_mode=False):
         white-space: nowrap !important;
         overflow: visible !important;
         text-overflow: unset !important;
+        line-height: 1.5 !important;
     }}
     
     div[data-testid="stSelectbox"]:has(select[key="lang_select"]) div[data-baseweb="select"] svg {{
@@ -761,6 +769,9 @@ def get_custom_css(dark_mode=False):
         overflow: visible !important;
         text-overflow: unset !important;
         white-space: nowrap !important;
+        line-height: 1.5 !important;
+        display: flex !important;
+        align-items: center !important;
     }}
     
     /* Fix the parent column width */
@@ -991,16 +1002,21 @@ def get_custom_css(dark_mode=False):
     .stMultiSelect div[data-baseweb="select"] > div {{
         background: {input_bg} !important;
         color: {text_dark} !important;
+        line-height: 1.5 !important;
+        display: flex !important;
+        align-items: center !important;
     }}
     
     .stMultiSelect div[data-baseweb="select"] input {{
         background: {input_bg} !important;
         color: {text_dark} !important;
         border: none !important;
+        line-height: 1.5 !important;
     }}
     
     .stMultiSelect div[data-baseweb="select"] span {{
         color: {text_dark} !important;
+        line-height: 1.5 !important;
     }}
     
     /* Multiselect tags/chips styling */
@@ -1044,16 +1060,21 @@ def get_custom_css(dark_mode=False):
     .stSelectbox div[data-baseweb="select"] > div {{
         background: {input_bg} !important;
         color: {text_dark} !important;
+        line-height: 1.5 !important;
+        display: flex !important;
+        align-items: center !important;
     }}
     
     .stSelectbox div[data-baseweb="select"] input {{
         background: {input_bg} !important;
         color: {text_dark} !important;
         border: none !important;
+        line-height: 1.5 !important;
     }}
     
     .stSelectbox div[data-baseweb="select"] span {{
         color: {text_dark} !important;
+        line-height: 1.5 !important;
     }}
     
     .stSelectbox div[data-baseweb="select"] svg {{
@@ -1793,11 +1814,13 @@ def show_hero_section():
         
         with col_a:
             if st.button("🚀 Get Started", key='hero_get_started'):
+                st.session_state.flora_chat = False  # Clear modal on navigation
                 st.session_state.page = 'register'
                 st.rerun()
         
         with col_b:
             if st.button("🔐 Log In", key='hero_login'):
+                st.session_state.flora_chat = False  # Clear modal on navigation
                 st.session_state.page = 'login'
                 st.rerun()
         
@@ -3067,6 +3090,7 @@ def login_page():
     """Enhanced login page with Lottie animation"""
     # Back button
     if st.button(f"← {t('back')}", key='back_from_login'):
+        st.session_state.flora_chat = False  # Clear modal on navigation
         st.session_state.page = 'landing'
         st.rerun()
     
@@ -3107,6 +3131,7 @@ def login_page():
                 register = st.form_submit_button("📝 Register Instead")
             
             if register:
+                st.session_state.flora_chat = False  # Clear modal on navigation
                 st.session_state.page = 'register'
                 st.rerun()
             
@@ -3122,6 +3147,7 @@ def login_page():
                             st.session_state.authenticated = True
                             st.session_state.session_token = result['session_token']
                             st.session_state.farmer_data = result['farmer']
+                            st.session_state.flora_chat = False  # Clear modal on navigation
                             st.session_state.page = 'dashboard'
                             show_notification(t('success_login'), 'success')
                             st.balloons()  # Celebration animation
@@ -3134,6 +3160,7 @@ def register_page():
     """Enhanced registration page with step visualization"""
     # Back button
     if st.button(f"← {t('back')}", key='back_from_register'):
+        st.session_state.flora_chat = False  # Clear modal on navigation
         st.session_state.page = 'landing'
         st.rerun()
     
@@ -3233,6 +3260,7 @@ def register_page():
                 login_instead = st.form_submit_button("🔐 Login Instead")
             
             if login_instead:
+                st.session_state.flora_chat = False  # Clear modal on navigation
                 st.session_state.page = 'login'
                 st.rerun()
             
@@ -3267,6 +3295,7 @@ def register_page():
                             show_notification(t('success_registration'), 'success')
                             st.balloons()  # Celebration!
                             time.sleep(2)
+                            st.session_state.flora_chat = False  # Clear modal on navigation
                             st.session_state.page = 'login'
                             st.rerun()
                         else:
@@ -3277,6 +3306,7 @@ def dashboard_page():
     farmer = st.session_state.farmer_data
     
     if not farmer:
+        st.session_state.flora_chat = False  # Clear modal on navigation
         st.session_state.page = 'landing'
         st.rerun()
         return
@@ -3307,6 +3337,7 @@ def dashboard_page():
             st.session_state.authenticated = False
             st.session_state.session_token = None
             st.session_state.farmer_data = None
+            st.session_state.flora_chat = False  # Clear modal on navigation
             st.session_state.page = 'landing'
             st.rerun()
     
@@ -4189,11 +4220,33 @@ def show_flora_chat_modal():
     # Close button
     if st.button("Close", key="flora_close_btn", type="primary", use_container_width=True):
         st.session_state.flora_chat = False
+        st.session_state.flora_chat_just_opened = False
+        if 'flora_chat_page' in st.session_state:
+            del st.session_state.flora_chat_page
         st.rerun()
 
 # Main app router
 def main():
     """Main application router with smooth transitions"""
+    
+    # Track previous page to detect navigation changes
+    if 'previous_page' not in st.session_state:
+        st.session_state.previous_page = st.session_state.page
+    
+    # Clear modal if page has changed OR if modal page doesn't match current page
+    if st.session_state.previous_page != st.session_state.page:
+        st.session_state.flora_chat = False
+        if 'flora_chat_page' in st.session_state:
+            del st.session_state.flora_chat_page
+    elif 'flora_chat' in st.session_state and st.session_state.flora_chat:
+        # Also check if flora_chat_page exists and matches current page
+        if 'flora_chat_page' in st.session_state:
+            if st.session_state.flora_chat_page != st.session_state.page:
+                st.session_state.flora_chat = False
+                del st.session_state.flora_chat_page
+    
+    # Update previous page for next render
+    st.session_state.previous_page = st.session_state.page
     
     # Apply CSS based on dark mode setting
     st.markdown(get_custom_css(st.session_state.dark_mode), unsafe_allow_html=True)
@@ -4253,19 +4306,45 @@ def main():
     
     # Create a unique marker for the flora chat button
     st.markdown('<div id="flora-chat-button-marker"></div>', unsafe_allow_html=True)
-    if st.button("💬", key="flora_chat_fab", help="Chat with Flora AI"):
+    
+    # Track if chat button was clicked THIS run
+    chat_button_clicked = st.button("💬", key="flora_chat_fab", help="Chat with Flora AI")
+    
+    if chat_button_clicked:
         st.session_state.flora_chat = True
+        st.session_state.flora_chat_page = st.session_state.page
+        st.session_state.flora_chat_just_opened = True
         st.rerun()
     
     # Handle Flora chat modal
     if 'flora_chat' in st.session_state and st.session_state.flora_chat:
-        show_flora_chat_modal()
+        # If dialog was open in previous run but chat button wasn't just clicked,
+        # and we're in a new run (meaning user clicked something else),
+        # then the dialog was dismissed
+        if not st.session_state.get('flora_chat_just_opened', False):
+            # Dialog was open before, but not just now - assume dismissed, don't show
+            st.session_state.flora_chat = False
+            if 'flora_chat_page' in st.session_state:
+                del st.session_state.flora_chat_page
+        else:
+            # Dialog was just opened, or is currently open - show it if on correct page
+            if 'flora_chat_page' in st.session_state and st.session_state.flora_chat_page == st.session_state.page:
+                show_flora_chat_modal()
+                # Clear the "just opened" flag for next run
+                st.session_state.flora_chat_just_opened = False
+            else:
+                # Page changed
+                st.session_state.flora_chat = False
+                st.session_state.flora_chat_just_opened = False
+                if 'flora_chat_page' in st.session_state:
+                    del st.session_state.flora_chat_page
     
     # Check authentication
     if st.session_state.authenticated and st.session_state.session_token:
         session = auth_service.verify_session(st.session_state.session_token)
         if not session:
             st.session_state.authenticated = False
+            st.session_state.flora_chat = False  # Clear modal on navigation
             st.session_state.page = 'landing'
             st.rerun()
     
@@ -4279,6 +4358,7 @@ def main():
     elif st.session_state.page == 'dashboard' and st.session_state.authenticated:
         dashboard_page()
     else:
+        st.session_state.flora_chat = False  # Clear modal on navigation
         st.session_state.page = 'landing'
         st.rerun()
 
