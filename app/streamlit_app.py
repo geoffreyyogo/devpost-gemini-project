@@ -147,6 +147,106 @@ LANGUAGES = {
 
 st.set_page_config(page_title="BloomWatch Kenya", layout="wide", page_icon="🌾")
 
+# Apply light mode fix for form styling
+st.markdown("""
+<style>
+/* Light Mode Fix for Form Styling */
+.stTextInput > div > div > input,
+.stSelectbox > div > div > select,
+.stMultiSelect > div > div,
+.stMultiSelect div[data-baseweb="select"],
+.stMultiSelect div[data-baseweb="select"] > div {
+    border-radius: 12px !important;
+    border: 2px solid #E0E0E0 !important;
+    padding: 0.85rem !important;
+    font-size: 1rem !important;
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    transition: all 0.3s ease !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] {
+    background: #FFFFFF !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 12px !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] > div {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] input {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    border: none !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] span {
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] {
+    background: #FFFFFF !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 12px !important;
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] > div {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] input {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    border: none !important;
+}
+
+.stSelectbox div[data-baseweb="select"] span {
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] svg {
+    fill: #212121 !important;
+}
+
+.stButton > button {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
+    color: #2E7D32 !important;
+    border: 2px solid rgba(255,255,255,0.8) !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    cursor: pointer !important;
+}
+
+.stForm .stButton > button,
+div[data-testid="stForm"] .stButton > button {
+    background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%) !important;
+    color: white !important;
+    border: 2px solid rgba(46,125,50,0.8) !important;
+    padding: 0.85rem 2rem !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    cursor: pointer !important;
+    min-width: 180px !important;
+}
+
+.stSelectbox label, .stTextInput label, .stMultiSelect label {
+    color: #212121 !important;
+    font-weight: 600 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Language selector
 col1, col2 = st.columns([3, 1])
 with col2:

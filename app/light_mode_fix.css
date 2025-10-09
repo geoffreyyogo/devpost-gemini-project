@@ -1,0 +1,167 @@
+/* Light Mode Fix for Streamlit Forms */
+/* Apply this CSS to fix dark styling issues in light mode */
+
+/* Form inputs - Light mode styling */
+.stTextInput > div > div > input,
+.stSelectbox > div > div > select,
+.stMultiSelect > div > div,
+.stMultiSelect div[data-baseweb="select"],
+.stMultiSelect div[data-baseweb="select"] > div {
+    border-radius: 12px !important;
+    border: 2px solid #E0E0E0 !important;
+    padding: 0.85rem !important;
+    font-size: 1rem !important;
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Multiselect specific styling for light mode */
+.stMultiSelect div[data-baseweb="select"] {
+    background: #FFFFFF !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 12px !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] > div {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] input {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    border: none !important;
+}
+
+.stMultiSelect div[data-baseweb="select"] span {
+    color: #212121 !important;
+}
+
+/* Multiselect tags/chips styling */
+.stMultiSelect div[data-baseweb="select"] div[role="option"] {
+    background: #2E7D32 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    margin: 2px !important;
+}
+
+/* Multiselect dropdown menu */
+.stMultiSelect div[data-baseweb="select"] + div {
+    background: #FFFFFF !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 12px !important;
+}
+
+/* Focus states for light mode */
+.stTextInput > div > div > input:focus,
+.stSelectbox > div > div > select:focus,
+.stMultiSelect div[data-baseweb="select"]:focus,
+.stMultiSelect div[data-baseweb="select"] > div:focus {
+    border-color: #2E7D32 !important;
+    box-shadow: 0 0 0 3px rgba(46,125,50,0.1) !important;
+    outline: none !important;
+}
+
+/* Enhanced selectbox styling for light mode */
+.stSelectbox div[data-baseweb="select"] {
+    background: #FFFFFF !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 12px !important;
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] > div {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] input {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    border: none !important;
+}
+
+.stSelectbox div[data-baseweb="select"] span {
+    color: #212121 !important;
+}
+
+.stSelectbox div[data-baseweb="select"] svg {
+    fill: #212121 !important;
+}
+
+/* Password toggle button styling for light mode */
+.stTextInput button {
+    background: #FFFFFF !important;
+    color: #212121 !important;
+    border: 2px solid #E0E0E0 !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+    margin-left: 0.5rem !important;
+}
+
+.stTextInput button:hover {
+    background: #f0f0f0 !important;
+    border-color: #2E7D32 !important;
+}
+
+/* Button styling for light mode */
+.stButton > button {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
+    color: #2E7D32 !important;
+    border: 2px solid rgba(255,255,255,0.8) !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1.1rem !important;
+    border-radius: 50px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    cursor: pointer !important;
+}
+
+/* Form submit buttons for light mode */
+.stForm .stButton > button,
+.stFormSubmitButton > button,
+div[data-testid="stForm"] .stButton > button {
+    background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%) !important;
+    color: white !important;
+    border: 2px solid rgba(46,125,50,0.8) !important;
+    padding: 0.85rem 2rem !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    cursor: pointer !important;
+    min-width: 180px !important;
+}
+
+/* Button hover effects */
+.stButton > button:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 
+        0 12px 24px rgba(0,0,0,0.3),
+        0 6px 12px rgba(0,0,0,0.2),
+        inset 0 -2px 4px rgba(0,0,0,0.1),
+        inset 0 2px 4px rgba(255,255,255,0.9) !important;
+}
+
+/* Form labels */
+.stSelectbox label, .stTextInput label, .stMultiSelect label {
+    color: #212121 !important;
+    font-weight: 600 !important;
+}
+
+/* Ensure proper cursor for interactive elements */
+.stSelectbox select, 
+.stSelectbox div[data-baseweb="select"],
+.stSelectbox div[data-baseweb="select"] > div,
+.stButton button {
+    cursor: pointer !important;
+}
+
+/* Remove text cursor from selectbox input */
+.stSelectbox div[data-baseweb="select"] input {
+    cursor: pointer !important;
+    caret-color: transparent !important;
+}

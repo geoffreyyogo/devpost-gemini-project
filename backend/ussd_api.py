@@ -42,6 +42,29 @@ def ussd_callback():
         logger.error(f"Error handling USSD request: {e}")
         return Response("END An error occurred. Please try again later.", mimetype='text/plain')
 
+@app.route('/delivery-reports', methods=['POST'])
+def sms_delivery_report():
+    """
+    SMS delivery report callback from Africa's Talking
+    This endpoint receives SMS delivery status updates
+    """
+    try:
+        # Get delivery report parameters
+        phone_number = request.values.get('phoneNumber', None)
+        status = request.values.get('status', None)
+        network_code = request.values.get('networkCode', None)
+        
+        logger.info(f"SMS Delivery Report - Phone: {phone_number}, Status: {status}, Network: {network_code}")
+        
+        # You can store this in MongoDB or use for analytics
+        # For now, just log it
+        
+        return Response('Received', mimetype='text/plain')
+        
+    except Exception as e:
+        logger.error(f"Error handling delivery report: {e}")
+        return Response('Error', mimetype='text/plain')
+
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""

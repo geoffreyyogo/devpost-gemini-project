@@ -20,8 +20,9 @@ class AfricasTalkingService:
     
     def __init__(self):
         """Initialize Africa's Talking SDK"""
-        self.username = os.getenv('AT_USERNAME', 'sandbox')
-        self.api_key = os.getenv('AT_API_KEY', '')
+        # Support both environment variable naming conventions
+        self.username = os.getenv('AFRICASTALKING_USERNAME') or os.getenv('AT_USERNAME', 'sandbox')
+        self.api_key = os.getenv('AFRICASTALKING_API_KEY') or os.getenv('AT_API_KEY', '')
         
         if not self.api_key:
             logger.warning("Africa's Talking API key not set. Running in demo mode.")

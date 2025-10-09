@@ -174,14 +174,14 @@ except ImportError:
 LOTTIE_URLS = {
     'satellite': 'https://assets5.lottiefiles.com/packages/lf20_nLjNFH.json',
     'farming': 'https://assets9.lottiefiles.com/packages/lf20_touohxv0.json',
-    'plant_growth': 'https://assets2.lottiefiles.com/packages/lf20_kcsr6fcp.json',
+    'plant_growth': 'https://lottie.host/a7e343eb-e957-40e5-9d00-69287bbe8dcd/MIn3oqUyYf.json',
     'weather': 'https://assets4.lottiefiles.com/packages/lf20_kxsd2zr.json',
     'success': 'https://assets9.lottiefiles.com/packages/lf20_lk80fpsm.json',
     'loading': 'https://assets8.lottiefiles.com/packages/lf20_a2chheio.json',
 }
 
 def load_lottie_url(url):
-    """Load Lottie animation from URL"""
+    """Load Lottie animation from URL with fallback"""
     if not LOTTIE_AVAILABLE:
         return None
     try:
@@ -191,6 +191,40 @@ def load_lottie_url(url):
     except:
         pass
     return None
+
+def show_dotlottie_animation(src, width=300, height=300, key="dotlottie"):
+    """Show dotLottie animation using iframe embed"""
+    # Convert the .lottie URL to embed URL
+    embed_url = src.replace("https://lottie.host/", "https://lottie.host/embed/")
+    st.markdown(f"""
+    <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0;">
+        <iframe src="{embed_url}" width="{width}" height="{height}" frameborder="0" allowfullscreen></iframe>
+    </div>
+    """, unsafe_allow_html=True)
+
+def show_animation_fallback(animation_type="plant"):
+    """Show a fallback when animation fails to load"""
+    if animation_type == "plant":
+        st.markdown("""
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🌱</div>
+            <div style="font-size: 1.2rem; color: #2E7D32; font-weight: 600;">Growing Together</div>
+        </div>
+        """, unsafe_allow_html=True)
+    elif animation_type == "farming":
+        st.markdown("""
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🚜</div>
+            <div style="font-size: 1.2rem; color: #2E7D32; font-weight: 600;">Smart Farming</div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🌾</div>
+            <div style="font-size: 1.2rem; color: #2E7D32; font-weight: 600;">BloomWatch Kenya</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # Initialize dark mode CSS
 def get_custom_css(dark_mode=False):
@@ -463,21 +497,167 @@ def get_custom_css(dark_mode=False):
         text-shadow: 0 2px 10px rgba(46,125,50,0.2);
     }}
     
-    /* Buttons with gradient and animation */
-    .stButton > button {{
-        background: linear-gradient(145deg, #ffffff, #f0f0f0) !important;
-        color: #2E7D32 !important;
-        border: 2px solid rgba(255,255,255,0.8) !important;
+    /* Buttons with enhanced light mode styling - FIXED CENTERING */
+    .stButton > button:not([key*="back"]) {{
+        background: {'linear-gradient(145deg, #3d3d3d, #2d2d2d)' if dark_mode else 'linear-gradient(145deg, #ffffff, #f0f0f0)'} !important;
+        color: {'#e0e0e0' if dark_mode else '#2E7D32'} !important;
+        border: 2px solid {'rgba(85,85,85,0.8)' if dark_mode else 'rgba(255,255,255,0.8)'} !important;
         padding: 0.75rem 1.5rem !important;
         font-size: 1.1rem !important;
         border-radius: 50px !important;
         font-weight: 700 !important;
         transition: all 0.3s ease !important;
-        box-shadow: 
-            0 8px 16px rgba(0,0,0,0.2),
-            0 4px 8px rgba(0,0,0,0.15),
-            inset 0 -2px 4px rgba(0,0,0,0.1),
-            inset 0 2px 4px rgba(255,255,255,0.9) !important;
+        box-shadow: {shadow_md} !important;
+        cursor: pointer !important;
+        margin-left: 8px !important;  /* Fix leftward shift */
+    }}
+    
+    /* Back button specific styling - no centering */
+    .stButton > button[key*="back"] {{
+        background: {'linear-gradient(145deg, #3d3d3d, #2d2d2d)' if dark_mode else 'linear-gradient(145deg, #ffffff, #f0f0f0)'} !important;
+        color: {'#e0e0e0' if dark_mode else '#2E7D32'} !important;
+        border: 2px solid {'rgba(85,85,85,0.8)' if dark_mode else 'rgba(255,255,255,0.8)'} !important;
+        padding: 0.5rem 1rem !important;
+        font-size: 1rem !important;
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: {shadow_md} !important;
+        cursor: pointer !important;
+        margin-left: 0 !important;
+        width: auto !important;
+        max-width: 180px !important;
+        min-width: auto !important;
+        flex: none !important;
+    }}
+    
+    /* Force back button container to not stretch */
+    .stButton:has(button[key*="back"]) {{
+        display: inline-block !important;
+        justify-content: unset !important;
+        margin: 0 !important;
+        width: auto !important;
+        max-width: 200px !important;
+        flex: none !important;
+    }}
+    
+    /* Force back button column to not stretch */
+    [data-testid="column"]:has(button[key*="back"]) {{
+        display: block !important;
+        justify-content: unset !important;
+        align-items: unset !important;
+        width: auto !important;
+        max-width: 200px !important;
+        flex: none !important;
+    }}
+    
+    /* Override any element container stretching for back buttons */
+    .element-container:has(button[key*="back"]) {{
+        display: block !important;
+        justify-content: unset !important;
+        margin: 0 !important;
+        width: auto !important;
+        max-width: 200px !important;
+        flex: none !important;
+    }}
+    
+    /* VERY SPECIFIC back button fixes for login and register pages */
+    button[key="back_from_login"],
+    button[key="back_from_register"] {{
+        width: auto !important;
+        max-width: 150px !important;
+        min-width: auto !important;
+        flex: none !important;
+        margin-left: 0 !important;
+        padding: 0.5rem 1rem !important;
+        font-size: 1rem !important;
+        display: inline-block !important;
+    }}
+    
+    
+    /* Force the container of back buttons to not stretch */
+    .element-container:has(button[key="back_from_login"]),
+    .element-container:has(button[key="back_from_register"]) {{
+        display: inline-block !important;
+        width: auto !important;
+        max-width: 200px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        flex: none !important;
+    }}
+    
+    /* Override any column stretching for back buttons */
+    [data-testid="column"]:has(button[key="back_from_login"]),
+    [data-testid="column"]:has(button[key="back_from_register"]) {{
+        display: block !important;
+        width: auto !important;
+        max-width: 200px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        flex: none !important;
+    }}
+    
+    /* Ensure the main container doesn't affect back button */
+    .main .block-container:has(button[key="back_from_login"]),
+    .main .block-container:has(button[key="back_from_register"]) {{
+        position: relative !important;
+    }}
+    
+    /* Position back button at top left */
+    button[key="back_from_login"],
+    button[key="back_from_register"] {{
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        margin-bottom: 1rem !important;
+    }}
+    
+    /* Fix button container centering - except back buttons */
+    .stButton:not(:has(button[key*="back"])) {{
+        display: flex !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+    }}
+    
+    /* Fix all button columns to be centered - except back buttons */
+    [data-testid="column"]:has(.stButton):not(:has(button[key*="back"])) {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }}
+    
+    /* Form submit buttons - enhanced for light mode */
+    .stForm .stButton > button,
+    .stFormSubmitButton > button,
+    div[data-testid="stForm"] .stButton > button {{
+        background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%) !important;
+        color: white !important;
+        border: 2px solid rgba(46,125,50,0.8) !important;
+        padding: 0.85rem 2rem !important;
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        border-radius: 12px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: {shadow_md} !important;
+        cursor: pointer !important;
+        min-width: 180px !important;
+    }}
+    
+    /* Form submit button hover effects */
+    .stForm .stButton > button:hover,
+    .stFormSubmitButton > button:hover,
+    div[data-testid="stForm"] .stButton > button:hover {{
+        transform: translateY(-3px) scale(1.05) !important;
+        background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%) !important;
+        box-shadow: 0 8px 25px rgba(46,125,50,0.4) !important;
+        border-color: #1B5E20 !important;
+    }}
+    
+    .stForm .stButton > button:active,
+    .stFormSubmitButton > button:active,
+    div[data-testid="stForm"] .stButton > button:active {{
+        transform: translateY(-1px) scale(1.02) !important;
+        box-shadow: 0 4px 15px rgba(46,125,50,0.3) !important;
     }}
     
     /* Large CTA buttons */
@@ -602,6 +782,109 @@ def get_custom_css(dark_mode=False):
         justify-content: center !important;
     }}
     
+    /* Fix hero button alignment - center the button columns */
+    [data-testid="column"]:has(button[key="hero_get_started"]),
+    [data-testid="column"]:has(button[key="hero_login"]) {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }}
+    
+    /* Center the button container */
+    .element-container:has(button[key="hero_get_started"]),
+    .element-container:has(button[key="hero_login"]) {{
+        display: flex !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+    }}
+    
+    /* Ensure the parent column containing both buttons is centered */
+    [data-testid="column"]:has([data-testid="column"]:has(button[key="hero_get_started"])) {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }}
+    
+    /* Center the button row container */
+    .element-container:has([data-testid="column"]:has(button[key="hero_get_started"])) {{
+        display: flex !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }}
+    
+    /* Force center alignment for hero buttons */
+    .stContainer:has(button[key="hero_get_started"]) {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 0 auto !important;
+    }}
+    
+    /* Center the button columns specifically */
+    [data-testid="column"]:has(button[key="hero_get_started"]) {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+    }}
+    
+    [data-testid="column"]:has(button[key="hero_login"]) {{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+    }}
+    
+    /* Fix specific button alignment issues */
+    /* "Explore your region's data" button */
+    button:has-text("Explore your region"),
+    button:has-text("Explore"),
+    [data-testid="column"]:has(button:has-text("Explore")) {{
+        margin-left: 12px !important;
+    }}
+    
+    /* "Chat with Flora now" button */
+    button:has-text("Chat with Flora"),
+    button:has-text("Chat"),
+    [data-testid="column"]:has(button:has-text("Chat")) {{
+        margin-left: 12px !important;
+    }}
+    
+    /* General button centering for all buttons - EXCEPT chat icon */
+    .element-container:has(.stButton):not(:has(#flora-chat-button-marker)) {{
+        display: flex !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }}
+    
+    /* Keep chat icon in fixed position (bottom right) */
+    .element-container:has(#flora-chat-button-marker) {{
+        display: block !important;
+        justify-content: unset !important;
+        margin: 0 !important;
+        width: auto !important;
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+    }}
+    
+    /* Ensure chat button stays in place */
+    .element-container:has(#flora-chat-button-marker) + .element-container {{
+        display: block !important;
+        justify-content: unset !important;
+        margin: 0 !important;
+        width: auto !important;
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 9999 !important;
+    }}
+    
     /* Carousel navigation buttons */
     button[key="carousel_prev"],
     button[key="carousel_next"] {{
@@ -644,12 +927,14 @@ def get_custom_css(dark_mode=False):
     }}
     
     .stButton > button:hover:not([key="carousel_prev"]):not([key="carousel_next"]) {{
-        transform: translateY(-4px) !important;
+        transform: translateY(-4px) scale(1.02) !important;
         box-shadow: 
             0 12px 24px rgba(0,0,0,0.3),
             0 6px 12px rgba(0,0,0,0.2),
             inset 0 -2px 4px rgba(0,0,0,0.1),
             inset 0 2px 4px rgba(255,255,255,0.9) !important;
+        background: {'linear-gradient(145deg, #4d4d4d, #3d3d3d)' if dark_mode else 'linear-gradient(145deg, #f8f8f8, #e8e8e8)'} !important;
+        border-color: #2E7D32 !important;
     }}
     
     .stButton > button:active:not([key="carousel_prev"]):not([key="carousel_next"]) {{
@@ -659,10 +944,12 @@ def get_custom_css(dark_mode=False):
             inset 0 2px 4px rgba(0,0,0,0.2) !important;
     }}
     
-    /* Form inputs - FIXED */
+    /* Form inputs - ENHANCED FOR LIGHT MODE */
     .stTextInput > div > div > input,
     .stSelectbox > div > div > select,
-    .stMultiSelect > div > div {{
+    .stMultiSelect > div > div,
+    .stMultiSelect div[data-baseweb="select"],
+    .stMultiSelect div[data-baseweb="select"] > div {{
         border-radius: 12px !important;
         border: 2px solid {input_border} !important;
         padding: 0.85rem !important;
@@ -672,17 +959,120 @@ def get_custom_css(dark_mode=False):
         transition: all 0.3s ease !important;
     }}
     
+    /* Fix placeholder visibility */
+    .stTextInput > div > div > input::placeholder {{
+        color: #757575 !important;
+        opacity: 1 !important;
+        font-weight: 400 !important;
+    }}
+    
+    .stTextInput > div > div > input::-webkit-input-placeholder {{
+        color: #757575 !important;
+        opacity: 1 !important;
+    }}
+    
+    .stTextInput > div > div > input::-moz-placeholder {{
+        color: #757575 !important;
+        opacity: 1 !important;
+    }}
+    
+    .stTextInput > div > div > input:-ms-input-placeholder {{
+        color: #757575 !important;
+        opacity: 1 !important;
+    }}
+    
+    /* Multiselect specific styling */
+    .stMultiSelect div[data-baseweb="select"] {{
+        background: {input_bg} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+    }}
+    
+    .stMultiSelect div[data-baseweb="select"] > div {{
+        background: {input_bg} !important;
+        color: {text_dark} !important;
+    }}
+    
+    .stMultiSelect div[data-baseweb="select"] input {{
+        background: {input_bg} !important;
+        color: {text_dark} !important;
+        border: none !important;
+    }}
+    
+    .stMultiSelect div[data-baseweb="select"] span {{
+        color: {text_dark} !important;
+    }}
+    
+    /* Multiselect tags/chips styling */
+    .stMultiSelect div[data-baseweb="select"] div[role="option"] {{
+        background: #2E7D32 !important;
+        color: white !important;
+        border-radius: 8px !important;
+        margin: 2px !important;
+    }}
+    
+    /* Multiselect dropdown menu */
+    .stMultiSelect div[data-baseweb="select"] + div {{
+        background: {input_bg} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+    }}
+    
     .stTextInput > div > div > input:focus,
-    .stSelectbox > div > div > select:focus {{
+    .stSelectbox > div > div > select:focus,
+    .stMultiSelect div[data-baseweb="select"]:focus,
+    .stMultiSelect div[data-baseweb="select"] > div:focus {{
         border-color: #2E7D32 !important;
         box-shadow: 0 0 0 3px rgba(46,125,50,0.1) !important;
         outline: none !important;
     }}
     
-    /* Selectbox styling */
+    /* Selectbox styling - enhanced for light mode */
     .stSelectbox label, .stTextInput label, .stMultiSelect label {{
         color: {text_dark} !important;
         font-weight: 600 !important;
+    }}
+    
+    /* Enhanced selectbox styling */
+    .stSelectbox div[data-baseweb="select"] {{
+        background: {input_bg} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+        color: {text_dark} !important;
+    }}
+    
+    .stSelectbox div[data-baseweb="select"] > div {{
+        background: {input_bg} !important;
+        color: {text_dark} !important;
+    }}
+    
+    .stSelectbox div[data-baseweb="select"] input {{
+        background: {input_bg} !important;
+        color: {text_dark} !important;
+        border: none !important;
+    }}
+    
+    .stSelectbox div[data-baseweb="select"] span {{
+        color: {text_dark} !important;
+    }}
+    
+    .stSelectbox div[data-baseweb="select"] svg {{
+        fill: {text_dark} !important;
+    }}
+    
+    /* Password toggle button styling */
+    .stTextInput button {{
+        background: {input_bg} !important;
+        color: {text_dark} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
+        margin-left: 0.5rem !important;
+    }}
+    
+    .stTextInput button:hover {{
+        background: {'#555555' if dark_mode else '#f0f0f0'} !important;
+        border-color: #2E7D32 !important;
     }}
     
     /* Selectbox and button cursor */
@@ -1394,8 +1784,12 @@ def show_hero_section():
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        # Custom styled buttons
-        col_a, col_b = st.columns(2)
+        # Centered buttons using a single centered column
+        centered_col = st.container()
+        
+        with centered_col:
+            # Create centered button layout
+            col_a, col_b = st.columns([1, 1], gap="large")
         
         with col_a:
             if st.button("🚀 Get Started", key='hero_get_started'):
@@ -1505,8 +1899,10 @@ def show_why_bloomwatch():
                 <p style="margin: 1rem 0;"><b>🌦️ Climate adaptation</b><br>
                    <small>Weather-smart strategies</small></p>
             </div>
-            <div style="margin-top: 1.5rem; padding: 1rem; background: #F3E5F5; border-radius: 8px;">
-                <p style="margin: 0; font-weight: bold;">Powered by GPT-4</p>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #F3E5F5; border-radius: 8px; text-align: center;">
+                <p style="margin: 0; font-weight: bold; color: #2E7D32;">
+                    Chat With Flora
+                </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1635,7 +2031,8 @@ def show_flora_chatbot_section():
         """, unsafe_allow_html=True)
         
         if st.button("💬 Chat with Flora Now", key='try_flora'):
-            st.session_state.show_flora_demo = not st.session_state.show_flora_demo
+            st.session_state.flora_chat = True
+            st.rerun()
     
     with col_right:
         # Mock chatbot interface
@@ -1877,7 +2274,7 @@ def show_testimonials_section():
         st.markdown("""
         **John Odhiambo is a smallholder maize farmer from Kisumu, Kenya.**
         
-        After joining BloomWatch in March 2024:
+        After joining BloomWatch:
         
         - 📊 Increased maize yield from 2.5 to 3.8 tons per acre (52% improvement)
         - 💰 Earned an extra KSh 45,000 ($350) per season
@@ -2678,11 +3075,15 @@ def login_page():
     with col2:
         st.markdown(f"## 👤 {t('login')}")
         
-        # Lottie animation
+        # Lottie animation with fallback
         if LOTTIE_AVAILABLE:
             lottie_farming = load_lottie_url(LOTTIE_URLS['farming'])
             if lottie_farming:
                 st_lottie(lottie_farming, height=150, key="login_animation")
+            else:
+                show_animation_fallback("farming")
+        else:
+            show_animation_fallback("farming")
         
         with st.form("login_form", clear_on_submit=False):
             phone = st.text_input(
@@ -2741,11 +3142,25 @@ def register_page():
     with col2:
         st.markdown(f"## 📝 {t('register')}")
         
-        # Lottie animation
+        # Lottie animation - plant growth using JSON
         if LOTTIE_AVAILABLE:
             lottie_plant = load_lottie_url(LOTTIE_URLS['plant_growth'])
             if lottie_plant:
                 st_lottie(lottie_plant, height=150, key="register_animation")
+            else:
+                # Try using the JSON URL directly with st_lottie
+                try:
+                    import requests
+                    response = requests.get(LOTTIE_URLS['plant_growth'], timeout=5)
+                    if response.status_code == 200:
+                        plant_data = response.json()
+                        st_lottie(plant_data, height=150, key="register_animation_direct")
+                    else:
+                        show_animation_fallback("plant")
+                except:
+                    show_animation_fallback("plant")
+        else:
+            show_animation_fallback("plant")
         
         # Progress indicator
         st.progress(0.0, text="Step 1 of 3: Personal Information")
