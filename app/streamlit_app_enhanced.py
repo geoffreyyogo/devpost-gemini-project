@@ -2528,6 +2528,44 @@ def show_pictures_carousel():
         width: 14px;
         height: 14px;
     }
+    
+    /* Mobile responsiveness for carousel */
+    @media screen and (max-width: 768px) {
+        .carousel-container-v2 {
+            max-height: 400px;
+            border-radius: 12px;
+        }
+        .carousel-container-v2 img {
+            height: 400px;
+        }
+        .carousel-caption-v2 {
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            margin: 0 4px;
+        }
+        .carousel-dot-active {
+            width: 10px;
+            height: 10px;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .carousel-container-v2 {
+            max-height: 300px;
+            border-radius: 8px;
+        }
+        .carousel-container-v2 img {
+            height: 300px;
+        }
+        .carousel-caption-v2 {
+            padding: 0.8rem;
+            font-size: 0.8rem;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
     
@@ -2574,48 +2612,94 @@ def show_pictures_carousel():
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Auto-refresh mechanism for carousel rotation - check time again
-    time_elapsed = time.time() - st.session_state.last_rotation
-    if time_elapsed > 3.0:
-        st.session_state.carousel_index = (st.session_state.carousel_index + 1) % len(images)
-        st.session_state.last_rotation = time.time()
-        st.rerun()
+    # Don't auto-refresh if modal is open to avoid interference
+    if not st.session_state.get('flora_chat', False):
+        time_elapsed = time.time() - st.session_state.last_rotation
+        if time_elapsed > 3.0:
+            st.session_state.carousel_index = (st.session_state.carousel_index + 1) % len(images)
+            st.session_state.last_rotation = time.time()
+            st.rerun()
     
-    # Image grid alternative
+    # Image grid alternative with responsive styling
+    st.markdown("""
+    <style>
+    .farm-grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .farm-card {
+        background-size: cover;
+        background-position: center;
+        height: 200px;
+        border-radius: 16px;
+        position: relative;
+    }
+    .farm-card-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(46,125,50,0.9);
+        padding: 1rem;
+        border-radius: 0 0 16px 16px;
+    }
+    .farm-card-caption p {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+    }
+    
+    @media screen and (max-width: 768px) {
+        .farm-grid-container {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .farm-card {
+            height: 180px;
+        }
+        .farm-card-caption {
+            padding: 0.8rem;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .farm-card {
+            height: 150px;
+            border-radius: 12px;
+        }
+        .farm-card-caption {
+            padding: 0.6rem;
+            border-radius: 0 0 12px 12px;
+        }
+        .farm-card-caption p {
+            font-size: 0.9rem;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     st.markdown("### 🌾 More from Kenyan Farms")
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400') center/cover; 
-                    height: 200px; border-radius: 16px; position: relative;">
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; 
-                        background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
-                <p style="color: white; margin: 0; font-weight: bold;">Maize Blooming</p>
+    st.markdown("""
+    <div class="farm-grid-container">
+        <div class="farm-card" style="background-image: url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400');">
+            <div class="farm-card-caption">
+                <p>Maize Blooming</p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: url('https://www.greenlife.co.ke/wp-content/uploads/2022/04/Coffee-Feeding-Greenlife.jpg') center/cover; 
-                    height: 200px; border-radius: 16px; position: relative;">
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; 
-                        background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
-                <p style="color: white; margin: 0; font-weight: bold;">Coffee Harvest</p>
+        <div class="farm-card" style="background-image: url('https://www.greenlife.co.ke/wp-content/uploads/2022/04/Coffee-Feeding-Greenlife.jpg');">
+            <div class="farm-card-caption">
+                <p>Coffee Harvest</p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400') center/cover; 
-                    height: 200px; border-radius: 16px; position: relative;">
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; 
-                        background: rgba(46,125,50,0.9); padding: 1rem; border-radius: 0 0 16px 16px;">
-                <p style="color: white; margin: 0; font-weight: bold;">Tea Plantations</p>
+        <div class="farm-card" style="background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400');">
+            <div class="farm-card-caption">
+                <p>Tea Plantations</p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
 
 def show_footer():
     """Section 8: Comprehensive footer with links and social proof"""
@@ -2676,6 +2760,46 @@ def show_footer():
         font-weight: 600;
         display: inline-block;
         margin-top: 1rem;
+    }
+    
+    /* Mobile responsiveness for footer */
+    @media screen and (max-width: 768px) {
+        .footer-section {
+            padding: 2rem 1rem;
+            border-radius: 12px;
+        }
+        .footer-heading {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .footer-link {
+            font-size: 0.9rem;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+        }
+        .footer-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .footer-badge {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+    }
+    
+    @media screen and (max-width: 480px) {
+        .footer-section {
+            padding: 1.5rem 0.8rem;
+        }
+        .footer-heading {
+            font-size: 1rem;
+        }
+        .footer-link {
+            font-size: 0.85rem;
+        }
+        .footer-text {
+            font-size: 0.85rem;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -2843,7 +2967,8 @@ def show_footer():
             body { 
                 margin: 0; 
                 padding: 20px; 
-                font-family: 'Inter', Arial, sans-serif; 
+                font-family: 'Inter', Arial, sans-serif;
+                overflow: hidden;
             }
             .logo-container {
                 text-align: center;
@@ -2856,123 +2981,238 @@ def show_footer():
                 margin-bottom: 2rem;
                 font-weight: bold;
                 font-size: 1.2rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
             }
-            .logos-grid {
+            .marquee-wrapper {
+                overflow: hidden;
+                position: relative;
+                width: 100%;
+                padding: 1rem 0;
+            }
+            .marquee-content {
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 2.5rem;
-                flex-wrap: wrap;
-                max-width: 1200px;
-                margin: 0 auto;
+                animation: scroll-left 30s linear infinite;
+                will-change: transform;
+            }
+            .marquee-content:hover {
+                animation-play-state: paused;
+            }
+            @keyframes scroll-left {
+                0% {
+                    transform: translateX(0);
+                }
+                100% {
+                    transform: translateX(-50%);
+                }
             }
             .logo-item {
-                padding: 1rem;
+                flex-shrink: 0;
+                padding: 0 2.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 transition: transform 0.3s ease;
-                cursor: pointer;
             }
             .logo-item:hover {
-                transform: scale(1.1);
+                transform: scale(1.15);
             }
             .logo-img {
-                height: 60px;
+                height: 70px;
+                max-width: 180px;
                 object-fit: contain;
+                filter: grayscale(20%);
+                transition: all 0.3s ease;
             }
-            .logo-text {
-                text-align: center;
-            }
-            .logo-text h3 {
-                margin: 0;
-                font-weight: bold;
-                color: #2E7D32;
-                font-size: 1.1rem;
-            }
-            .logo-text p {
-                margin: 0;
-                font-size: 0.75rem;
-                color: #666;
+            .logo-item:hover .logo-img {
+                filter: grayscale(0%);
             }
             .ksa-bg {
                 background: white;
-                padding: 0.5rem;
+                padding: 0.8rem;
                 border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            }
+            
+            /* Mobile responsiveness */
+            @media screen and (max-width: 768px) {
+                body {
+                    padding: 10px;
+                }
+                .logo-container {
+                    padding: 1.5rem 1rem;
+                }
+                .powered-by-text {
+                    font-size: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+                .logo-item {
+                    padding: 0 2rem;
+                }
+                .logo-img {
+                    height: 60px;
+                    max-width: 150px;
+                }
+                .marquee-content {
+                    animation: scroll-left 25s linear infinite;
+                }
+            }
+            
+            @media screen and (max-width: 480px) {
+                .logo-container {
+                    padding: 1rem 0.5rem;
+                }
+                .powered-by-text {
+                    font-size: 0.9rem;
+                    margin-bottom: 1rem;
+                }
+                .logo-item {
+                    padding: 0 1.5rem;
+                }
+                .logo-img {
+                    height: 50px;
+                    max-width: 120px;
+                }
+                .marquee-content {
+                    animation: scroll-left 20s linear infinite;
+                }
             }
         </style>
     </head>
     <body>
         <div class="logo-container">
-            <p class="powered-by-text">POWERED BY</p>
-            <div class="logos-grid">
-                
-                <!-- NASA -->
-                <div class="logo-item">
-                    <img src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg" 
-                         alt="NASA" class="logo-img">
-                </div>
-                
-                <!-- Digital Earth Africa -->
-                <div class="logo-item">
-                    <img src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png" 
-                         alt="Digital Earth Africa" class="logo-img">
-                </div>
-                
-                <!-- Google Earth Engine -->
-                <div class="logo-item">
-                    <img src="https://earthengine.google.com/static/images/earth_engine_logo.png" 
-                         alt="Google Earth Engine" class="logo-img">
-                </div>
-                
-                <!-- ESRI -->
-                <div class="logo-item">
-                    <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png" 
-                         alt="ESRI" style="height: 50px; object-fit: contain;">
-                </div>
-                
-                <!-- KALRO -->
-                <div class="logo-item">
-                    <img src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp" 
-                         alt="KALRO" class="logo-img">
-                </div>
-                
-                <!-- Kenya Space Agency -->
-                <div class="logo-item">
-                    <div class="ksa-bg">
-                        <img src="https://ksa.go.ke/assets/images/ksa-logo-new.png-web2-207x165.png" 
-                             alt="Kenya Space Agency" style="height: 55px; object-fit: contain;">
+            <p class="powered-by-text">Powered By</p>
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    <!-- First set of logos -->
+                    <div class="logo-item">
+                        <img src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg" 
+                             alt="NASA" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png" 
+                             alt="Digital Earth Africa" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://earthengine.google.com/static/images/earth_engine_logo.png" 
+                             alt="Google Earth Engine" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png" 
+                             alt="ESRI" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp" 
+                             alt="KALRO" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <div class="ksa-bg">
+                            <img src="https://ksa.go.ke/assets/images/ksa-logo-new.png-web2-207x165.png" 
+                                 alt="Kenya Space Agency" class="logo-img">
+                        </div>
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png" 
+                             alt="MESPT" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png" 
+                             alt="Africa's Talking" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png" 
+                             alt="RIIS" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png" 
+                             alt="University of Nairobi" class="logo-img">
+                    </div>
+                    
+                    <!-- Duplicate set for seamless loop -->
+                    <div class="logo-item">
+                        <img src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg" 
+                             alt="NASA" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png" 
+                             alt="Digital Earth Africa" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://earthengine.google.com/static/images/earth_engine_logo.png" 
+                             alt="Google Earth Engine" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png" 
+                             alt="ESRI" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp" 
+                             alt="KALRO" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <div class="ksa-bg">
+                            <img src="https://ksa.go.ke/assets/images/ksa-logo-new.png-web2-207x165.png" 
+                                 alt="Kenya Space Agency" class="logo-img">
+                        </div>
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png" 
+                             alt="MESPT" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png" 
+                             alt="Africa's Talking" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png" 
+                             alt="RIIS" class="logo-img">
+                    </div>
+                    
+                    <div class="logo-item">
+                        <img src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png" 
+                             alt="University of Nairobi" class="logo-img">
                     </div>
                 </div>
-                
-                <!-- MESPT -->
-                <div class="logo-item">
-                    <img src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png" 
-                         alt="MESPT" class="logo-img">
-                </div>
-                
-                <!-- Africa's Talking -->
-                <div class="logo-item">
-                    <img src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png" 
-                         alt="Africa's Talking" style="height: 50px; object-fit: contain;">
-                </div>
-                
-                <!-- RIIS -->
-                <div class="logo-item">
-                    <img src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png" 
-                         alt="RIIS" class="logo-img">
-                </div>
-                
-                <!-- University of Nairobi -->
-                <div class="logo-item">
-                    <img src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png" 
-                         alt="University of Nairobi" class="logo-img">
-                </div>
-                
             </div>
         </div>
+        
+        <script>
+            // Auto-adjust iframe height for mobile
+            function adjustHeight() {
+                const height = document.body.scrollHeight;
+                window.parent.postMessage({type: 'setHeight', height: height}, '*');
+            }
+            
+            // Call on load and resize
+            window.addEventListener('load', adjustHeight);
+            window.addEventListener('resize', adjustHeight);
+            
+            // Initial call
+            adjustHeight();
+        </script>
     </body>
     </html>
     """
     
-    components.html(logos_html, height=300)
+    # Compact height for marquee scrolling
+    components.html(logos_html, height=250, scrolling=False)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -4220,7 +4460,7 @@ def show_flora_chat_modal():
     # Close button
     if st.button("Close", key="flora_close_btn", type="primary", use_container_width=True):
         st.session_state.flora_chat = False
-        st.session_state.flora_chat_just_opened = False
+        st.session_state.flora_chat_open_count = 0
         if 'flora_chat_page' in st.session_state:
             del st.session_state.flora_chat_page
         st.rerun()
@@ -4313,31 +4553,34 @@ def main():
     if chat_button_clicked:
         st.session_state.flora_chat = True
         st.session_state.flora_chat_page = st.session_state.page
-        st.session_state.flora_chat_just_opened = True
+        st.session_state.flora_chat_open_count = 0  # Reset interaction counter
         st.rerun()
     
     # Handle Flora chat modal
     if 'flora_chat' in st.session_state and st.session_state.flora_chat:
-        # If dialog was open in previous run but chat button wasn't just clicked,
-        # and we're in a new run (meaning user clicked something else),
-        # then the dialog was dismissed
-        if not st.session_state.get('flora_chat_just_opened', False):
-            # Dialog was open before, but not just now - assume dismissed, don't show
+        # Increment the open count to track how many renders have occurred
+        if 'flora_chat_open_count' not in st.session_state:
+            st.session_state.flora_chat_open_count = 0
+        st.session_state.flora_chat_open_count += 1
+        
+        # If count > 1 and we're in a new render (user clicked something), assume dismissal
+        # Count = 1: first time showing modal after button click
+        # Count > 1: modal was open, now a new rerun happened (user clicked something else)
+        if st.session_state.flora_chat_open_count > 1:
+            # User dismissed and clicked something else, don't show modal
             st.session_state.flora_chat = False
+            st.session_state.flora_chat_open_count = 0
             if 'flora_chat_page' in st.session_state:
                 del st.session_state.flora_chat_page
+        elif 'flora_chat_page' in st.session_state and st.session_state.flora_chat_page == st.session_state.page:
+            # Modal is legitimately open, show it
+            show_flora_chat_modal()
         else:
-            # Dialog was just opened, or is currently open - show it if on correct page
-            if 'flora_chat_page' in st.session_state and st.session_state.flora_chat_page == st.session_state.page:
-                show_flora_chat_modal()
-                # Clear the "just opened" flag for next run
-                st.session_state.flora_chat_just_opened = False
-            else:
-                # Page changed
-                st.session_state.flora_chat = False
-                st.session_state.flora_chat_just_opened = False
-                if 'flora_chat_page' in st.session_state:
-                    del st.session_state.flora_chat_page
+            # Page changed, clear the modal
+            st.session_state.flora_chat = False
+            st.session_state.flora_chat_open_count = 0
+            if 'flora_chat_page' in st.session_state:
+                del st.session_state.flora_chat_page
     
     # Check authentication
     if st.session_state.authenticated and st.session_state.session_token:
@@ -4364,3 +4607,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
