@@ -66,3 +66,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Documentation files (keep locally, exclude from Git)
+# Keep README.md tracked
+*.md
+!README.md

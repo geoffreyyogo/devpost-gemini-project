@@ -44,7 +44,7 @@ jobs:
     - name: Test Streamlit app import
       run: |
         cd app
-        python -c "import streamlit_app; print('Streamlit app imports successfully')"
+        python -c "import streamlit_app_enhanced; print('Streamlit app imports successfully')"
 
   docker:
     runs-on: ubuntu-latest
