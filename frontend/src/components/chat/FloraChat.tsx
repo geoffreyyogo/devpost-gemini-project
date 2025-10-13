@@ -8,12 +8,7 @@ import { MessageSquare, X, Send, Loader2, Sprout, AlertCircle, Bot } from 'lucid
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { getFallbackResponse } from './FloraFallback'
-
-interface ChatMessage {
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: Date
-}
+import type { ChatMessage } from '@/types'
 
 export function FloraChatWidget() {
   const { farmer } = useAuthStore()
@@ -41,7 +36,7 @@ export function FloraChatWidget() {
         content: farmer 
           ? `Hi ${farmer.name.split(' ')[0]}! 👋 I'm Flora, your AI farming assistant. I can help you with crop advice, bloom predictions, weather insights, and more. How can I assist you today?`
           : `Hello! 👋 I'm Flora, your AI farming assistant. I'm here to help with crop advice, bloom predictions, and farming best practices. What would you like to know?`,
-        timestamp: new Date()
+        timestamp: new Date().toISOString()
       }
       setMessages([welcomeMessage])
     }
@@ -53,7 +48,7 @@ export function FloraChatWidget() {
     const userMessage: ChatMessage = {
       role: 'user',
       content: input,
-      timestamp: new Date()
+      timestamp: new Date().toISOString()
     }
 
     setMessages(prev => [...prev, userMessage])
@@ -67,7 +62,7 @@ export function FloraChatWidget() {
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response,
-        timestamp: new Date()
+        timestamp: new Date().toISOString()
       }
       
       setMessages(prev => [...prev, assistantMessage])
@@ -84,7 +79,7 @@ export function FloraChatWidget() {
         const assistantMessage: ChatMessage = {
           role: 'assistant',
           content: fallbackResponse,
-          timestamp: new Date()
+          timestamp: new Date().toISOString()
         }
         setMessages(prev => [...prev, assistantMessage])
       } else {
@@ -92,7 +87,7 @@ export function FloraChatWidget() {
         const errorMessage: ChatMessage = {
           role: 'assistant',
           content: "I'm having trouble processing your request right now. Please try again in a moment.",
-          timestamp: new Date()
+          timestamp: new Date().toISOString()
         }
         setMessages(prev => [...prev, errorMessage])
       }
