@@ -70,14 +70,14 @@ export async function getLiveMapData(): Promise<MapData> {
     const response = await mapClient.get('/api/map/live-data')
     console.log('Map data response:', response.data)
     return response.data.data
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to fetch live map data:', error)
     console.error('Error details:', {
-      message: error.message,
-      code: error.code,
-      response: error.response?.data,
-      status: error.response?.status,
-      statusText: error.response?.statusText
+      message: error?.message,
+      code: error?.code,
+      response: error?.response?.data,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText
     })
     throw error
   }
@@ -92,14 +92,14 @@ export async function getClimateStats(): Promise<ClimateStats> {
     const response = await mapClient.get('/api/map/climate-stats')
     console.log('Climate stats response:', response.data)
     return response.data.data
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to fetch climate stats:', error)
     console.error('Error details:', {
-      message: error.message,
-      code: error.code,
-      response: error.response?.data,
-      status: error.response?.status,
-      statusText: error.response?.statusText
+      message: error?.message,
+      code: error?.code,
+      response: error?.response?.data,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText
     })
     throw error
   }
@@ -114,14 +114,14 @@ export async function getDataFreshness(): Promise<DataFreshness> {
     const response = await mapClient.get('/api/map/freshness')
     console.log('Data freshness response:', response.data)
     return response.data.data
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to fetch data freshness:', error)
     console.error('Error details:', {
-      message: error.message,
-      code: error.code,
-      response: error.response?.data,
-      status: error.response?.status,
-      statusText: error.response?.statusText
+      message: error?.message,
+      code: error?.code,
+      response: error?.response?.data,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText
     })
     throw error
   }
@@ -134,7 +134,7 @@ export async function getCountyData(countyId: string): Promise<any> {
   try {
     const response = await mapClient.get(`/api/counties/${countyId}`)
     return response.data.data
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Failed to fetch county data for ${countyId}:`, error)
     throw error
   }
@@ -150,7 +150,7 @@ export async function getRegionsAndCrops(): Promise<{
   try {
     const response = await mapClient.get('/api/public/regions')
     return response.data.data
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to fetch regions and crops:', error)
     throw error
   }
