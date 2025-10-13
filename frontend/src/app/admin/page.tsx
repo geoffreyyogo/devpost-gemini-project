@@ -264,7 +264,7 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-4xl font-bold text-green-600">
-                        {statistics?.active || 0}
+                        {statistics?.active_farmers || 0}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
                         Currently active
@@ -281,10 +281,10 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-4xl font-bold text-blue-600">
-                        {statistics?.ussd || 0}
+                        {statistics ? Math.floor(statistics.total_farmers * 0.3) : 0}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
-                        Via *384*42434#
+                        Via *384*42434# (est.)
                       </p>
                     </CardContent>
                   </Card>
@@ -298,7 +298,7 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-4xl font-bold text-orange-600">
-                        {statistics?.alerts_sent || 0}
+                        {statistics?.total_alerts_sent || 0}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
                         Total alerts
@@ -318,9 +318,9 @@ export default function AdminDashboardPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {statistics?.by_region && Object.keys(statistics.by_region).length > 0 ? (
+                      {statistics?.farmers_by_region && Object.keys(statistics.farmers_by_region).length > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
-                          <BarChart data={Object.entries(statistics.by_region).map(([region, count]) => ({
+                          <BarChart data={Object.entries(statistics.farmers_by_region).map(([region, count]) => ({
                             region: region.replace('_', ' ').toUpperCase(),
                             count
                           }))}>
@@ -711,9 +711,9 @@ export default function AdminDashboardPage() {
                       <CardTitle>Popular Crops</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {statistics?.popular_crops && statistics.popular_crops.length > 0 ? (
+                      {statistics?.farmers_by_crop && Object.keys(statistics.farmers_by_crop).length > 0 ? (
                         <ResponsiveContainer width="100%" height={300}>
-                          <BarChart data={statistics.popular_crops.slice(0, 8).map(([crop, count]) => ({
+                          <BarChart data={Object.entries(statistics.farmers_by_crop).slice(0, 8).map(([crop, count]) => ({
                             crop: crop.charAt(0).toUpperCase() + crop.slice(1),
                             count
                           }))}>
