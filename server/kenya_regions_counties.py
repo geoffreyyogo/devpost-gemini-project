@@ -92,7 +92,9 @@ def get_county_crops(county_id: str) -> list:
     import os
     
     try:
-        file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'county_data', f'{county_id.lower().replace(" ", "_").replace("-", "_").replace("\'", "")}.json')
+        # Clean county_id for filename
+        clean_id = county_id.lower().replace(" ", "_").replace("-", "_").replace("'", "")
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'county_data', f'{clean_id}.json')
         with open(file_path, 'r') as f:
             data = json.load(f)
             return data.get('main_crops', [])

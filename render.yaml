@@ -108,7 +108,7 @@ services:
     branch: deploy-nextjs-fastapi  # Change to 'main' after testing
     buildCommand: |
       cd frontend
-      npm install --legacy-peer-deps
+      npm ci --legacy-peer-deps --include=dev
       npm run build
     startCommand: cd frontend && npm start
     envVars:
