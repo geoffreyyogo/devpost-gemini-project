@@ -102,7 +102,7 @@ services:
   # Next.js Frontend
   - type: web
     name: bloomwatch-nextjs
-    env: static
+    env: node
     region: oregon
     plan: free
     branch: deploy-nextjs-fastapi  # Change to 'main' after testing
@@ -110,7 +110,7 @@ services:
       cd frontend
       npm ci --legacy-peer-deps --include=dev
       npm run build
-    publishDir: frontend/.next
+    startCommand: cd frontend && npm start
     envVars:
       - key: NODE_VERSION
         value: "20.11.1"

@@ -247,10 +247,10 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-4xl font-bold text-purple-600">
-                        {statistics?.total || 0}
+                        {statistics?.total_farmers || 0}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
-                        Registered users
+                        Registered farmers
                       </p>
                     </CardContent>
                   </Card>
