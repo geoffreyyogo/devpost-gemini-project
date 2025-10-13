@@ -183,7 +183,7 @@ export default function DashboardPage() {
                     {dashboardData?.bloom_events?.length || 0}
                   </p>
                   <p className="text-sm text-gray-500 mt-1">
-                    {dashboardData?.bloom_events?.length > 0 ? 'In progress' : 'None detected'}
+                    {(dashboardData?.bloom_events?.length ?? 0) > 0 ? 'In progress' : 'None detected'}
                   </p>
                 </CardContent>
               </Card>
