@@ -1,0 +1,32 @@
+{
+  "county_id": "machakos",
+  "county_name": "Machakos",
+  "region": "eastern",
+  "coordinates": {
+    "lat": -1.522,
+    "lon": 37.263
+  },
+  "main_crops": [
+    "maize",
+    "beans",
+    "fruits",
+    "vegetables"
+  ],
+  "last_updated": "2025-10-13T07:56:20.164560",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 30.98436585229697,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 218.48330131710438,
+    "bloom_percentage": 1.8206941776425365,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

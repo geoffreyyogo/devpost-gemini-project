@@ -1,0 +1,32 @@
+{
+  "county_id": "taita_taveta",
+  "county_name": "Taita-Taveta",
+  "region": "coast",
+  "coordinates": {
+    "lat": -3.316,
+    "lon": 38.348
+  },
+  "main_crops": [
+    "maize",
+    "beans",
+    "horticulture",
+    "sisal"
+  ],
+  "last_updated": "2025-10-13T08:08:04.099462",
+  "satellite_data": {
+    "ndvi": 0.22340589834525407,
+    "ndwi": -0.40642749071346046,
+    "rainfall_mm": 0,
+    "temperature_c": 32.22616004429229,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 344.4302337326269,
+    "bloom_percentage": 2.870251947771891,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

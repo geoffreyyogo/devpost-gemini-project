@@ -1,0 +1,30 @@
+{
+  "county_id": "nairobi",
+  "county_name": "Nairobi",
+  "region": "nairobi",
+  "coordinates": {
+    "lat": -1.286,
+    "lon": 36.817
+  },
+  "main_crops": [
+    "urban farming",
+    "horticulture"
+  ],
+  "last_updated": "2025-10-13T08:24:57.218471",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 27.087273012609025,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 623.7796580423042,
+    "bloom_percentage": 5.198163817019202,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

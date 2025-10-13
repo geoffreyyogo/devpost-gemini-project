@@ -1,0 +1,32 @@
+{
+  "county_id": "homa_bay",
+  "county_name": "Homa Bay",
+  "region": "nyanza",
+  "coordinates": {
+    "lat": -0.523,
+    "lon": 34.457
+  },
+  "main_crops": [
+    "maize",
+    "sorghum",
+    "fishing",
+    "cotton"
+  ],
+  "last_updated": "2025-10-13T08:00:29.798355",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 25.555414073294024,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 626.6059661131629,
+    "bloom_percentage": 5.221716384276358,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

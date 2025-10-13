@@ -1,0 +1,32 @@
+{
+  "county_id": "busia",
+  "county_name": "Busia",
+  "region": "western",
+  "coordinates": {
+    "lat": 0.45,
+    "lon": 34.111
+  },
+  "main_crops": [
+    "maize",
+    "cassava",
+    "sweet potatoes",
+    "millet"
+  ],
+  "last_updated": "2025-10-13T07:58:55.392603",
+  "satellite_data": {
+    "ndvi": 0.4712312531681052,
+    "ndwi": -0.45637203661324927,
+    "rainfall_mm": 0,
+    "temperature_c": 25.97837291240487,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 232.4385068003263,
+    "bloom_percentage": 1.936987556669386,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

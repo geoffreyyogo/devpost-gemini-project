@@ -1,0 +1,33 @@
+{
+  "county_id": "kirinyaga",
+  "county_name": "Kirinyaga",
+  "region": "central",
+  "coordinates": {
+    "lat": -0.659,
+    "lon": 37.383
+  },
+  "main_crops": [
+    "rice",
+    "maize",
+    "beans",
+    "coffee",
+    "tea"
+  ],
+  "last_updated": "2025-10-13T07:44:04.510750",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 30.648244883361855,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 721.8497043636514,
+    "bloom_percentage": 6.015414203030429,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

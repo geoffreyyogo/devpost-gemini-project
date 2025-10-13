@@ -1,0 +1,31 @@
+{
+  "county_id": "lamu",
+  "county_name": "Lamu",
+  "region": "coast",
+  "coordinates": {
+    "lat": -2.271,
+    "lon": 40.902
+  },
+  "main_crops": [
+    "coconut",
+    "fishing",
+    "maize"
+  ],
+  "last_updated": "2025-10-13T08:07:07.761113",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": -0.10760714963124865,
+    "rainfall_mm": 0,
+    "temperature_c": 28.91205183342657,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 512.9782348381412,
+    "bloom_percentage": 4.274818623651177,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

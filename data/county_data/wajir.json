@@ -1,0 +1,29 @@
+{
+  "county_id": "wajir",
+  "county_name": "Wajir",
+  "region": "north_eastern",
+  "coordinates": {
+    "lat": 1.747,
+    "lon": 40.057
+  },
+  "main_crops": [
+    "livestock"
+  ],
+  "last_updated": "2025-10-13T08:24:42.027626",
+  "satellite_data": {
+    "ndvi": 0.14113416371930212,
+    "ndwi": -0.33909832115547894,
+    "rainfall_mm": 0,
+    "temperature_c": 36.24954461955766,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0017862235107421875,
+    "bloom_percentage": 1.927299701755431e-06,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

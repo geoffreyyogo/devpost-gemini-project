@@ -1,0 +1,33 @@
+{
+  "county_id": "kiambu",
+  "county_name": "Kiambu",
+  "region": "central",
+  "coordinates": {
+    "lat": -1.171,
+    "lon": 36.835
+  },
+  "main_crops": [
+    "coffee",
+    "tea",
+    "maize",
+    "beans",
+    "potatoes"
+  ],
+  "last_updated": "2025-10-13T07:43:50.737249",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 25.405375252016842,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 770.1444474145135,
+    "bloom_percentage": 6.417870395120946,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

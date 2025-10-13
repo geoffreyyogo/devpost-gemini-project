@@ -1,0 +1,2 @@
+date,time,region,bbox,temperature_mean_c,temperature_min_c,temperature_max_c,temperature_images
+2025-10-06,00:00:00,Kenya,"[36.0, -1.5, 37.5, 0.5]",25.823879947884187,4.130000000000052,41.51666666666669,3

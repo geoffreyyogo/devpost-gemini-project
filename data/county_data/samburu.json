@@ -1,0 +1,31 @@
+{
+  "county_id": "samburu",
+  "county_name": "Samburu",
+  "region": "rift_valley",
+  "coordinates": {
+    "lat": 1.216,
+    "lon": 36.944
+  },
+  "main_crops": [
+    "livestock",
+    "maize",
+    "sorghum"
+  ],
+  "last_updated": "2025-10-13T08:10:08.014969",
+  "satellite_data": {
+    "ndvi": 0.2430565212107746,
+    "ndwi": -0.35668329728778,
+    "rainfall_mm": 0,
+    "temperature_c": 33.61809126728787,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.17337964630126954,
+    "bloom_percentage": 0.0005009778167370151,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

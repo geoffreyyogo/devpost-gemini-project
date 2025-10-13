@@ -1,0 +1,33 @@
+{
+  "county_id": "nyandarua",
+  "county_name": "Nyandarua",
+  "region": "central",
+  "coordinates": {
+    "lat": -0.18,
+    "lon": 36.48
+  },
+  "main_crops": [
+    "potatoes",
+    "cabbages",
+    "wheat",
+    "maize",
+    "pyrethrum"
+  ],
+  "last_updated": "2025-10-13T07:45:03.379852",
+  "satellite_data": {
+    "ndvi": 0.46264576367056703,
+    "ndwi": -0.4506095586818156,
+    "rainfall_mm": 0,
+    "temperature_c": 21.283051579968078,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

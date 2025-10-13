@@ -1,0 +1,1496 @@
+{
+  "kiambu": {
+    "county_id": "kiambu",
+    "county_name": "Kiambu",
+    "region": "central",
+    "coordinates": {
+      "lat": -1.171,
+      "lon": 36.835
+    },
+    "main_crops": [
+      "coffee",
+      "tea",
+      "maize",
+      "beans",
+      "potatoes"
+    ],
+    "last_updated": "2025-10-13T07:43:50.737249",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 25.405375252016842,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 770.1444474145135,
+      "bloom_percentage": 6.417870395120946,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kirinyaga": {
+    "county_id": "kirinyaga",
+    "county_name": "Kirinyaga",
+    "region": "central",
+    "coordinates": {
+      "lat": -0.659,
+      "lon": 37.383
+    },
+    "main_crops": [
+      "rice",
+      "maize",
+      "beans",
+      "coffee",
+      "tea"
+    ],
+    "last_updated": "2025-10-13T07:44:04.510750",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 30.648244883361855,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 721.8497043636514,
+      "bloom_percentage": 6.015414203030429,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "muranga": {
+    "county_id": "muranga",
+    "county_name": "Murang'a",
+    "region": "central",
+    "coordinates": {
+      "lat": -0.722,
+      "lon": 37.152
+    },
+    "main_crops": [
+      "coffee",
+      "tea",
+      "maize",
+      "beans",
+      "macadamia"
+    ],
+    "last_updated": "2025-10-13T07:44:17.516547",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 28.49472366539086,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 755.9940583916732,
+      "bloom_percentage": 6.299950486597276,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "nyandarua": {
+    "county_id": "nyandarua",
+    "county_name": "Nyandarua",
+    "region": "central",
+    "coordinates": {
+      "lat": -0.18,
+      "lon": 36.48
+    },
+    "main_crops": [
+      "potatoes",
+      "cabbages",
+      "wheat",
+      "maize",
+      "pyrethrum"
+    ],
+    "last_updated": "2025-10-13T07:45:03.379852",
+    "satellite_data": {
+      "ndvi": 0.46264576367056703,
+      "ndwi": -0.4506095586818156,
+      "rainfall_mm": 0,
+      "temperature_c": 21.283051579968078,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "nyeri": {
+    "county_id": "nyeri",
+    "county_name": "Nyeri",
+    "region": "central",
+    "coordinates": {
+      "lat": -0.42,
+      "lon": 36.95
+    },
+    "main_crops": [
+      "coffee",
+      "tea",
+      "maize",
+      "beans",
+      "dairy"
+    ],
+    "last_updated": "2025-10-13T07:45:16.540737",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 23.336930375949894,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 610.7563409565402,
+      "bloom_percentage": 5.089636174637835,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "baringo": {
+    "county_id": "baringo",
+    "county_name": "Baringo",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 0.468,
+      "lon": 36.089
+    },
+    "main_crops": [
+      "maize",
+      "sorghum",
+      "millet",
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T07:45:49.999824",
+    "satellite_data": {
+      "ndvi": 0.39651988049344844,
+      "ndwi": -0.37844543570849226,
+      "rainfall_mm": 0,
+      "temperature_c": 25.899005423559842,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "bomet": {
+    "county_id": "bomet",
+    "county_name": "Bomet",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": -0.803,
+      "lon": 35.308
+    },
+    "main_crops": [
+      "tea",
+      "maize",
+      "pyrethrum",
+      "dairy"
+    ],
+    "last_updated": "2025-10-13T07:46:33.981496",
+    "satellite_data": {
+      "ndvi": 0.5076630869582818,
+      "ndwi": -0.5020718932451631,
+      "rainfall_mm": 0,
+      "temperature_c": 22.085416725876293,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "elgeyo_marakwet": {
+    "county_id": "elgeyo_marakwet",
+    "county_name": "Elgeyo-Marakwet",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 0.85,
+      "lon": 35.45
+    },
+    "main_crops": [
+      "maize",
+      "wheat",
+      "pyrethrum",
+      "dairy"
+    ],
+    "last_updated": "2025-10-13T07:47:23.742954",
+    "satellite_data": {
+      "ndvi": 0.5795519815098521,
+      "ndwi": -0.5689281330333407,
+      "rainfall_mm": 0,
+      "temperature_c": 21.124138685319465,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0088894317586263,
+      "bloom_percentage": 0.00020543894269458402,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kajiado": {
+    "county_id": "kajiado",
+    "county_name": "Kajiado",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": -1.852,
+      "lon": 36.777
+    },
+    "main_crops": [
+      "maize",
+      "beans",
+      "livestock",
+      "horticulture"
+    ],
+    "last_updated": "2025-10-13T07:48:08.368339",
+    "satellite_data": {
+      "ndvi": 0.25895163187716835,
+      "ndwi": -0.36495236644465934,
+      "rainfall_mm": 0,
+      "temperature_c": 31.670312877273464,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 380.00580218929287,
+      "bloom_percentage": 3.1667150182441075,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kericho": {
+    "county_id": "kericho",
+    "county_name": "Kericho",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": -0.368,
+      "lon": 35.283
+    },
+    "main_crops": [
+      "tea",
+      "maize",
+      "pyrethrum",
+      "dairy"
+    ],
+    "last_updated": "2025-10-13T07:48:41.860042",
+    "satellite_data": {
+      "ndvi": 0.5780590434210519,
+      "ndwi": -0.5198675983377311,
+      "rainfall_mm": 0,
+      "temperature_c": 22.432299907926964,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "laikipia": {
+    "county_id": "laikipia",
+    "county_name": "Laikipia",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 0.362,
+      "lon": 36.782
+    },
+    "main_crops": [
+      "wheat",
+      "maize",
+      "barley",
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T07:49:42.164825",
+    "satellite_data": {
+      "ndvi": 0.3203186339409006,
+      "ndwi": -0.3638080625964199,
+      "rainfall_mm": 0,
+      "temperature_c": 26.860401854902143,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "nakuru": {
+    "county_id": "nakuru",
+    "county_name": "Nakuru",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": -0.303,
+      "lon": 36.08
+    },
+    "main_crops": [
+      "wheat",
+      "maize",
+      "pyrethrum",
+      "horticulture"
+    ],
+    "last_updated": "2025-10-13T07:50:33.438263",
+    "satellite_data": {
+      "ndvi": 0.46243632021546366,
+      "ndwi": -0.449868902224085,
+      "rainfall_mm": 0,
+      "temperature_c": 22.406600971649418,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "nandi": {
+    "county_id": "nandi",
+    "county_name": "Nandi",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 0.183,
+      "lon": 35.127
+    },
+    "main_crops": [
+      "tea",
+      "maize",
+      "pyrethrum",
+      "dairy"
+    ],
+    "last_updated": "2025-10-13T07:51:25.365970",
+    "satellite_data": {
+      "ndvi": 0.5800600419719523,
+      "ndwi": -0.5250194818408003,
+      "rainfall_mm": 0,
+      "temperature_c": 23.659315732524103,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.000893973876953125,
+      "bloom_percentage": 2.0657953379277558e-05,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "narok": {
+    "county_id": "narok",
+    "county_name": "Narok",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": -1.085,
+      "lon": 35.871
+    },
+    "main_crops": [
+      "wheat",
+      "maize",
+      "barley",
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T07:52:28.294227",
+    "satellite_data": {
+      "ndvi": 0.38125229893320167,
+      "ndwi": -0.43362393378860925,
+      "rainfall_mm": 0,
+      "temperature_c": 25.67258246860609,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "trans_nzoia": {
+    "county_id": "trans_nzoia",
+    "county_name": "Trans Nzoia",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 1.049,
+      "lon": 34.95
+    },
+    "main_crops": [
+      "maize",
+      "wheat",
+      "dairy",
+      "pyrethrum"
+    ],
+    "last_updated": "2025-10-13T07:53:17.605623",
+    "satellite_data": {
+      "ndvi": 0.5746479711583673,
+      "ndwi": -0.5410437213361908,
+      "rainfall_mm": 0,
+      "temperature_c": 22.05428464700147,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "uasin_gishu": {
+    "county_id": "uasin_gishu",
+    "county_name": "Uasin Gishu",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 0.514,
+      "lon": 35.27
+    },
+    "main_crops": [
+      "maize",
+      "wheat",
+      "pyrethrum",
+      "dairy"
+    ],
+    "last_updated": "2025-10-13T07:54:36.248243",
+    "satellite_data": {
+      "ndvi": 0.6043209774550519,
+      "ndwi": -0.5678510891444777,
+      "rainfall_mm": 0,
+      "temperature_c": 21.88776691999673,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "west_pokot": {
+    "county_id": "west_pokot",
+    "county_name": "West Pokot",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 1.621,
+      "lon": 35.363
+    },
+    "main_crops": [
+      "maize",
+      "sorghum",
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T07:55:20.522989",
+    "satellite_data": {
+      "ndvi": 0.4338469014616722,
+      "ndwi": -0.44906346081523096,
+      "rainfall_mm": 0,
+      "temperature_c": 26.842392832983208,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.01608860595703125,
+      "bloom_percentage": 8.678811354056068e-05,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "embu": {
+    "county_id": "embu",
+    "county_name": "Embu",
+    "region": "eastern",
+    "coordinates": {
+      "lat": -0.531,
+      "lon": 37.45
+    },
+    "main_crops": [
+      "coffee",
+      "tea",
+      "maize",
+      "beans",
+      "miraa"
+    ],
+    "last_updated": "2025-10-13T07:55:36.704822",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 28.39901893010386,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 775.77700687612,
+      "bloom_percentage": 6.4648083906343325,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kitui": {
+    "county_id": "kitui",
+    "county_name": "Kitui",
+    "region": "eastern",
+    "coordinates": {
+      "lat": -1.367,
+      "lon": 38.01
+    },
+    "main_crops": [
+      "maize",
+      "beans",
+      "millet",
+      "sorghum",
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T07:56:06.998787",
+    "satellite_data": {
+      "ndvi": 0.23470742079318022,
+      "ndwi": -0.4240918737039364,
+      "rainfall_mm": 0,
+      "temperature_c": 32.68796920438599,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 246.6175468755074,
+      "bloom_percentage": 2.055146223962562,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "machakos": {
+    "county_id": "machakos",
+    "county_name": "Machakos",
+    "region": "eastern",
+    "coordinates": {
+      "lat": -1.522,
+      "lon": 37.263
+    },
+    "main_crops": [
+      "maize",
+      "beans",
+      "fruits",
+      "vegetables"
+    ],
+    "last_updated": "2025-10-13T07:56:20.164560",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 30.98436585229697,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 218.48330131710438,
+      "bloom_percentage": 1.8206941776425365,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "makueni": {
+    "county_id": "makueni",
+    "county_name": "Makueni",
+    "region": "eastern",
+    "coordinates": {
+      "lat": -2.28,
+      "lon": 37.82
+    },
+    "main_crops": [
+      "maize",
+      "beans",
+      "pigeon peas",
+      "fruits"
+    ],
+    "last_updated": "2025-10-13T07:57:05.148953",
+    "satellite_data": {
+      "ndvi": 0.2259074856320262,
+      "ndwi": -0.41605320612274843,
+      "rainfall_mm": 0,
+      "temperature_c": 33.091689839272206,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 702.658773474654,
+      "bloom_percentage": 5.85548977895545,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "meru": {
+    "county_id": "meru",
+    "county_name": "Meru",
+    "region": "eastern",
+    "coordinates": {
+      "lat": 0.05,
+      "lon": 37.65
+    },
+    "main_crops": [
+      "miraa",
+      "coffee",
+      "tea",
+      "maize",
+      "beans"
+    ],
+    "last_updated": "2025-10-13T07:57:22.872466",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": -0.13612021303383529,
+      "rainfall_mm": 0,
+      "temperature_c": 29.512378401359076,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "tharaka_nithi": {
+    "county_id": "tharaka_nithi",
+    "county_name": "Tharaka-Nithi",
+    "region": "eastern",
+    "coordinates": {
+      "lat": -0.281,
+      "lon": 37.733
+    },
+    "main_crops": [
+      "coffee",
+      "tea",
+      "miraa",
+      "maize",
+      "beans"
+    ],
+    "last_updated": "2025-10-13T07:57:37.381625",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 29.029202349891293,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 301.3900970438141,
+      "bloom_percentage": 2.511584142031784,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "bungoma": {
+    "county_id": "bungoma",
+    "county_name": "Bungoma",
+    "region": "western",
+    "coordinates": {
+      "lat": 0.564,
+      "lon": 34.558
+    },
+    "main_crops": [
+      "maize",
+      "sugarcane",
+      "beans",
+      "bananas"
+    ],
+    "last_updated": "2025-10-13T07:58:09.962966",
+    "satellite_data": {
+      "ndvi": 0.6098544567333738,
+      "ndwi": -0.5569072760939824,
+      "rainfall_mm": 0,
+      "temperature_c": 24.842587876474635,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "busia": {
+    "county_id": "busia",
+    "county_name": "Busia",
+    "region": "western",
+    "coordinates": {
+      "lat": 0.45,
+      "lon": 34.111
+    },
+    "main_crops": [
+      "maize",
+      "cassava",
+      "sweet potatoes",
+      "millet"
+    ],
+    "last_updated": "2025-10-13T07:58:55.392603",
+    "satellite_data": {
+      "ndvi": 0.4712312531681052,
+      "ndwi": -0.45637203661324927,
+      "rainfall_mm": 0,
+      "temperature_c": 25.97837291240487,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 232.4385068003263,
+      "bloom_percentage": 1.936987556669386,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kakamega": {
+    "county_id": "kakamega",
+    "county_name": "Kakamega",
+    "region": "western",
+    "coordinates": {
+      "lat": 0.282,
+      "lon": 34.752
+    },
+    "main_crops": [
+      "maize",
+      "sugarcane",
+      "tea",
+      "bananas"
+    ],
+    "last_updated": "2025-10-13T07:59:39.725167",
+    "satellite_data": {
+      "ndvi": 0.5031759426265323,
+      "ndwi": -0.44998933007491065,
+      "rainfall_mm": 0,
+      "temperature_c": 24.677902862525272,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "vihiga": {
+    "county_id": "vihiga",
+    "county_name": "Vihiga",
+    "region": "western",
+    "coordinates": {
+      "lat": 0.07,
+      "lon": 34.728
+    },
+    "main_crops": [
+      "tea",
+      "maize",
+      "bananas",
+      "beans"
+    ],
+    "last_updated": "2025-10-13T08:00:14.603802",
+    "satellite_data": {
+      "ndvi": 0.373913556041542,
+      "ndwi": -0.328663223910813,
+      "rainfall_mm": 0,
+      "temperature_c": 25.57292255352063,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "homa_bay": {
+    "county_id": "homa_bay",
+    "county_name": "Homa Bay",
+    "region": "nyanza",
+    "coordinates": {
+      "lat": -0.523,
+      "lon": 34.457
+    },
+    "main_crops": [
+      "maize",
+      "sorghum",
+      "fishing",
+      "cotton"
+    ],
+    "last_updated": "2025-10-13T08:00:29.798355",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 25.555414073294024,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 626.6059661131629,
+      "bloom_percentage": 5.221716384276358,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kisii": {
+    "county_id": "kisii",
+    "county_name": "Kisii",
+    "region": "nyanza",
+    "coordinates": {
+      "lat": -0.677,
+      "lon": 34.778
+    },
+    "main_crops": [
+      "tea",
+      "bananas",
+      "maize",
+      "beans"
+    ],
+    "last_updated": "2025-10-13T08:01:11.425763",
+    "satellite_data": {
+      "ndvi": 0.5507419095026963,
+      "ndwi": -0.5231314332411133,
+      "rainfall_mm": 0,
+      "temperature_c": 24.59403698722339,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kisumu": {
+    "county_id": "kisumu",
+    "county_name": "Kisumu",
+    "region": "nyanza",
+    "coordinates": {
+      "lat": -0.091,
+      "lon": 34.768
+    },
+    "main_crops": [
+      "maize",
+      "sugarcane",
+      "rice",
+      "fishing"
+    ],
+    "last_updated": "2025-10-13T08:01:55.804290",
+    "satellite_data": {
+      "ndvi": 0.4594260934825165,
+      "ndwi": -0.40563632048201154,
+      "rainfall_mm": 0,
+      "temperature_c": 25.491293140886057,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "migori": {
+    "county_id": "migori",
+    "county_name": "Migori",
+    "region": "nyanza",
+    "coordinates": {
+      "lat": -1.063,
+      "lon": 34.473
+    },
+    "main_crops": [
+      "sugarcane",
+      "maize",
+      "tobacco",
+      "sorghum"
+    ],
+    "last_updated": "2025-10-13T08:03:25.687533",
+    "satellite_data": {
+      "ndvi": 0.4346690138079167,
+      "ndwi": -0.4464353657823174,
+      "rainfall_mm": 0,
+      "temperature_c": 26.590912976783418,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "nyamira": {
+    "county_id": "nyamira",
+    "county_name": "Nyamira",
+    "region": "nyanza",
+    "coordinates": {
+      "lat": -0.568,
+      "lon": 34.935
+    },
+    "main_crops": [
+      "tea",
+      "bananas",
+      "maize",
+      "beans"
+    ],
+    "last_updated": "2025-10-13T08:04:26.148122",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 23.607376021657533,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 612.3938781390239,
+      "bloom_percentage": 5.103282317825199,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "siaya": {
+    "county_id": "siaya",
+    "county_name": "Siaya",
+    "region": "nyanza",
+    "coordinates": {
+      "lat": -0.063,
+      "lon": 34.288
+    },
+    "main_crops": [
+      "maize",
+      "sorghum",
+      "cassava",
+      "fishing"
+    ],
+    "last_updated": "2025-10-13T08:04:44.187273",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 24.726385625899646,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 330.32576442225803,
+      "bloom_percentage": 2.752714703518817,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kilifi": {
+    "county_id": "kilifi",
+    "county_name": "Kilifi",
+    "region": "coast",
+    "coordinates": {
+      "lat": -3.631,
+      "lon": 39.853
+    },
+    "main_crops": [
+      "coconut",
+      "cashew nuts",
+      "maize",
+      "cassava"
+    ],
+    "last_updated": "2025-10-13T08:05:44.700414",
+    "satellite_data": {
+      "ndvi": 0.23252828197916658,
+      "ndwi": -0.2775670030441764,
+      "rainfall_mm": 0,
+      "temperature_c": 31.651003245354676,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "kwale": {
+    "county_id": "kwale",
+    "county_name": "Kwale",
+    "region": "coast",
+    "coordinates": {
+      "lat": -4.174,
+      "lon": 39.453
+    },
+    "main_crops": [
+      "cashew nuts",
+      "coconut",
+      "maize",
+      "cassava"
+    ],
+    "last_updated": "2025-10-13T08:06:51.393524",
+    "satellite_data": {
+      "ndvi": 0.24069264779841518,
+      "ndwi": -0.31019540090485775,
+      "rainfall_mm": 0,
+      "temperature_c": 31.677134034598886,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "lamu": {
+    "county_id": "lamu",
+    "county_name": "Lamu",
+    "region": "coast",
+    "coordinates": {
+      "lat": -2.271,
+      "lon": 40.902
+    },
+    "main_crops": [
+      "coconut",
+      "fishing",
+      "maize"
+    ],
+    "last_updated": "2025-10-13T08:07:07.761113",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": -0.10760714963124865,
+      "rainfall_mm": 0,
+      "temperature_c": 28.91205183342657,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 512.9782348381412,
+      "bloom_percentage": 4.274818623651177,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "taita_taveta": {
+    "county_id": "taita_taveta",
+    "county_name": "Taita-Taveta",
+    "region": "coast",
+    "coordinates": {
+      "lat": -3.316,
+      "lon": 38.348
+    },
+    "main_crops": [
+      "maize",
+      "beans",
+      "horticulture",
+      "sisal"
+    ],
+    "last_updated": "2025-10-13T08:08:04.099462",
+    "satellite_data": {
+      "ndvi": 0.22340589834525407,
+      "ndwi": -0.40642749071346046,
+      "rainfall_mm": 0,
+      "temperature_c": 32.22616004429229,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 344.4302337326269,
+      "bloom_percentage": 2.870251947771891,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "tana_river": {
+    "county_id": "tana_river",
+    "county_name": "Tana River",
+    "region": "coast",
+    "coordinates": {
+      "lat": -1.519,
+      "lon": 39.992
+    },
+    "main_crops": [
+      "maize",
+      "bananas",
+      "mangoes",
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T08:08:44.825448",
+    "satellite_data": {
+      "ndvi": 0.1584989884437088,
+      "ndwi": -0.2836341207679507,
+      "rainfall_mm": 0,
+      "temperature_c": 32.38457877826433,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 250.8829242311099,
+      "bloom_percentage": 2.0906910352592494,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "samburu": {
+    "county_id": "samburu",
+    "county_name": "Samburu",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 1.216,
+      "lon": 36.944
+    },
+    "main_crops": [
+      "livestock",
+      "maize",
+      "sorghum"
+    ],
+    "last_updated": "2025-10-13T08:10:08.014969",
+    "satellite_data": {
+      "ndvi": 0.2430565212107746,
+      "ndwi": -0.35668329728778,
+      "rainfall_mm": 0,
+      "temperature_c": 33.61809126728787,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.17337964630126954,
+      "bloom_percentage": 0.0005009778167370151,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "turkana": {
+    "county_id": "turkana",
+    "county_name": "Turkana",
+    "region": "rift_valley",
+    "coordinates": {
+      "lat": 3.117,
+      "lon": 35.597
+    },
+    "main_crops": [
+      "livestock",
+      "sorghum",
+      "millet"
+    ],
+    "last_updated": "2025-10-13T08:12:15.808500",
+    "satellite_data": {
+      "ndvi": 0.08422125000902034,
+      "ndwi": -0.13619996375018248,
+      "rainfall_mm": 0,
+      "temperature_c": 33.2600097754551,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.07149125756835938,
+      "bloom_percentage": 6.297027423925812e-05,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "isiolo": {
+    "county_id": "isiolo",
+    "county_name": "Isiolo",
+    "region": "eastern",
+    "coordinates": {
+      "lat": 0.355,
+      "lon": 37.583
+    },
+    "main_crops": [
+      "livestock",
+      "maize",
+      "sorghum"
+    ],
+    "last_updated": "2025-10-13T08:13:43.170709",
+    "satellite_data": {
+      "ndvi": 0.18408101926471743,
+      "ndwi": -0.3270669450820669,
+      "rainfall_mm": 0,
+      "temperature_c": 33.49327999033174,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "marsabit": {
+    "county_id": "marsabit",
+    "county_name": "Marsabit",
+    "region": "eastern",
+    "coordinates": {
+      "lat": 2.333,
+      "lon": 37.983
+    },
+    "main_crops": [
+      "livestock",
+      "maize"
+    ],
+    "last_updated": "2025-10-13T08:16:00.907892",
+    "satellite_data": {
+      "ndvi": 0.13400511239312632,
+      "ndwi": -0.2781027918911667,
+      "rainfall_mm": 0,
+      "temperature_c": 37.09090070718285,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.021852650739363124,
+      "bloom_percentage": 3.370677792233192e-05,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "mombasa": {
+    "county_id": "mombasa",
+    "county_name": "Mombasa",
+    "region": "coast",
+    "coordinates": {
+      "lat": -4.043,
+      "lon": 39.668
+    },
+    "main_crops": [
+      "fishing",
+      "coconut"
+    ],
+    "last_updated": "2025-10-13T08:16:26.686821",
+    "satellite_data": {
+      "ndvi": 0.2371461488875377,
+      "ndwi": -0.24314633333672295,
+      "rainfall_mm": 0,
+      "temperature_c": 30.14385934574275,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 733.3330635627146,
+      "bloom_percentage": 6.111108863022622,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "garissa": {
+    "county_id": "garissa",
+    "county_name": "Garissa",
+    "region": "north_eastern",
+    "coordinates": {
+      "lat": -0.453,
+      "lon": 39.646
+    },
+    "main_crops": [
+      "livestock",
+      "maize"
+    ],
+    "last_updated": "2025-10-13T08:18:47.295845",
+    "satellite_data": {
+      "ndvi": 0.1430202654760166,
+      "ndwi": -0.30855981593964427,
+      "rainfall_mm": 0,
+      "temperature_c": 34.36310944135049,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "mandera": {
+    "county_id": "mandera",
+    "county_name": "Mandera",
+    "region": "north_eastern",
+    "coordinates": {
+      "lat": 3.937,
+      "lon": 41.867
+    },
+    "main_crops": [
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T08:20:49.383281",
+    "satellite_data": {
+      "ndvi": 0.15256953605155543,
+      "ndwi": -0.38839344458223446,
+      "rainfall_mm": 0,
+      "temperature_c": 36.06071315871985,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0008929927368164063,
+      "bloom_percentage": 1.5077528741983335e-06,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "wajir": {
+    "county_id": "wajir",
+    "county_name": "Wajir",
+    "region": "north_eastern",
+    "coordinates": {
+      "lat": 1.747,
+      "lon": 40.057
+    },
+    "main_crops": [
+      "livestock"
+    ],
+    "last_updated": "2025-10-13T08:24:42.027626",
+    "satellite_data": {
+      "ndvi": 0.14113416371930212,
+      "ndwi": -0.33909832115547894,
+      "rainfall_mm": 0,
+      "temperature_c": 36.24954461955766,
+      "data_source": "Sentinel-2",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 0.0017862235107421875,
+      "bloom_percentage": 1.927299701755431e-06,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  },
+  "nairobi": {
+    "county_id": "nairobi",
+    "county_name": "Nairobi",
+    "region": "nairobi",
+    "coordinates": {
+      "lat": -1.286,
+      "lon": 36.817
+    },
+    "main_crops": [
+      "urban farming",
+      "horticulture"
+    ],
+    "last_updated": "2025-10-13T08:24:57.218471",
+    "satellite_data": {
+      "ndvi": 0,
+      "ndwi": 0,
+      "rainfall_mm": 0,
+      "temperature_c": 27.087273012609025,
+      "data_source": "Unknown",
+      "is_real_data": true
+    },
+    "bloom_data": {
+      "bloom_area_km2": 623.7796580423042,
+      "bloom_percentage": 5.198163817019202,
+      "bloom_probability": 26.05,
+      "bloom_prediction": 0,
+      "confidence": "High",
+      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "county_id": "kitui",
+  "county_name": "Kitui",
+  "region": "eastern",
+  "coordinates": {
+    "lat": -1.367,
+    "lon": 38.01
+  },
+  "main_crops": [
+    "maize",
+    "beans",
+    "millet",
+    "sorghum",
+    "livestock"
+  ],
+  "last_updated": "2025-10-13T07:56:06.998787",
+  "satellite_data": {
+    "ndvi": 0.23470742079318022,
+    "ndwi": -0.4240918737039364,
+    "rainfall_mm": 0,
+    "temperature_c": 32.68796920438599,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 246.6175468755074,
+    "bloom_percentage": 2.055146223962562,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

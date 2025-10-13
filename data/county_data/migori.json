@@ -1,0 +1,32 @@
+{
+  "county_id": "migori",
+  "county_name": "Migori",
+  "region": "nyanza",
+  "coordinates": {
+    "lat": -1.063,
+    "lon": 34.473
+  },
+  "main_crops": [
+    "sugarcane",
+    "maize",
+    "tobacco",
+    "sorghum"
+  ],
+  "last_updated": "2025-10-13T08:03:25.687533",
+  "satellite_data": {
+    "ndvi": 0.4346690138079167,
+    "ndwi": -0.4464353657823174,
+    "rainfall_mm": 0,
+    "temperature_c": 26.590912976783418,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

@@ -1,7 +1,15 @@
-# Data files
-data/**
+# Data files - Include critical files for deployment
+# Exclude only .tif files (deprecated, large)
 *.tif
 *.tiff
+data/**/*.tif
+data/**/*.tiff
+
+# Include essential data for deployment
+!data/models/**
+!data/county_data/**
+!data/exports/**
+!data/*.json
 
 # Python
 __pycache__/

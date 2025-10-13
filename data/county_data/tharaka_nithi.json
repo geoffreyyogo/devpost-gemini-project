@@ -1,0 +1,33 @@
+{
+  "county_id": "tharaka_nithi",
+  "county_name": "Tharaka-Nithi",
+  "region": "eastern",
+  "coordinates": {
+    "lat": -0.281,
+    "lon": 37.733
+  },
+  "main_crops": [
+    "coffee",
+    "tea",
+    "miraa",
+    "maize",
+    "beans"
+  ],
+  "last_updated": "2025-10-13T07:57:37.381625",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 29.029202349891293,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 301.3900970438141,
+    "bloom_percentage": 2.511584142031784,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

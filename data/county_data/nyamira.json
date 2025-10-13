@@ -1,0 +1,32 @@
+{
+  "county_id": "nyamira",
+  "county_name": "Nyamira",
+  "region": "nyanza",
+  "coordinates": {
+    "lat": -0.568,
+    "lon": 34.935
+  },
+  "main_crops": [
+    "tea",
+    "bananas",
+    "maize",
+    "beans"
+  ],
+  "last_updated": "2025-10-13T08:04:26.148122",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 23.607376021657533,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 612.3938781390239,
+    "bloom_percentage": 5.103282317825199,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

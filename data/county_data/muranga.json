@@ -1,0 +1,33 @@
+{
+  "county_id": "muranga",
+  "county_name": "Murang'a",
+  "region": "central",
+  "coordinates": {
+    "lat": -0.722,
+    "lon": 37.152
+  },
+  "main_crops": [
+    "coffee",
+    "tea",
+    "maize",
+    "beans",
+    "macadamia"
+  ],
+  "last_updated": "2025-10-13T07:44:17.516547",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 28.49472366539086,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 755.9940583916732,
+    "bloom_percentage": 6.299950486597276,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

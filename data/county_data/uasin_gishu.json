@@ -1,0 +1,32 @@
+{
+  "county_id": "uasin_gishu",
+  "county_name": "Uasin Gishu",
+  "region": "rift_valley",
+  "coordinates": {
+    "lat": 0.514,
+    "lon": 35.27
+  },
+  "main_crops": [
+    "maize",
+    "wheat",
+    "pyrethrum",
+    "dairy"
+  ],
+  "last_updated": "2025-10-13T07:54:36.248243",
+  "satellite_data": {
+    "ndvi": 0.6043209774550519,
+    "ndwi": -0.5678510891444777,
+    "rainfall_mm": 0,
+    "temperature_c": 21.88776691999673,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

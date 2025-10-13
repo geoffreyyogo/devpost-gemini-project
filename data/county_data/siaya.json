@@ -1,0 +1,32 @@
+{
+  "county_id": "siaya",
+  "county_name": "Siaya",
+  "region": "nyanza",
+  "coordinates": {
+    "lat": -0.063,
+    "lon": 34.288
+  },
+  "main_crops": [
+    "maize",
+    "sorghum",
+    "cassava",
+    "fishing"
+  ],
+  "last_updated": "2025-10-13T08:04:44.187273",
+  "satellite_data": {
+    "ndvi": 0,
+    "ndwi": 0,
+    "rainfall_mm": 0,
+    "temperature_c": 24.726385625899646,
+    "data_source": "Unknown",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 330.32576442225803,
+    "bloom_percentage": 2.752714703518817,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

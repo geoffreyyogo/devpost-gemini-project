@@ -1,0 +1,31 @@
+{
+  "county_id": "turkana",
+  "county_name": "Turkana",
+  "region": "rift_valley",
+  "coordinates": {
+    "lat": 3.117,
+    "lon": 35.597
+  },
+  "main_crops": [
+    "livestock",
+    "sorghum",
+    "millet"
+  ],
+  "last_updated": "2025-10-13T08:12:15.808500",
+  "satellite_data": {
+    "ndvi": 0.08422125000902034,
+    "ndwi": -0.13619996375018248,
+    "rainfall_mm": 0,
+    "temperature_c": 33.2600097754551,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.07149125756835938,
+    "bloom_percentage": 6.297027423925812e-05,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

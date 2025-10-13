@@ -1,0 +1,32 @@
+{
+  "county_id": "kwale",
+  "county_name": "Kwale",
+  "region": "coast",
+  "coordinates": {
+    "lat": -4.174,
+    "lon": 39.453
+  },
+  "main_crops": [
+    "cashew nuts",
+    "coconut",
+    "maize",
+    "cassava"
+  ],
+  "last_updated": "2025-10-13T08:06:51.393524",
+  "satellite_data": {
+    "ndvi": 0.24069264779841518,
+    "ndwi": -0.31019540090485775,
+    "rainfall_mm": 0,
+    "temperature_c": 31.677134034598886,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

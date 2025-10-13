@@ -1,0 +1,32 @@
+{
+  "county_id": "kisumu",
+  "county_name": "Kisumu",
+  "region": "nyanza",
+  "coordinates": {
+    "lat": -0.091,
+    "lon": 34.768
+  },
+  "main_crops": [
+    "maize",
+    "sugarcane",
+    "rice",
+    "fishing"
+  ],
+  "last_updated": "2025-10-13T08:01:55.804290",
+  "satellite_data": {
+    "ndvi": 0.4594260934825165,
+    "ndwi": -0.40563632048201154,
+    "rainfall_mm": 0,
+    "temperature_c": 25.491293140886057,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

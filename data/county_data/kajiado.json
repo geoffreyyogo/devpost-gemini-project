@@ -1,0 +1,32 @@
+{
+  "county_id": "kajiado",
+  "county_name": "Kajiado",
+  "region": "rift_valley",
+  "coordinates": {
+    "lat": -1.852,
+    "lon": 36.777
+  },
+  "main_crops": [
+    "maize",
+    "beans",
+    "livestock",
+    "horticulture"
+  ],
+  "last_updated": "2025-10-13T07:48:08.368339",
+  "satellite_data": {
+    "ndvi": 0.25895163187716835,
+    "ndwi": -0.36495236644465934,
+    "rainfall_mm": 0,
+    "temperature_c": 31.670312877273464,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 380.00580218929287,
+    "bloom_percentage": 3.1667150182441075,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "county_id": "elgeyo_marakwet",
+  "county_name": "Elgeyo-Marakwet",
+  "region": "rift_valley",
+  "coordinates": {
+    "lat": 0.85,
+    "lon": 35.45
+  },
+  "main_crops": [
+    "maize",
+    "wheat",
+    "pyrethrum",
+    "dairy"
+  ],
+  "last_updated": "2025-10-13T07:47:23.742954",
+  "satellite_data": {
+    "ndvi": 0.5795519815098521,
+    "ndwi": -0.5689281330333407,
+    "rainfall_mm": 0,
+    "temperature_c": 21.124138685319465,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0088894317586263,
+    "bloom_percentage": 0.00020543894269458402,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

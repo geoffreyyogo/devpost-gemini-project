@@ -1,0 +1,32 @@
+{
+  "county_id": "narok",
+  "county_name": "Narok",
+  "region": "rift_valley",
+  "coordinates": {
+    "lat": -1.085,
+    "lon": 35.871
+  },
+  "main_crops": [
+    "wheat",
+    "maize",
+    "barley",
+    "livestock"
+  ],
+  "last_updated": "2025-10-13T07:52:28.294227",
+  "satellite_data": {
+    "ndvi": 0.38125229893320167,
+    "ndwi": -0.43362393378860925,
+    "rainfall_mm": 0,
+    "temperature_c": 25.67258246860609,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}

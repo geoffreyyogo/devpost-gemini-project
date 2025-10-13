@@ -1,0 +1,30 @@
+{
+  "county_id": "marsabit",
+  "county_name": "Marsabit",
+  "region": "eastern",
+  "coordinates": {
+    "lat": 2.333,
+    "lon": 37.983
+  },
+  "main_crops": [
+    "livestock",
+    "maize"
+  ],
+  "last_updated": "2025-10-13T08:16:00.907892",
+  "satellite_data": {
+    "ndvi": 0.13400511239312632,
+    "ndwi": -0.2781027918911667,
+    "rainfall_mm": 0,
+    "temperature_c": 37.09090070718285,
+    "data_source": "Sentinel-2",
+    "is_real_data": true
+  },
+  "bloom_data": {
+    "bloom_area_km2": 0.021852650739363124,
+    "bloom_percentage": 3.370677792233192e-05,
+    "bloom_probability": 26.05,
+    "bloom_prediction": 0,
+    "confidence": "High",
+    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+  }
+}
