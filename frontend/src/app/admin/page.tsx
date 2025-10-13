@@ -30,7 +30,7 @@ export default function AdminDashboardPage() {
     farmers, 
     statistics, 
     recentRegistrations,
-    loading,
+    isLoading,
     error,
     fetchFarmers,
     fetchStatistics,
@@ -199,7 +199,7 @@ export default function AdminDashboardPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {loading && !statistics ? (
+        {isLoading && !statistics ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-purple-600" />
           </div>
