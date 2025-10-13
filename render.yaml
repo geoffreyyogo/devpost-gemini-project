@@ -17,7 +17,7 @@ services:
       cd server && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.0"
       
       # MongoDB Configuration
       - key: MONGODB_URI
@@ -108,12 +108,12 @@ services:
     branch: deploy-nextjs-fastapi  # Change to 'main' after testing
     buildCommand: |
       cd frontend
-      npm install
+      npm install --legacy-peer-deps
       npm run build
     startCommand: cd frontend && npm start
     envVars:
       - key: NODE_VERSION
-        value: "18.17.0"
+        value: "20.11.1"
       - key: NEXT_PUBLIC_API_URL
         value: "https://bloomwatch-fastapi.onrender.com"  # Update after backend deploys
       - key: NODE_ENV
