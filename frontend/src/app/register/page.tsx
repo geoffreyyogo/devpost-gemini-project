@@ -487,7 +487,7 @@ export default function RegisterPage() {
                             // Get crop display name from regionsData if available
                             const cropData = regionsData?.crops?.[crop]
                             const displayName = cropData?.name || crop.charAt(0).toUpperCase() + crop.slice(1).replace('_', ' ')
-                            const icon = cropData?.icon || ''
+                            const icon = (cropData as any)?.icon || ''
                             
                             return (
                               <Button
