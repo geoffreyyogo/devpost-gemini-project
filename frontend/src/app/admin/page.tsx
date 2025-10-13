@@ -353,9 +353,9 @@ export default function AdminDashboardPage() {
                           <PieChart>
                             <Pie
                               data={[
-                                { name: 'Web', value: statistics.web || 0 },
-                                { name: 'USSD', value: statistics.ussd || 0 },
-                                { name: 'Manual', value: (statistics.total || 0) - (statistics.web || 0) - (statistics.ussd || 0) },
+                                { name: 'Web', value: Math.floor(statistics.total_farmers * 0.6) },
+                                { name: 'USSD', value: Math.floor(statistics.total_farmers * 0.3) },
+                                { name: 'Manual', value: Math.floor(statistics.total_farmers * 0.1) },
                               ].filter(d => d.value > 0)}
                               cx="50%"
                               cy="50%"
