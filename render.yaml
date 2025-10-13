@@ -9,12 +9,12 @@ services:
     region: oregon
     plan: free
     branch: deploy-nextjs-fastapi  # Change to 'main' after testing
-    rootDirectory: ./server
     buildCommand: |
+      cd server
       python -m pip install --upgrade pip
       pip install -r requirements-fastapi.txt
     startCommand: |
-      uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+      cd server && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"
@@ -106,11 +106,11 @@ services:
     region: oregon
     plan: free
     branch: deploy-nextjs-fastapi  # Change to 'main' after testing
-    rootDirectory: ./frontend
     buildCommand: |
+      cd frontend
       npm install
       npm run build
-    startCommand: npm start
+    startCommand: cd frontend && npm start
     envVars:
       - key: NODE_VERSION
         value: "18.17.0"
