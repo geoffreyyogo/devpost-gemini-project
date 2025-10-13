@@ -15,8 +15,12 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/  # Commented out - was excluding frontend/src/lib
 lib64/
+# Only exclude Python lib directories in specific locations
+/lib/
+venv/lib/
+env/lib/
 parts/
 sdist/
 var/
