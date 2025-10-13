@@ -101,6 +101,7 @@ export interface Statistics {
   active_farmers: number;
   farmers_by_region: Record<string, number>;
   farmers_by_crop: Record<string, number>;
+  farmers_by_source: Record<string, number>;
   total_alerts_sent: number;
 }
 
@@ -110,6 +111,26 @@ export interface DashboardData {
   recent_alerts: Alert[];
   health_score: number;
   next_bloom?: string;
+  season?: {
+    name: string;
+    status: string;
+  };
+  climate_history?: Array<{
+    date: string;
+    temperature: number;
+    rainfall: number;
+  }>;
+  ndvi_history?: Array<{
+    date: string;
+    ndvi: number;
+  }>;
+  current_weather?: {
+    temperature: number;
+    rainfall: number;
+    conditions: string;
+  };
+  ndvi_average?: number;
+  ml_prediction?: any;
 }
 
 export interface ChatMessage {

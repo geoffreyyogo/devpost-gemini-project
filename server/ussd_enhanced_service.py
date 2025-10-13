@@ -246,7 +246,7 @@ Select language / Chagua lugha:
             'crops': session['data']['crops'],
             'language': session['data']['language'],
             'sms_enabled': True,
-            'registered_via': 'ussd',
+            'registration_source': 'ussd',  # Track registration source
             'registered_at': datetime.now().isoformat()
         }
         

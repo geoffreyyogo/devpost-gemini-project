@@ -579,6 +579,7 @@ async def register(request: RegisterRequest):
     """Register new farmer"""
     try:
         farmer_data = request.model_dump(exclude={'password'})
+        farmer_data['registration_source'] = 'web'  # Track registration source
         result = auth_service.register_farmer(farmer_data, request.password)
         
         if result['success']:

@@ -145,6 +145,10 @@ class MongoDBService:
             farmer_data['updated_at'] = datetime.now()
             farmer_data['active'] = True
             
+            # Set registration source if not already set
+            if 'registration_source' not in farmer_data:
+                farmer_data['registration_source'] = 'web'  # Default to web
+            
             if 'alert_count' not in farmer_data:
                 farmer_data['alert_count'] = 0
             
@@ -355,6 +359,7 @@ class MongoDBService:
                 'active_farmers': self.farmers.count_documents({'active': True}),
                 'farmers_by_region': {},
                 'farmers_by_crop': {},
+                'farmers_by_source': {},
                 'total_alerts_sent': self.alerts.count_documents({})
             }
             
@@ -372,6 +377,14 @@ class MongoDBService:
             ]
             for doc in self.farmers.aggregate(crop_pipeline):
                 stats['farmers_by_crop'][doc['_id']] = doc['count']
+            
+            # Aggregate by registration source
+            source_pipeline = [
+                {'$group': {'_id': '$registration_source', 'count': {'$sum': 1}}}
+            ]
+            for doc in self.farmers.aggregate(source_pipeline):
+                source = doc['_id'] or 'unknown'
+                stats['farmers_by_source'][source] = doc['count']
             
             return stats
             

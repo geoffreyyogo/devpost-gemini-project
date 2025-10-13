@@ -281,10 +281,10 @@ export default function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-4xl font-bold text-blue-600">
-                        {statistics ? Math.floor(statistics.total_farmers * 0.3) : 0}
+                        {statistics?.farmers_by_source?.ussd || 0}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
-                        Via *384*42434# (est.)
+                        Via *384*42434#
                       </p>
                     </CardContent>
                   </Card>
@@ -348,14 +348,14 @@ export default function AdminDashboardPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {statistics ? (
+                      {statistics?.farmers_by_source ? (
                         <ResponsiveContainer width="100%" height={300}>
                           <PieChart>
                             <Pie
                               data={[
-                                { name: 'Web', value: Math.floor(statistics.total_farmers * 0.6) },
-                                { name: 'USSD', value: Math.floor(statistics.total_farmers * 0.3) },
-                                { name: 'Manual', value: Math.floor(statistics.total_farmers * 0.1) },
+                                { name: 'Web', value: statistics.farmers_by_source.web || 0 },
+                                { name: 'USSD', value: statistics.farmers_by_source.ussd || 0 },
+                                { name: 'Manual', value: statistics.farmers_by_source.manual || 0 },
                               ].filter(d => d.value > 0)}
                               cx="50%"
                               cy="50%"
