@@ -218,9 +218,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🏆 NASA Space Apps Challenge 2025
 
-**Team**: [Your Team Name]  
+**Team**: Sentries  
 **Challenge**: Global Flowering Phenology  
-**Submission**: [Repository Link] | [Demo Video] | [Presentation]
 
 ## 🌍 Expanding to Other African Countries
 

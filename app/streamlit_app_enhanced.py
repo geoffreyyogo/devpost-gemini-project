@@ -58,7 +58,9 @@ try:
     from mongodb_service import MongoDBService
     from bloom_processor import BloomProcessor
     from gee_data_loader import GEEDataLoader
-except ImportError:
+    print("✓ Successfully imported backend services")
+except ImportError as e:
+    print(f"⚠ Import failed: {e}")
     # Create dummy auth service for demo
     class AuthService:
         def __init__(self): pass
@@ -89,6 +91,16 @@ except ImportError:
     MongoDBService = None
     BloomProcessor = None
     GEEDataLoader = None
+
+# Try to import enhanced Kenya data
+try:
+    from kenya_regions_counties import KENYA_REGIONS_COUNTIES, ALL_KENYA_CROPS, get_counties_by_region
+    USE_ENHANCED = True
+except ImportError:
+    USE_ENHANCED = False
+    KENYA_REGIONS_COUNTIES = {}
+    ALL_KENYA_CROPS = {}
+    def get_counties_by_region(region_id): return []
 
 try:
     from kenya_crops import KenyaCropCalendar, KENYA_REGIONS
@@ -1096,6 +1108,119 @@ def get_custom_css(dark_mode=False):
         border-color: #2E7D32 !important;
     }}
     
+    /* ==========================================
+       COMPREHENSIVE FORM INPUT STYLING FIX
+       Ensures all inputs are light with dark text
+       ========================================== */
+    
+    /* Text Input - All instances */
+    .stTextInput > div > div > input,
+    .stTextInput input,
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"] {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+        padding: 0.85rem !important;
+        font-size: 1rem !important;
+    }}
+    
+    /* Number Input - All instances */
+    .stNumberInput > div > div > input,
+    .stNumberInput input,
+    input[type="number"] {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+        padding: 0.85rem !important;
+        font-size: 1rem !important;
+    }}
+    
+    /* All input labels should be dark and visible */
+    .stTextInput label,
+    .stNumberInput label,
+    .stSelectbox label,
+    .stMultiSelect label {{
+        color: {text_dark} !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+    }}
+    
+    /* Selectbox - All instances (including outside form) */
+    .stSelectbox div[data-baseweb="select"],
+    .stSelectbox > div > div {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+    }}
+    
+    .stSelectbox div[data-baseweb="select"] > div {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+    }}
+    
+    /* MultiSelect - All instances */
+    .stMultiSelect div[data-baseweb="select"],
+    .stMultiSelect > div > div {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+    }}
+    
+    .stMultiSelect div[data-baseweb="select"] > div {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+    }}
+    
+    .stMultiSelect div[data-baseweb="select"] input {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+    }}
+    
+    /* MultiSelect tags (selected items) */
+    .stMultiSelect div[data-baseweb="tag"] {{
+        background-color: #E8F5E9 !important;
+        color: #2E7D32 !important;
+        border: 1px solid #81C784 !important;
+    }}
+    
+    /* Form container styling */
+    .stForm {{
+        background-color: {bg_white} !important;
+        border: none !important;
+        padding: 0 !important;
+    }}
+    
+    /* Ensure all inputs inside forms are light */
+    .stForm .stTextInput > div > div > input,
+    .stForm .stNumberInput > div > div > input,
+    .stForm input[type="text"],
+    .stForm input[type="tel"],
+    .stForm input[type="email"],
+    .stForm input[type="number"] {{
+        background-color: {input_bg} !important;
+        color: {text_dark} !important;
+        border: 2px solid {input_border} !important;
+        border-radius: 12px !important;
+    }}
+    
+    /* Focus states for all inputs */
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus,
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus {{
+        border-color: #2E7D32 !important;
+        box-shadow: 0 0 0 3px rgba(46,125,50,0.1) !important;
+        outline: none !important;
+    }}
+    
     /* Selectbox and button cursor */
     .stSelectbox select, 
     .stSelectbox div[data-baseweb="select"],
@@ -1542,14 +1667,34 @@ init_session_state()
 @st.cache_resource
 def get_services():
     """Get singleton instances of services"""
-    auth = AuthService()
-    mongo = MongoDBService() if MongoDBService else None
+    print("Initializing services...")
+    try:
+        auth = AuthService()
+        print(f"  ✓ AuthService initialized (MongoDB: {auth.mongo.db is not None if hasattr(auth, 'mongo') and auth.mongo else 'N/A'})")
+    except Exception as e:
+        print(f"  ✗ AuthService failed: {e}")
+        auth = None
+    
+    try:
+        mongo = MongoDBService() if MongoDBService else None
+        print(f"  ✓ MongoDBService: {mongo.db is not None if mongo else 'Not available'}")
+    except Exception as e:
+        print(f"  ✗ MongoDBService failed: {e}")
+        mongo = None
+    
     calendar = KenyaCropCalendar()
     bloom_proc = BloomProcessor() if BloomProcessor else None
     gee_loader = GEEDataLoader() if GEEDataLoader else None
+    
     return auth, mongo, calendar, bloom_proc, gee_loader
 
+print("=" * 60)
+print("INITIALIZING BLOOMWATCH KENYA SERVICES")
+print("=" * 60)
 auth_service, mongo_service, crop_calendar, bloom_processor, gee_loader = get_services()
+print(f"Auth Service Available: {auth_service is not None}")
+print(f"MongoDB Available: {mongo_service is not None and mongo_service.db is not None if mongo_service else False}")
+print("=" * 60)
 
 # Load actual bloom data
 @st.cache_data(ttl=3600)  # Cache for 1 hour
@@ -1698,7 +1843,7 @@ def show_hero_section():
         animation: gradientShift 8s ease infinite;
         border-radius: 24px;
         margin-bottom: -380px;
-        padding: 4rem 2rem 28rem 2rem;
+        padding: 4rem 2rem 22rem 2rem;
         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
     
@@ -1723,8 +1868,8 @@ def show_hero_section():
     .hero-floating-cta {
         position: relative;
         z-index: 100;
-        margin-top: -360px;
-        padding: 0 2rem 2rem 2rem;
+        margin-top: -380px !important;
+        padding: 4rem 2rem 2rem 2rem !important;
     }
     
     /* Enhanced button styling with 3D effect */
@@ -1791,13 +1936,16 @@ def show_hero_section():
                        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
                 Track Maua, Master Ukulima
             </h2>
-            <p style="text-align: center; font-size: 1.3rem; margin-top: 1.5rem; color: white;
+            <p style="text-align: center; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0; color: white;
                       text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">
                 Use NASA satellite data and Flora, our AI MauaMentor, to monitor blooming and climate for better harvests.
             </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Add spacer for better spacing
+    st.markdown('<div style="height: 3rem;"></div>', unsafe_allow_html=True)
     
     # Floating CTA container
     st.markdown('<div class="hero-floating-cta">', unsafe_allow_html=True)
@@ -1931,11 +2079,71 @@ def show_why_bloomwatch():
         """, unsafe_allow_html=True)
     
 def show_kenya_climate_map():
-    """Section 2: Interactive Kenya map with live climate data"""
+    """Section 2: Interactive Kenya map with live climate data - REAL SATELLITE DATA"""
     st.markdown("<div class='scroll-animate'>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: #2E7D32; font-size: 2.5rem;'>🗺️ Kenya Live Climate & Bloom Data</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'><b>Real-time agricultural insights powered by NASA satellite technology</b></p>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+    
+    # Load REAL satellite data
+    try:
+        sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+        from streamlit_data_loader import StreamlitDataLoader
+        
+        loader = StreamlitDataLoader()
+        map_data = loader.get_landing_page_map_data()
+        freshness = loader.get_data_freshness_info()
+        climate_stats = loader.get_climate_summary_stats()
+        
+        # Show data freshness indicator
+        if freshness['is_fresh']:
+            st.success(f"✅ Live NASA satellite data | Last updated: {freshness['age_str']}")
+        elif freshness['last_updated'] != 'Never':
+            st.warning(f"⚠️ Data is {freshness['age_str']} old | Consider refreshing")
+        else:
+            st.info("ℹ️ Using demo data | Run `python backend/kenya_data_fetcher.py --all` to fetch real satellite data")
+        
+        kenya_climate_regions = {}
+        for marker in map_data['markers']:
+            kenya_climate_regions[marker['name']] = {
+                'lat': marker['lat'],
+                'lon': marker['lon'],
+                'bloom': marker['bloom_probability'],
+                'temp': marker['temperature'],
+                'rainfall': marker['rainfall'],
+                'ndvi': marker['ndvi'],
+                'confidence': marker['confidence'],
+                'is_real': marker['is_real_data'],
+                'data_source': marker['data_source']
+            }
+        
+        has_real_data = map_data['has_real_data']
+        
+    except Exception as e:
+        # Fallback to demo data if loader fails
+        st.warning(f"⚠️ Could not load real data: {e}. Using demo data.")
+        kenya_climate_regions = {
+            'Nakuru': {'lat': -0.303, 'lon': 36.08, 'bloom': '80%', 'temp': '24°C', 'rainfall': '15mm', 'ndvi': '0.65', 'confidence': 'Medium', 'is_real': False, 'data_source': 'Demo'},
+            'Eldoret': {'lat': 0.514, 'lon': 35.27, 'bloom': '75%', 'temp': '22°C', 'rainfall': '20mm', 'ndvi': '0.60', 'confidence': 'Medium', 'is_real': False, 'data_source': 'Demo'},
+            'Kisii': {'lat': -0.677, 'lon': 34.78, 'bloom': '70%', 'temp': '23°C', 'rainfall': '25mm', 'ndvi': '0.58', 'confidence': 'Medium', 'is_real': False, 'data_source': 'Demo'},
+            'Kitale': {'lat': 1.015, 'lon': 35.00, 'bloom': '65%', 'temp': '21°C', 'rainfall': '18mm', 'ndvi': '0.55', 'confidence': 'Low', 'is_real': False, 'data_source': 'Demo'},
+            'Nyeri': {'lat': -0.420, 'lon': 36.95, 'bloom': '85%', 'temp': '19°C', 'rainfall': '30mm', 'ndvi': '0.70', 'confidence': 'High', 'is_real': False, 'data_source': 'Demo'},
+            'Kericho': {'lat': -0.368, 'lon': 35.28, 'bloom': '90%', 'temp': '18°C', 'rainfall': '35mm', 'ndvi': '0.75', 'confidence': 'High', 'is_real': False, 'data_source': 'Demo'},
+            'Machakos': {'lat': -1.522, 'lon': 37.26, 'bloom': '60%', 'temp': '25°C', 'rainfall': '10mm', 'ndvi': '0.50', 'confidence': 'Low', 'is_real': False, 'data_source': 'Demo'},
+            'Mombasa': {'lat': -4.043, 'lon': 39.66, 'bloom': '55%', 'temp': '28°C', 'rainfall': '5mm', 'ndvi': '0.45', 'confidence': 'Low', 'is_real': False, 'data_source': 'Demo'},
+            'Kiambu': {'lat': -1.171, 'lon': 36.83, 'bloom': '82%', 'temp': '20°C', 'rainfall': '28mm', 'ndvi': '0.68', 'confidence': 'High', 'is_real': False, 'data_source': 'Demo'},
+            'Embu': {'lat': -0.531, 'lon': 37.45, 'bloom': '78%', 'temp': '21°C', 'rainfall': '22mm', 'ndvi': '0.62', 'confidence': 'Medium', 'is_real': False, 'data_source': 'Demo'}
+        }
+        has_real_data = False
+        climate_stats = {
+            'avg_bloom_level': '73%',
+            'avg_temperature': '22°C',
+            'avg_rainfall': '21mm',
+            'total_bloom_area': 'N/A',
+            'bloom_level_delta': '+5%',
+            'temperature_delta': '+1°C',
+            'rainfall_delta': '+15mm'
+        }
     
     # Create comprehensive Kenya map with scroll wheel zoom disabled
     m = folium.Map(
@@ -1945,20 +2153,6 @@ def show_kenya_climate_map():
         attr='CartoDB',
         scrollWheelZoom=False  # Disable scroll wheel zoom
     )
-    
-    # Kenya regions with climate data
-    kenya_climate_regions = {
-        'Nakuru': {'lat': -0.303, 'lon': 36.08, 'bloom': '80%', 'temp': '24°C', 'humidity': '60%', 'rainfall': '15mm'},
-        'Eldoret': {'lat': 0.514, 'lon': 35.27, 'bloom': '75%', 'temp': '22°C', 'humidity': '55%', 'rainfall': '20mm'},
-        'Kisii': {'lat': -0.677, 'lon': 34.78, 'bloom': '70%', 'temp': '23°C', 'humidity': '70%', 'rainfall': '25mm'},
-        'Kitale': {'lat': 1.015, 'lon': 35.00, 'bloom': '65%', 'temp': '21°C', 'humidity': '58%', 'rainfall': '18mm'},
-        'Nyeri': {'lat': -0.420, 'lon': 36.95, 'bloom': '85%', 'temp': '19°C', 'humidity': '65%', 'rainfall': '30mm'},
-        'Kericho': {'lat': -0.368, 'lon': 35.28, 'bloom': '90%', 'temp': '18°C', 'humidity': '75%', 'rainfall': '35mm'},
-        'Machakos': {'lat': -1.522, 'lon': 37.26, 'bloom': '60%', 'temp': '25°C', 'humidity': '50%', 'rainfall': '10mm'},
-        'Mombasa': {'lat': -4.043, 'lon': 39.66, 'bloom': '55%', 'temp': '28°C', 'humidity': '80%', 'rainfall': '5mm'},
-        'Kiambu': {'lat': -1.171, 'lon': 36.83, 'bloom': '82%', 'temp': '20°C', 'humidity': '62%', 'rainfall': '28mm'},
-        'Embu': {'lat': -0.531, 'lon': 37.45, 'bloom': '78%', 'temp': '21°C', 'humidity': '60%', 'rainfall': '22mm'}
-    }
     
     # Add markers with climate data
     for county, data in kenya_climate_regions.items():
@@ -1974,13 +2168,20 @@ def show_kenya_climate_map():
             color = 'red'
             icon_color = 'red'
         
+        # Data source badge
+        source_badge = "🛰️ NASA Satellite" if data.get('is_real', False) else "📊 Demo Data"
+        source_color = "#1B5E20" if data.get('is_real', False) else "#FF6F00"
+        
         popup_html = f"""
-        <div style="font-family: Arial; min-width: 200px;">
-            <h4 style="margin: 0 0 10px 0; color: #2E7D32;">{county}</h4>
-            <p style="margin: 5px 0;"><b>🌸 Blooming:</b> {data['bloom']}</p>
+        <div style="font-family: Arial; min-width: 250px;">
+            <h4 style="margin: 0 0 5px 0; color: #2E7D32;">{county}</h4>
+            <p style="margin: 5px 0; font-size: 11px; color: {source_color}; font-weight: bold;">{source_badge}</p>
+            <hr style="margin: 8px 0; border: none; border-top: 1px solid #ddd;">
+            <p style="margin: 5px 0;"><b>🌸 Bloom Probability:</b> {data['bloom']}</p>
+            <p style="margin: 5px 0;"><b>🌱 NDVI:</b> {data.get('ndvi', 'N/A')}</p>
             <p style="margin: 5px 0;"><b>🌡️ Temperature:</b> {data['temp']}</p>
-            <p style="margin: 5px 0;"><b>💧 Humidity:</b> {data['humidity']}</p>
             <p style="margin: 5px 0;"><b>🌧️ Rainfall:</b> {data['rainfall']}</p>
+            <p style="margin: 5px 0;"><b>📊 Confidence:</b> {data.get('confidence', 'N/A')}</p>
         </div>
         """
         
@@ -2005,17 +2206,26 @@ def show_kenya_climate_map():
     # Display map
     st_folium(m, height=500, width=None, returned_objects=[], key='climate_map')
     
-    # Climate summary stats
+    # Climate summary stats - REAL DATA
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("🌸 Avg Bloom Level", "73%", delta="+5%")
+        st.metric("🌸 Avg Bloom Level", climate_stats.get('avg_bloom_level', 'N/A'), 
+                 delta=climate_stats.get('bloom_level_delta', '+5%'))
     with col2:
-        st.metric("🌡️ Avg Temperature", "22°C", delta="+1°C")
+        st.metric("🌡️ Avg Temperature", climate_stats.get('avg_temperature', 'N/A'), 
+                 delta=climate_stats.get('temperature_delta', '+1°C'))
     with col3:
-        st.metric("💧 Avg Humidity", "63%", delta="-2%")
+        st.metric("🌧️ Avg Rainfall", climate_stats.get('avg_rainfall', 'N/A'), 
+                 delta=climate_stats.get('rainfall_delta', '+15mm'))
     with col4:
-        st.metric("🌧️ Total Rainfall", "208mm", delta="+15mm")
+        st.metric("📍 Total Bloom Area", climate_stats.get('total_bloom_area', 'N/A'))
+    
+    # Real data indicator
+    if has_real_data:
+        st.success("✅ **Displaying real NASA satellite data** from Google Earth Engine | Covering all 47 Kenya counties")
+    else:
+        st.warning("⚠️ **Demo data displayed** | To fetch real satellite data, run: `python backend/kenya_data_fetcher.py --all`")
     
     # CTA for map exploration
     col_cta1, col_cta2, col_cta3 = st.columns([1, 2, 1])
@@ -2101,9 +2311,31 @@ def show_flora_chatbot_section():
             st.info("🔑 **Flora AI Demo**: To activate Flora, set your OpenAI API key in the `.env` file with `OPENAI_API_KEY=your_key_here`")
             st.caption("Flora will provide personalized agricultural advice powered by GPT-4")
 
-def get_flora_response(user_query):
-    """Get response from Flora using OpenAI API"""
+def get_flora_response(user_query, farmer_data=None):
+    """Get response from Flora using OpenAI API or Flora AI Service"""
     try:
+        # Try to use the new Flora AI Service first
+        try:
+            from flora_ai_service import FloraAIService
+            from mongodb_service import MongoDBService
+            
+            mongo = MongoDBService()
+            flora = FloraAIService(mongo)
+            
+            # Determine language from farmer_data or session
+            language = 'en'
+            if farmer_data and 'language' in farmer_data:
+                language = farmer_data['language']
+            elif 'farmer' in st.session_state:
+                language = st.session_state.farmer.get('language', 'en')
+            
+            response = flora.answer_question(user_query, farmer_data, language, use_internet=True)
+            return response
+        except Exception as e:
+            logger.info(f"Flora AI Service unavailable, using fallback: {e}")
+            # Fallback to inline OpenAI implementation
+            pass
+        
         client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
         
         system_prompt = """You are Flora, an AI agricultural assistant for BloomWatch Kenya. 
@@ -3432,6 +3664,70 @@ def register_page():
         # Progress indicator
         st.progress(0.0, text="Step 1 of 3: Personal Information")
         
+        # REGION & COUNTY SELECTION - OUTSIDE FORM for dynamic updates
+        st.markdown("### 🌾 Farm Location")
+        st.markdown("*Select your region and county first, then fill in the rest of the form below*")
+        
+        if USE_ENHANCED:
+            # Initialize session state for region if not exists
+            if 'selected_region' not in st.session_state:
+                st.session_state.selected_region = list(KENYA_REGIONS_COUNTIES.keys())[0]
+            
+            if 'selected_county' not in st.session_state:
+                st.session_state.selected_county = None
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Region selection
+                region_options = list(KENYA_REGIONS_COUNTIES.keys())
+                region_index = region_options.index(st.session_state.selected_region) if st.session_state.selected_region in region_options else 0
+                
+                region = st.selectbox(
+                    t('region'),
+                    options=region_options,
+                    format_func=lambda x: KENYA_REGIONS_COUNTIES[x]['name'],
+                    index=region_index,
+                    key='reg_region_selector'
+                )
+                
+                # Update session state if region changed
+                if region != st.session_state.selected_region:
+                    st.session_state.selected_region = region
+                    st.session_state.selected_county = None  # Reset county when region changes
+                    st.rerun()  # Force rerun to update counties
+            
+            with col2:
+                # Get counties for selected region
+                available_counties = get_counties_by_region(region)
+                
+                # Set default county if not set or if it's not in the current region's counties
+                if st.session_state.selected_county not in available_counties:
+                    st.session_state.selected_county = available_counties[0] if available_counties else None
+                
+                county_index = available_counties.index(st.session_state.selected_county) if st.session_state.selected_county in available_counties else 0
+                
+                county = st.selectbox(
+                    "County" if st.session_state.get('language', 'en') == 'en' else "Kaunti",
+                    options=available_counties,
+                    index=county_index,
+                    help="Select your county",
+                    key='reg_county_selector'
+                )
+                
+                # Update session state
+                st.session_state.selected_county = county
+        else:
+            region = st.selectbox(
+                t('region'),
+                options=list(KENYA_REGIONS.keys()),
+                format_func=lambda x: x.replace('_', ' ').title()
+            )
+            county = None
+        
+        st.markdown("---")
+        
+        # NOW START THE FORM with the rest of the fields
         with st.form("register_form", clear_on_submit=False):
             # Personal info
             st.markdown("### 👤 Personal Information")
@@ -3455,10 +3751,88 @@ def register_page():
             
             st.markdown("### 🌾 Farm Information")
             
-            region = st.selectbox(
-                t('region'),
-                options=list(KENYA_REGIONS.keys()),
-                format_func=lambda x: x.replace('_', ' ').title()
+            # Display selected region and county (read-only in form)
+            if USE_ENHANCED:
+                st.info(f"📍 **Location:** {KENYA_REGIONS_COUNTIES[st.session_state.selected_region]['name']} → {st.session_state.selected_county}")
+                
+                # Use session state values for registration
+                region = st.session_state.selected_region
+                county = st.session_state.selected_county
+                
+                # Farm size input
+                st.markdown("**Farm Size (Acres)** / **Ukubwa wa Shamba (Ekari)**")
+                farm_size = st.number_input(
+                    "Farm Size",
+                    min_value=0.1,
+                    max_value=10000.0,
+                    value=5.0,
+                    step=0.5,
+                    help="Enter your farm size in acres",
+                    label_visibility="collapsed",
+                    key='reg_farm_size'
+                )
+                
+                # Enhanced crop selection
+                crop_categories = {
+                    'Cereals': ['maize', 'wheat', 'rice', 'sorghum', 'millet', 'barley'],
+                    'Legumes': ['beans', 'pigeon_peas'],
+                    'Cash Crops': ['coffee', 'tea', 'sugarcane', 'cotton', 'tobacco', 'pyrethrum'],
+                    'Tubers': ['potatoes', 'sweet_potatoes', 'cassava'],
+                    'Fruits': ['bananas', 'mangoes', 'coconut'],
+                    'Nuts': ['cashew_nuts', 'macadamia'],
+                    'Vegetables': ['vegetables', 'cabbages', 'horticulture'],
+                    'Livestock': ['dairy', 'livestock']
+                }
+                
+                all_crops_list = []
+                crop_id_to_name = {}
+                for category, crop_ids in crop_categories.items():
+                    for crop_id in crop_ids:
+                        if crop_id in ALL_KENYA_CROPS:
+                            crop_data = ALL_KENYA_CROPS[crop_id]
+                            display_name = f"{crop_data.get('icon', '')} {crop_data['name']}"
+                            all_crops_list.append(crop_id)
+                            crop_id_to_name[crop_id] = display_name
+                
+                crops = st.multiselect(
+                    t('crops'),
+                    options=all_crops_list,
+                    default=['maize'],
+                    format_func=lambda x: crop_id_to_name.get(x, x.title()),
+                    help="Select all crops you grow on your farm",
+                    key='reg_crops'
+                )
+                
+                # Add "Other" crop option
+                st.markdown("**Other Crops** (if not in list above)")
+                other_crops_input = st.text_input(
+                    "Enter crop names separated by commas",
+                    placeholder="e.g., Quinoa, Avocado, Passion fruit",
+                    help="Add any crops not in the list above",
+                    key='reg_other_crops'
+                )
+                
+                # Combine selected crops with other crops
+                if other_crops_input:
+                    other_crops = [crop.strip() for crop in other_crops_input.split(',') if crop.strip()]
+                    # Add 'other:' prefix to distinguish them
+                    crops = crops + [f"other:{crop}" for crop in other_crops]
+            else:
+                # Fallback: simple region/crops without counties
+                st.info(f"📍 **Location:** {region.replace('_', ' ').title()}")
+                county = None
+                farm_size = 5.0
+                
+                st.markdown("**Farm Size (Acres)** / **Ukubwa wa Shamba (Ekari)**")
+                farm_size = st.number_input(
+                    "Farm Size",
+                    min_value=0.1,
+                    max_value=10000.0,
+                    value=5.0,
+                    step=0.5,
+                    help="Enter your farm size in acres",
+                    label_visibility="collapsed",
+                    key='reg_farm_size_fallback'
             )
             
             available_crops = ['maize', 'beans', 'coffee', 'tea', 'wheat', 'sorghum', 'millet', 'cassava']
@@ -3469,6 +3843,19 @@ def register_page():
                 format_func=lambda x: x.title(),
                 help="Select all crops you grow"
             )
+            
+            # Add "Other" crop option for fallback too
+            st.markdown("**Other Crops** (if not in list above)")
+            other_crops_input = st.text_input(
+                "Enter crop names separated by commas",
+                placeholder="e.g., Quinoa, Avocado, Passion fruit",
+                help="Add any crops not in the list above",
+                key='reg_other_crops_fallback'
+            )
+            
+            if other_crops_input:
+                other_crops = [crop.strip() for crop in other_crops_input.split(',') if crop.strip()]
+                crops = crops + [f"other:{crop}" for crop in other_crops]
             
             language = st.selectbox(
                 t('language_pref'),
@@ -3513,7 +3900,7 @@ def register_page():
                 elif len(password) < 6:
                     show_notification("Password must be at least 6 characters", 'error')
                 else:
-                    # Register farmer
+                    # Register farmer with enhanced data
                     farmer_data = {
                         'name': name,
                         'phone': phone,
@@ -3521,14 +3908,49 @@ def register_page():
                         'region': region,
                         'crops': crops,
                         'language': language,
-                        'location_lat': KENYA_REGIONS[region]['coordinates']['lat'],
-                        'location_lon': KENYA_REGIONS[region]['coordinates']['lon'],
                         'sms_enabled': True,
                         'registered_via': 'web'
                     }
                     
+                    # Add county and farm_size if using enhanced version
+                    try:
+                        if USE_ENHANCED and county:
+                            farmer_data['county'] = county
+                            farmer_data['farm_size'] = farm_size
+                            
+                            # Get county coordinates
+                            import json
+                            county_id = county.lower().replace(" ", "_").replace("-", "_").replace("'", "")
+                            county_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'county_data', f'{county_id}.json')
+                            with open(county_file, 'r') as f:
+                                county_data = json.load(f)
+                                coords = county_data.get('coordinates', {})
+                                farmer_data['location_lat'] = coords.get('lat', 0)
+                                farmer_data['location_lon'] = coords.get('lon', 0)
+                        else:
+                            # Fallback to region coordinates
+                            farmer_data['location_lat'] = KENYA_REGIONS[region]['coordinates']['lat']
+                            farmer_data['location_lon'] = KENYA_REGIONS[region]['coordinates']['lon']
+                    except:
+                        farmer_data['location_lat'] = KENYA_REGIONS[region]['coordinates']['lat']
+                        farmer_data['location_lon'] = KENYA_REGIONS[region]['coordinates']['lon']
+                    
                     with st.spinner('🌱 Creating your account...'):
                         time.sleep(1.5)  # Simulate processing
+                        
+                        # Debug: Check if services are available
+                        if auth_service is None:
+                            show_notification("❌ Authentication service not available", 'error')
+                            st.error("System Error: Auth service not initialized. Please refresh the page.")
+                            st.stop()
+                        
+                        # Check if MongoDB is available
+                        if hasattr(auth_service, 'mongo') and auth_service.mongo and auth_service.mongo.db is None:
+                            show_notification("❌ Database connection failed", 'error')
+                            st.error("Database Error: Cannot connect to MongoDB. Please contact support or try again later.")
+                            st.info("Debug: MongoDB connection string might be incorrect or service is down.")
+                            st.stop()
+                        
                         result = auth_service.register_farmer(farmer_data, password)
                         
                         if result['success']:
@@ -3539,7 +3961,13 @@ def register_page():
                             st.session_state.page = 'login'
                             st.rerun()
                         else:
-                            show_notification(result.get('message', 'Registration failed'), 'error')
+                            error_msg = result.get('message', 'Registration failed')
+                            show_notification(f"❌ {error_msg}", 'error')
+                            
+                            # Show more details if in demo mode
+                            if result.get('demo'):
+                                st.warning("⚠️ System is running in demo mode. Database connection might be unavailable.")
+                                st.info("💡 This usually means MongoDB failed to connect. Check the terminal logs for details.")
 
 def dashboard_page():
     """Enhanced dashboard with interactive charts and animations"""
@@ -3640,18 +4068,26 @@ def show_dashboard_tab(farmer):
         )
     
     with col4:
-        # Try to get actual alert count from MongoDB
-        alert_count = "24"
+        # Get actual alert count from MongoDB
+        alert_count = 0
+        recent_alerts = 0
         if mongo_service:
             try:
-                alerts = mongo_service.get_recent_alerts(farmer.get('phone'), limit=100)
-                alert_count = str(len(alerts))
-            except:
-                pass
+                # Get all alerts
+                alerts = mongo_service.get_recent_alerts(farmer.get('phone'), limit=1000)
+                alert_count = len(alerts)
+                
+                # Count alerts from today
+                from datetime import datetime, timedelta
+                today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+                recent_alerts = sum(1 for a in alerts if a.get('timestamp', datetime.min) >= today)
+            except Exception as e:
+                print(f"Warning: Could not fetch alerts: {e}")
+        
         st.metric(
             label="📨 Alerts Received",
-            value=alert_count,
-            delta="+5 today"
+            value=str(alert_count) if alert_count > 0 else "0",
+            delta=f"+{recent_alerts} today" if recent_alerts > 0 else "None today"
         )
     
     st.markdown("<br>", unsafe_allow_html=True)
@@ -3661,25 +4097,55 @@ def show_dashboard_tab(farmer):
     
     with col_left:
         # Interactive NDVI chart with animations
-        st.markdown("### 📈 Farm Health - NDVI Trend (Last 12 Months)")
+        st.markdown("### 📈 Farm Health - NDVI Trend (NASA Satellite Data)")
         
         months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         
-        # Use actual NDVI time series if available
-        if bloom_data and 'time_series_mean' in bloom_data:
-            # Use actual data from bloom processor
-            ndvi_values = np.array(bloom_data['time_series_mean'])
-            # Pad or trim to 12 months
+        # Get NDVI data from bloom processor or GEE
+        ndvi_values = None
+        data_source = "Live Satellite Data"
+        
+        if bloom_processor and farmer.get('region'):
+            try:
+                # Try to get real-time NDVI data for farmer's region
+                region_id = farmer.get('region')
+                county = farmer.get('county', '')
+                
+                # Fetch bloom data for farmer's region
+                region_bloom = bloom_processor.detect_bloom_events(region_id)
+                
+                if region_bloom and 'ndvi_data' in region_bloom:
+                    ndvi_values = np.array(region_bloom['ndvi_data'])
+                    data_source = f"NASA Satellite - {county or region_id.title()}"
+                elif bloom_data and 'time_series_mean' in bloom_data:
+                    ndvi_values = np.array(bloom_data['time_series_mean'])
+                    data_source = "NASA MODIS/Landsat"
+            except Exception as e:
+                print(f"Warning: Could not fetch real-time NDVI: {e}")
+        
+        # Use GEE data if available
+        if ndvi_values is None and gee_data and 'ndvi_time_series' in gee_data:
+            ndvi_values = np.array(gee_data['ndvi_time_series'])
+            data_source = "Google Earth Engine"
+        
+        # Pad or trim to 12 months if we have data
+        if ndvi_values is not None:
             if len(ndvi_values) < 12:
-                # Pad with Kenya seasonal pattern
-                base_ndvi = np.array([0.35, 0.40, 0.55, 0.70, 0.75, 0.60, 0.50, 0.45, 0.50, 0.60, 0.75, 0.65])
-                ndvi_values = np.concatenate([ndvi_values, base_ndvi[len(ndvi_values):]])
+                # Use last available value to pad
+                last_val = ndvi_values[-1] if len(ndvi_values) > 0 else 0.5
+                padding = np.full(12 - len(ndvi_values), last_val)
+                ndvi_values = np.concatenate([ndvi_values, padding])
             elif len(ndvi_values) > 12:
-                ndvi_values = ndvi_values[:12]
+                ndvi_values = ndvi_values[-12:]  # Take last 12 months
         else:
-            # Fallback to realistic seasonal pattern if no actual data
+            # Only use fallback if no satellite data available at all
+            st.warning("⚠️ Live satellite data temporarily unavailable. Showing estimated seasonal pattern.")
             base_ndvi = np.array([0.35, 0.40, 0.55, 0.70, 0.75, 0.60, 0.50, 0.45, 0.50, 0.60, 0.75, 0.65])
-            ndvi_values = base_ndvi + np.random.uniform(-0.05, 0.05, 12)
+            ndvi_values = base_ndvi
+            data_source = "Estimated (Demo)"
+        
+        # Show data source badge
+        st.caption(f"📡 Data Source: {data_source}")
         
         # Create animated Plotly chart
         fig = go.Figure()
@@ -3701,11 +4167,42 @@ def show_dashboard_tab(farmer):
         fig.add_hline(y=0.6, line_dash="dash", line_color="orange", 
                      annotation_text="Healthy Threshold")
         
-        # Highlight actual bloom periods from processor
-        if bloom_data and 'bloom_months' in bloom_data:
+        # Highlight actual bloom periods from ML model predictions
+        bloom_months = []
+        
+        if bloom_processor and farmer.get('region'):
+            try:
+                # Get bloom predictions for farmer's region
+                region_bloom = bloom_processor.detect_bloom_events(farmer['region'])
+                if region_bloom and 'bloom_events' in region_bloom:
+                    # Extract month indices from bloom events
+                    for event in region_bloom['bloom_events']:
+                        if 'month' in event:
+                            bloom_months.append(event['month'])
+                        elif 'date' in event:
+                            # Parse date to get month
+                            from datetime import datetime
+                            date_str = event['date']
+                            if isinstance(date_str, str):
+                                month = datetime.fromisoformat(date_str.replace('Z', '+00:00')).month
+                                bloom_months.append(month - 1)  # 0-indexed
+            except Exception as e:
+                print(f"Warning: Could not fetch bloom predictions: {e}")
+        
+        # Fallback to bloom_data if no processor data
+        if not bloom_months and bloom_data and 'bloom_months' in bloom_data:
             bloom_months = bloom_data['bloom_months']
-        else:
-            bloom_months = [3, 4, 10, 11]  # Default: April, May, November, December
+        
+        # Use crop calendar predictions as last resort
+        if not bloom_months and farmer.get('crops'):
+            try:
+                expected_blooms = crop_calendar.get_expected_blooms()
+                for crop in farmer['crops']:
+                    if crop in expected_blooms:
+                        bloom_months.extend(expected_blooms[crop].get('months', []))
+                bloom_months = list(set(bloom_months))  # Remove duplicates
+            except:
+                pass
         
         for bm in bloom_months:
             fig.add_vrect(
@@ -3749,35 +4246,37 @@ def show_dashboard_tab(farmer):
         # Create stable bloom markers using farmer-specific seed to prevent flickering
         farmer_seed = hash(farmer.get('phone', 'default')) % (2**32)
         
-        # Initialize or retrieve cached bloom markers for ALL Kenya regions
+        # Initialize or retrieve cached bloom markers for ALL Kenya regions - REAL DATA
         if 'bloom_markers_kenya' not in st.session_state or st.session_state.get('current_farmer') != farmer.get('phone'):
             np.random.seed(farmer_seed)
             st.session_state.bloom_markers_kenya = []
             
-            # Generate bloom markers across all Kenya agricultural regions
-            kenya_regions = {
-                'central': {'lat': -0.9, 'lon': 36.9, 'name': 'Central Kenya'},
-                'rift_valley': {'lat': 0.2, 'lon': 35.8, 'name': 'Rift Valley'},
-                'western': {'lat': 0.5, 'lon': 34.8, 'name': 'Western Kenya'},
-                'eastern': {'lat': -1.5, 'lon': 37.5, 'name': 'Eastern Kenya'},
-                'coast': {'lat': -3.5, 'lon': 39.7, 'name': 'Coastal Kenya'}
-            }
-            
-            # Use actual bloom data if available
-            if bloom_data and 'bloom_hotspots' in bloom_data and bloom_data['bloom_hotspots']:
-                # Distribute real bloom data across regions
-                for idx, hotspot in enumerate(bloom_data['bloom_hotspots']):
-                    region_key = list(kenya_regions.keys())[idx % len(kenya_regions)]
-                    region = kenya_regions[region_key]
-                    st.session_state.bloom_markers_kenya.append({
-                        'lat': region['lat'] + np.random.uniform(-0.15, 0.15),
-                        'lon': region['lon'] + np.random.uniform(-0.15, 0.15),
-                        'intensity': hotspot.get('confidence', 0.7),
-                        'location': region['name'],
-                        'region': region_key,
-                        'data_source': 'NASA Satellite'
-                    })
-            else:
+            # Try to load REAL satellite bloom data
+            try:
+                sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+                from streamlit_data_loader import StreamlitDataLoader
+                
+                loader = StreamlitDataLoader()
+                dashboard_data = loader.get_farmer_dashboard_data(farmer_region=None)  # Load all regions
+                
+                if dashboard_data['bloom_markers']:
+                    st.session_state.bloom_markers_kenya = dashboard_data['bloom_markers']
+                    st.session_state.real_bloom_data = True
+                else:
+                    raise Exception("No real bloom data available")
+                    
+            except Exception as e:
+                # Fallback to synthetic data if real data not available
+                st.session_state.real_bloom_data = False
+                
+                kenya_regions = {
+                    'central': {'lat': -0.9, 'lon': 36.9, 'name': 'Central Kenya'},
+                    'rift_valley': {'lat': 0.2, 'lon': 35.8, 'name': 'Rift Valley'},
+                    'western': {'lat': 0.5, 'lon': 34.8, 'name': 'Western Kenya'},
+                    'eastern': {'lat': -1.5, 'lon': 37.5, 'name': 'Eastern Kenya'},
+                    'coast': {'lat': -3.5, 'lon': 39.7, 'name': 'Coastal Kenya'}
+                }
+                
                 # Generate realistic synthetic bloom data across all regions
                 for region_key, region in kenya_regions.items():
                     # 3-5 bloom events per region
@@ -3888,6 +4387,12 @@ def show_dashboard_tab(farmer):
         # Display map
         st_folium(m, height=450, width=None, returned_objects=[], key='kenya_bloom_map')
         
+        # Data source indicator
+        if st.session_state.get('real_bloom_data', False):
+            st.success("✅ **Real NASA satellite data** displayed on map")
+        else:
+            st.info("ℹ️ **Demo data** | Run `python backend/kenya_data_fetcher.py --all` to fetch real satellite data")
+        
         # Statistics below map
         col_stat1, col_stat2, col_stat3 = st.columns(3)
         with col_stat1:
@@ -3906,11 +4411,35 @@ def show_dashboard_tab(farmer):
         # Yield prediction gauge (based on health score)
         st.markdown("### 🎯 Predicted Yield (This Season)")
         
-        # Use actual health score from bloom processor
-        if bloom_data and 'health_score' in bloom_data:
+        # Calculate yield prediction from multiple sources
+        predicted_yield = None
+        
+        # 1. Try to get from bloom processor ML model
+        if bloom_processor and farmer.get('region'):
+            try:
+                region_bloom = bloom_processor.detect_bloom_events(farmer['region'])
+                if region_bloom and 'health_score' in region_bloom:
+                    predicted_yield = region_bloom['health_score'] * 100  # Convert to percentage
+            except:
+                pass
+        
+        # 2. Try cached bloom data
+        if predicted_yield is None and bloom_data and 'health_score' in bloom_data:
             predicted_yield = bloom_data['health_score']
-        else:
-            predicted_yield = 85  # Fallback percentage
+            if predicted_yield < 1:  # If it's a decimal
+                predicted_yield *= 100
+        
+        # 3. Calculate from NDVI if available
+        if predicted_yield is None and ndvi_values is not None:
+            # High NDVI correlates with good yield
+            avg_ndvi = np.mean(ndvi_values)
+            predicted_yield = min(100, max(0, (avg_ndvi / 0.8) * 100))  # Scale 0.8 NDVI = 100% yield
+        
+        # 4. Last resort: Show warning instead of fake data
+        if predicted_yield is None:
+            st.warning("⚠️ Yield prediction unavailable - insufficient satellite data")
+            st.caption("Predictions will appear once we have enough NDVI data from NASA satellites")
+            predicted_yield = 0  # Will show as "No Data" in gauge
         
         fig_gauge = go.Figure(go.Indicator(
             mode="gauge+number+delta",
@@ -3941,18 +4470,64 @@ def show_dashboard_tab(farmer):
         
         st.plotly_chart(fig_gauge, config={'displayModeBar': False})
         
-        # Weather widget (placeholder)
-        st.markdown("### 🌤️ Weather Forecast")
+        # Weather widget - Real satellite climate data
+        st.markdown("### 🌤️ Climate Data (NASA Satellite)")
         
-        weather_data = {
-            'Day': ['Today', 'Tomorrow', 'Wed', 'Thu', 'Fri'],
-            'Condition': ['☀️ Sunny', '🌤️ Partly Cloudy', '🌧️ Rain', '⛈️ Storms', '🌤️ Cloudy'],
-            'Temp (°C)': ['24-28', '23-27', '20-25', '19-24', '22-26'],
-            'Rain (%)': ['10%', '30%', '80%', '90%', '40%']
-        }
+        # Try to get real climate data from GEE
+        weather_data = None
         
-        df_weather = pd.DataFrame(weather_data)
-        st.dataframe(df_weather, hide_index=True)
+        if gee_data and 'climate' in gee_data:
+            try:
+                climate = gee_data['climate']
+                weather_data = {
+                    'Metric': ['Temperature', 'Rainfall', 'Soil Moisture', 'Humidity'],
+                    'Current': [
+                        f"{climate.get('temperature', 'N/A')}°C" if climate.get('temperature') else 'N/A',
+                        f"{climate.get('rainfall', 'N/A')} mm" if climate.get('rainfall') else 'N/A',
+                        f"{climate.get('soil_moisture', 'N/A')}%" if climate.get('soil_moisture') else 'N/A',
+                        f"{climate.get('humidity', 'N/A')}%" if climate.get('humidity') else 'N/A'
+                    ],
+                    'Trend': [
+                        climate.get('temp_trend', '→'),
+                        climate.get('rain_trend', '→'),
+                        climate.get('moisture_trend', '→'),
+                        climate.get('humidity_trend', '→')
+                    ]
+                }
+            except:
+                pass
+        
+        # Try bloom processor climate data
+        if weather_data is None and bloom_processor and farmer.get('region'):
+            try:
+                region_bloom = bloom_processor.detect_bloom_events(farmer['region'])
+                if region_bloom and 'climate_data' in region_bloom:
+                    climate = region_bloom['climate_data']
+                    weather_data = {
+                        'Metric': ['Temperature', 'Rainfall', 'NDVI', 'Bloom Risk'],
+                        'Value': [
+                            f"{climate.get('temp_avg', 0):.1f}°C",
+                            f"{climate.get('rainfall_total', 0):.0f} mm",
+                            f"{climate.get('ndvi_mean', 0):.2f}",
+                            f"{climate.get('bloom_probability', 0):.0%}"
+                        ],
+                        'Status': [
+                            '✅ Optimal' if 18 <= climate.get('temp_avg', 0) <= 28 else '⚠️ Suboptimal',
+                            '✅ Good' if climate.get('rainfall_total', 0) > 50 else '⚠️ Low',
+                            '✅ Healthy' if climate.get('ndvi_mean', 0) > 0.6 else '⚠️ Stressed',
+                            '⚠️ High' if climate.get('bloom_probability', 0) > 0.7 else '✅ Low'
+                        ]
+                    }
+            except:
+                pass
+        
+        if weather_data:
+            df_weather = pd.DataFrame(weather_data)
+            st.dataframe(df_weather, hide_index=True, use_container_width=True)
+            st.caption("📡 Source: NASA MODIS/Landsat satellites")
+        else:
+            st.info("🌤️ Real-time weather data will appear here once satellite data is available")
+            st.caption("Requires Google Earth Engine connection")
         
         # Expected blooms (use actual data)
         st.markdown("### 🌸 Expected Blooms This Month")
@@ -4339,11 +4914,26 @@ def show_profile_tab(farmer):
                 new_name = st.text_input("Name", value=farmer.get('name', ''))
                 new_email = st.text_input("Email", value=farmer.get('email', ''))
                 
+                # Build crop options including all from ALL_KENYA_CROPS plus any the farmer has
+                if USE_ENHANCED:
+                    crop_options = list(ALL_KENYA_CROPS.keys())
+                else:
+                    crop_options = ['maize', 'beans', 'coffee', 'tea', 'wheat', 'sorghum', 'millet', 'cassava']
+                
+                # Add farmer's crops if not in the list
+                farmer_crops = farmer.get('crops', [])
+                for crop in farmer_crops:
+                    if crop not in crop_options:
+                        crop_options.append(crop)
+                
+                # Filter default to only include crops that exist in options
+                valid_defaults = [c for c in farmer_crops if c in crop_options]
+                
                 new_crops = st.multiselect(
                     "Crops",
-                    ['maize', 'beans', 'coffee', 'tea', 'wheat', 'sorghum', 'millet', 'cassava'],
-                    default=farmer.get('crops', []),
-                    format_func=lambda x: x.title()
+                    crop_options,
+                    default=valid_defaults,
+                    format_func=lambda x: ALL_KENYA_CROPS.get(x, {}).get('name', x.title()) if USE_ENHANCED else x.title()
                 )
                 
                 if st.form_submit_button("💾 Update Profile"):
@@ -4359,10 +4949,60 @@ def show_profile_tab(farmer):
         # Activity statistics
         st.markdown("### 📊 Your Statistics")
         
-        st.metric("Days Active", "47", delta="+7 this week")
-        st.metric("Alerts Received", "24", delta="+5")
-        st.metric("Reports Generated", "12", delta="+2")
-        st.metric("Farming Tips Viewed", "18", delta="+4")
+        # Calculate real statistics from MongoDB
+        days_active = 0
+        alerts_received = 0
+        reports_generated = 0
+        chat_history_count = 0
+        
+        if mongo_service:
+            try:
+                # Calculate days since registration
+                if farmer.get('created_at'):
+                    from datetime import datetime
+                    created_date = farmer['created_at']
+                    if isinstance(created_date, str):
+                        created_date = datetime.fromisoformat(created_date.replace('Z', '+00:00'))
+                    days_active = (datetime.utcnow() - created_date).days
+                
+                # Get actual alert count
+                alerts = mongo_service.get_recent_alerts(farmer.get('phone'), limit=1000)
+                alerts_received = len(alerts)
+                
+                # Get reports/bloom events count
+                reports_generated = mongo_service.db['alerts'].count_documents({
+                    'phone': farmer.get('phone'),
+                    'type': {'$in': ['bloom_alert', 'climate_alert']}
+                })
+                
+                # Get Flora AI chat history count
+                chat_history_count = mongo_service.db['chat_history'].count_documents({
+                    'phone': farmer.get('phone')
+                })
+            except Exception as e:
+                print(f"Warning: Could not fetch statistics: {e}")
+        
+        # Display metrics with real data
+        # Format created_at date
+        created_date_str = "N/A"
+        if farmer.get('created_at'):
+            from datetime import datetime
+            created_at = farmer['created_at']
+            if isinstance(created_at, datetime):
+                created_date_str = created_at.strftime('%Y-%m-%d')
+            elif isinstance(created_at, str):
+                created_date_str = created_at[:10]
+            else:
+                created_date_str = str(created_at)[:10]
+        
+        st.metric("Days Active", str(days_active) if days_active > 0 else "New", 
+                 delta=f"Since {created_date_str}" if farmer.get('created_at') else None)
+        st.metric("Alerts Received", str(alerts_received), 
+                 delta=f"+{min(5, alerts_received)} recent" if alerts_received > 0 else "None yet")
+        st.metric("Bloom Reports", str(reports_generated), 
+                 delta="Active monitoring" if reports_generated > 0 else "Awaiting data")
+        st.metric("Flora AI Chats", str(chat_history_count), 
+                 delta="Ask me anything!" if chat_history_count == 0 else f"+{min(4, chat_history_count)} recent")
         
         # Lottie success animation
         if LOTTIE_AVAILABLE:
@@ -4582,14 +5222,31 @@ def main():
             if 'flora_chat_page' in st.session_state:
                 del st.session_state.flora_chat_page
     
-    # Check authentication
+    # Check authentication - validate session if authenticated
     if st.session_state.authenticated and st.session_state.session_token:
-        session = auth_service.verify_session(st.session_state.session_token)
-        if not session:
-            st.session_state.authenticated = False
-            st.session_state.flora_chat = False  # Clear modal on navigation
-            st.session_state.page = 'landing'
-            st.rerun()
+        if auth_service:
+            try:
+                session = auth_service.verify_session(st.session_state.session_token)
+                if not session:
+                    # Session expired or invalid
+                    print(f"Session validation failed for token: {st.session_state.session_token[:10]}...")
+                    st.session_state.authenticated = False
+                    st.session_state.farmer_data = None
+                    st.session_state.session_token = None
+                    st.session_state.flora_chat = False
+                    st.session_state.page = 'landing'
+                    st.rerun()
+                else:
+                    # Session is valid, ensure farmer_data is loaded
+                    if not st.session_state.farmer_data:
+                        st.session_state.farmer_data = session.get('farmer_data')
+            except Exception as e:
+                print(f"Warning: Session verification failed: {e}")
+                # Don't log out on verification errors - keep user logged in
+                # Only log out if explicit session validation fails
+        else:
+            # Auth service not available - don't force logout
+            print("Warning: Auth service not available, skipping session verification")
     
     # Route to appropriate page
     if st.session_state.page == 'landing':

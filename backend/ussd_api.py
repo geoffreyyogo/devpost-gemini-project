@@ -1,16 +1,31 @@
 """
 Flask API server for Africa's Talking USSD callbacks
+Uses Enhanced USSD Service with Flora AI integration
 """
 
 from flask import Flask, request, Response
 from africastalking_service import AfricasTalkingService
+from ussd_enhanced_service import EnhancedUSSDService
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-at_service = AfricasTalkingService()
+
+# Use enhanced service if available, fallback to original
+USE_ENHANCED = os.getenv('USE_ENHANCED_USSD', 'true').lower() == 'true'
+
+if USE_ENHANCED:
+    logger.info("Using Enhanced USSD Service with Flora AI")
+    ussd_service = EnhancedUSSDService()
+else:
+    logger.info("Using Original USSD Service")
+    ussd_service = AfricasTalkingService()
+
+# Keep reference to original service for compatibility
+at_service = ussd_service if not USE_ENHANCED else AfricasTalkingService()
 
 @app.route('/ussd', methods=['POST','GET'])
 def ussd_callback():
@@ -27,8 +42,8 @@ def ussd_callback():
         
         logger.info(f"USSD Request - Phone: {phone_number}, Text: {text}")
         
-        # Handle USSD request
-        response_text = at_service.handle_ussd_request(
+        # Handle USSD request with enhanced or original service
+        response_text = ussd_service.handle_ussd_request(
             session_id, 
             service_code, 
             phone_number, 
@@ -119,7 +134,7 @@ def test_ussd():
 @app.route('/stats', methods=['GET'])
 def get_stats():
     """Get farmer statistics"""
-    stats = at_service.mongo.get_farmer_statistics()
+    stats = ussd_service.mongo.get_farmer_statistics()
     
     html = f'''
     <html>

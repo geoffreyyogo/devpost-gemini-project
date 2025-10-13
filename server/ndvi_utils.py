@@ -1,52 +1,22 @@
-"""
-Lightweight NDVI utilities for BloomWatch Kenya demo
-Works without heavy geospatial dependencies
-"""
-
 import numpy as np
+import rasterio as rio
+from scipy.signal import find_peaks
+from scipy.ndimage import gaussian_filter1d
+import xarray as xr
 from typing import Tuple, List
 
-def load_raster_demo(file_path: str, band: int = 1) -> np.ndarray:
-    """Demo version - generates synthetic raster data"""
-    # Generate Kenya-like NDVI data
-    return np.random.rand(100, 100) * 0.8 + 0.1  # 0.1 to 0.9 NDVI range
+def load_raster(file_path: str, band: int = 1) -> np.ndarray:
+    """Load raster band as numpy array."""
+    with rio.open(file_path) as src:
+        return src.read(band)
 
 def compute_anomaly(current: np.ndarray, baseline: np.ndarray) -> np.ndarray:
     """NDVI anomaly: (current - baseline) / baseline * 100."""
     return np.where(baseline != 0, (current - baseline) / baseline * 100, 0)
 
 def smooth_time_series(ts: np.ndarray, sigma: float = 2) -> np.ndarray:
-    """Simple smoothing for NDVI time-series (without scipy)"""
-    # Simple moving average as replacement for Gaussian filter
-    if len(ts.shape) == 1:
-        # 1D case
-        window = int(sigma * 2 + 1)
-        if window >= len(ts):
-            return ts
-        
-        smoothed = np.zeros_like(ts)
-        for i in range(len(ts)):
-            start = max(0, i - window // 2)
-            end = min(len(ts), i + window // 2 + 1)
-            smoothed[i] = np.mean(ts[start:end])
-        return smoothed
-    else:
-        # Multi-dimensional case - smooth along first axis
-        smoothed = np.zeros_like(ts)
-        for i in range(ts.shape[0]):
-            window_start = max(0, i - int(sigma))
-            window_end = min(ts.shape[0], i + int(sigma) + 1)
-            smoothed[i] = np.mean(ts[window_start:window_end], axis=0)
-        return smoothed
-
-def find_peaks_simple(data: np.ndarray, prominence: float = 0.2) -> List[int]:
-    """Simple peak detection without scipy"""
-    peaks = []
-    for i in range(1, len(data) - 1):
-        if (data[i] > data[i-1] and data[i] > data[i+1] and 
-            data[i] - min(data[i-1], data[i+1]) >= prominence):
-            peaks.append(i)
-    return peaks
+    """Gaussian smoothing for NDVI time-series."""
+    return gaussian_filter1d(ts, sigma=sigma, axis=0)
 
 def detect_blooms(ndvi_ts: np.ndarray, ari_values: List[float], 
                   prominence: float = 0.2, anomaly_thresh: float = 20, 
@@ -63,7 +33,7 @@ def detect_blooms(ndvi_ts: np.ndarray, ari_values: List[float],
         mean_ndvi = ndvi_ts
     
     mean_ndvi = smooth_time_series(mean_ndvi)
-    peaks = find_peaks_simple(mean_ndvi, prominence=prominence)
+    peaks, _ = find_peaks(mean_ndvi, prominence=prominence)
     
     # Refine: Check ARI and anomaly at peaks
     refined_peaks = []
@@ -75,8 +45,7 @@ def detect_blooms(ndvi_ts: np.ndarray, ari_values: List[float],
                 refined_peaks.append(p)
     
     bloom_scores = np.zeros_like(mean_ndvi)
-    if refined_peaks:
-        bloom_scores[refined_peaks] = mean_ndvi[refined_peaks]
+    bloom_scores[refined_peaks] = mean_ndvi[refined_peaks]
     
     return refined_peaks, bloom_scores
 

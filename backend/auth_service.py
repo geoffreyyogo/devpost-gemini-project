@@ -28,7 +28,19 @@ class AuthService:
     
     def __init__(self, mongo_service=None):
         self.mongo = mongo_service if mongo_service is not None else MongoDBService()
-        self.sessions = {}  # In-memory sessions (use Redis in production)
+        self.sessions = {}  # In-memory sessions (fallback)
+        
+        # Use MongoDB for session persistence
+        if self.mongo and self.mongo.db is not None:
+            self.db_sessions = self.mongo.db['sessions']
+            # Create index for session expiry
+            try:
+                self.db_sessions.create_index('expires_at', expireAfterSeconds=0)
+                self.db_sessions.create_index('session_token', unique=True)
+            except:
+                pass
+        else:
+            self.db_sessions = None
         
         # Initialize smart alert service if available
         if SMART_ALERTS_AVAILABLE:
@@ -136,12 +148,37 @@ class AuthService:
         
         # Create session
         session_token = secrets.token_urlsafe(32)
-        self.sessions[session_token] = {
+        session_data = {
+            'session_token': session_token,
             'farmer_id': str(farmer['_id']),
             'phone': farmer['phone'],
+            'farmer_data': {
+                'phone': farmer['phone'],
+                'name': farmer['name'],
+                'email': farmer.get('email'),
+                'region': farmer.get('region'),
+                'county': farmer.get('county'),
+                'crops': farmer.get('crops', []),
+                'language': farmer.get('language', 'en'),
+                'created_at': farmer.get('created_at'),
+                'farm_size': farmer.get('farm_size')
+            },
             'created_at': datetime.now(),
             'expires_at': datetime.now() + timedelta(days=7)
         }
+        
+        # Store in memory
+        self.sessions[session_token] = session_data
+        
+        # Also store in MongoDB for persistence
+        if self.db_sessions is not None:
+            try:
+                # Remove old sessions for this farmer
+                self.db_sessions.delete_many({'phone': farmer['phone']})
+                # Insert new session
+                self.db_sessions.insert_one(session_data)
+            except Exception as e:
+                logger.warning(f"Could not persist session to DB: {e}")
         
         # Update last login
         if self.mongo.db is not None:
@@ -163,33 +200,67 @@ class AuthService:
         }
     
     def verify_session(self, session_token: str) -> Optional[Dict]:
-        """Verify session token"""
+        """Verify session token - checks both memory and MongoDB"""
         if session_token == 'demo_token':
             return {
                 'phone': 'demo',
                 'farmer_id': 'demo',
-                'demo': True
+                'demo': True,
+                'farmer_data': {
+                    'phone': 'demo',
+                    'name': 'Demo Farmer',
+                    'region': 'central',
+                    'crops': ['maize', 'beans'],
+                    'language': 'en'
+                }
             }
         
+        # First check in-memory sessions
         session = self.sessions.get(session_token)
+        
+        # If not in memory, check MongoDB
+        if not session and self.db_sessions is not None:
+            try:
+                session = self.db_sessions.find_one({'session_token': session_token})
+                if session:
+                    # Restore to memory for faster access
+                    self.sessions[session_token] = session
+            except Exception as e:
+                logger.warning(f"Could not retrieve session from DB: {e}")
+                return None
         
         if not session:
             return None
         
         # Check if expired
-        if datetime.now() > session['expires_at']:
+        expires_at = session.get('expires_at')
+        if expires_at and datetime.now() > expires_at:
+            # Delete expired session
             del self.sessions[session_token]
+            if self.db_sessions is not None:
+                try:
+                    self.db_sessions.delete_one({'session_token': session_token})
+                except:
+                    pass
             return None
         
         return session
     
     def logout(self, session_token: str) -> bool:
         """Logout and invalidate session"""
+        # Remove from memory
         if session_token in self.sessions:
             del self.sessions[session_token]
-            logger.info("✓ Farmer logged out")
-            return True
-        return False
+        
+        # Remove from MongoDB
+        if self.db_sessions is not None:
+            try:
+                self.db_sessions.delete_one({'session_token': session_token})
+            except Exception as e:
+                logger.warning(f"Could not delete session from DB: {e}")
+        
+        logger.info("✓ Farmer logged out")
+        return True
     
     def get_farmer_from_session(self, session_token: str) -> Optional[Dict]:
         """Get farmer data from session"""

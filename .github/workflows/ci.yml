@@ -25,9 +25,8 @@ jobs:
     
     - name: Install Python dependencies
       run: |
-        cd backend
         pip install -r requirements.txt
-        pip install pytest flake8
+        pip install flake8
     
     - name: Lint with flake8
       run: |
@@ -38,11 +37,13 @@ jobs:
     
     - name: Run tests
       run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
         cd tests
         python -m pytest -v
     
     - name: Test Streamlit app import
       run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)
         cd app
         python -c "import streamlit_app_enhanced; print('Streamlit app imports successfully')"
 

@@ -1,0 +1,143 @@
+# Render Blueprint for BloomWatch Kenya - Next.js + FastAPI
+# Modern deployment configuration
+
+services:
+  # FastAPI Backend
+  - type: web
+    name: bloomwatch-fastapi
+    env: python
+    region: oregon
+    plan: free
+    branch: deploy-nextjs-fastapi  # Change to 'main' after testing
+    rootDirectory: ./server
+    buildCommand: |
+      python -m pip install --upgrade pip
+      pip install -r requirements-fastapi.txt
+    startCommand: |
+      uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      
+      # MongoDB Configuration
+      - key: MONGODB_URI
+        sync: false  # Set in Render Dashboard: mongodb+srv://...
+      - key: MONGODB_DATABASE
+        value: "bloomwatch_kenya"
+      
+      # Africa's Talking API
+      - key: AT_USERNAME
+        sync: false  # Set in Render Dashboard (e.g., 'sandbox' for testing)
+      - key: AT_API_KEY
+        sync: false  # Set in Render Dashboard
+      - key: SMS_SENDER_ID
+        value: "BloomWatch"
+      - key: ENABLE_SMS_NOTIFICATIONS
+        value: "True"
+      - key: SMS_DAILY_LIMIT
+        value: "5"
+      
+      # USSD Configuration
+      - key: USSD_SHORT_CODE
+        value: "*384*42434#"
+      - key: USSD_CALLBACK_URL
+        value: "https://bloomwatch-fastapi.onrender.com/ussd/callback"
+      
+      # Security & Authentication
+      - key: SECRET_KEY
+        generateValue: true  # Auto-generated secure key
+      - key: JWT_SECRET_KEY
+        generateValue: true  # Auto-generated secure key
+      - key: SESSION_TIMEOUT_DAYS
+        value: "7"
+      - key: MIN_PASSWORD_LENGTH
+        value: "6"
+      
+      # Google Earth Engine
+      - key: GEE_PROJECT_ID
+        value: "bloomwatch-474200"
+      - key: GEE_SERVICE_ACCOUNT
+        sync: false  # Optional: for Earth Engine service account authentication
+      
+      # Application Settings
+      - key: ENVIRONMENT
+        value: "production"
+      - key: DEBUG
+        value: "False"
+      - key: LOG_LEVEL
+        value: "INFO"
+      
+      # CORS Configuration
+      - key: CORS_ORIGINS
+        value: "https://bloomwatch-nextjs.onrender.com,https://bloomwatch-app.onrender.com"
+      
+      # Notification Scheduler Settings
+      - key: BLOOM_CHECK_INTERVAL_HOURS
+        value: "6"
+      - key: MIN_BLOOM_INTENSITY
+        value: "0.5"
+      - key: DEFAULT_ALERT_RADIUS_KM
+        value: "50"
+      
+      # SMS Delivery Reports Callback
+      # Configure in Africa's Talking: https://bloomwatch-fastapi.onrender.com/api/sms/delivery-reports
+      
+      # OpenAI Configuration (for Flora AI Chatbot)
+      - key: OPENAI_API_KEY
+        sync: false  # Set in Render Dashboard (optional)
+      
+      # SendGrid Email Configuration (optional)
+      - key: SENDGRID_API_KEY
+        sync: false  # Set in Render Dashboard (optional)
+      - key: SENDGRID_FROM_EMAIL
+        value: "noreply@bloomwatchkenya.com"
+      - key: SENDGRID_FROM_NAME
+        value: "BloomWatch Kenya"
+      
+      # Admin Configuration
+      - key: ADMIN_PASSWORD
+        sync: false  # Set in Render Dashboard
+    healthCheckPath: /health
+
+  # Next.js Frontend
+  - type: web
+    name: bloomwatch-nextjs
+    env: node
+    region: oregon
+    plan: free
+    branch: deploy-nextjs-fastapi  # Change to 'main' after testing
+    rootDirectory: ./frontend
+    buildCommand: |
+      npm install
+      npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "18.17.0"
+      - key: NEXT_PUBLIC_API_URL
+        value: "https://bloomwatch-fastapi.onrender.com"  # Update after backend deploys
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /
+
+  # Optional: Keep Flask USSD API if still needed
+  # - type: web
+  #   name: bloomwatch-ussd-api
+  #   env: python
+  #   region: oregon
+  #   plan: free
+  #   branch: deploy-nextjs-fastapi
+  #   rootDirectory: ./backend
+  #   buildCommand: pip install -r requirements.txt
+  #   startCommand: gunicorn ussd_api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+  #   envVars:
+  #     - key: MONGODB_URI
+  #       sync: false
+  #     - key: AFRICASTALKING_USERNAME
+  #       sync: false
+  #     - key: AFRICASTALKING_API_KEY
+  #       sync: false
+  #     - key: FLASK_ENV
+  #       value: production
+  #   healthCheckPath: /health
+

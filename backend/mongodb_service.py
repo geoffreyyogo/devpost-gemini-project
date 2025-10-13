@@ -25,43 +25,19 @@ class MongoDBService:
         )
         
         try:
-            # Add SSL/TLS parameters for Atlas compatibility in WSL
-            import ssl
-            import certifi
-            
-            # Create custom SSL context for WSL
-            ssl_context = ssl.create_default_context(cafile=certifi.where())
-            ssl_context.check_hostname = False
-            ssl_context.verify_mode = ssl.CERT_NONE
-            
-            # Increased timeouts for WSL2 DNS resolution issues
+            # Simplified connection for Atlas compatibility
+            # Let PyMongo handle SSL/TLS automatically based on connection string
             self.client = MongoClient(
                 self.connection_string, 
-                serverSelectionTimeoutMS=30000,  # Increased from 5s to 30s
-                connectTimeoutMS=30000,  # 30 seconds for initial connection
-                socketTimeoutMS=30000,   # 30 seconds for socket operations
-                tls=True,
-                tlsAllowInvalidCertificates=True,
-                tlsCAFile=certifi.where(),
-                retryWrites=True,  # Enable retry writes
-                retryReads=True,   # Enable retry reads
-                maxPoolSize=10,
-                minPoolSize=1
+                serverSelectionTimeoutMS=5000,  # Quick timeout for faster failure
+                connectTimeoutMS=10000,
+                socketTimeoutMS=10000,
+                retryWrites=True,
+                maxPoolSize=10
             )
-            # Test connection with retry
-            max_retries = 3
-            retry_count = 0
-            while retry_count < max_retries:
-                try:
-                    self.client.server_info()
-                    break
-                except Exception as e:
-                    retry_count += 1
-                    if retry_count >= max_retries:
-                        raise e
-                    logger.warning(f"MongoDB connection attempt {retry_count} failed, retrying...")
-                    import time
-                    time.sleep(2)
+            
+            # Test connection
+            self.client.server_info()
             
             self.db = self.client['bloomwatch_kenya']
             logger.info("✓ Connected to MongoDB successfully")
@@ -76,6 +52,8 @@ class MongoDBService:
             self.message_templates = self.db['message_templates']
             self.agricultural_advice = self.db['agricultural_advice']
             self.system_config = self.db['system_config']
+            self.chat_history = self.db['chat_history']
+            self.counties = self.db['counties']
             
             # Create indexes
             self._create_indexes()
@@ -94,6 +72,8 @@ class MongoDBService:
             self.message_templates = None
             self.agricultural_advice = None
             self.system_config = None
+            self.chat_history = None
+            self.counties = None
     
     def _create_indexes(self):
         """Create database indexes for performance"""
@@ -104,6 +84,8 @@ class MongoDBService:
         self.farmers.create_index('phone', unique=True)
         self.farmers.create_index([('location', '2dsphere')])
         self.farmers.create_index('region')
+        self.farmers.create_index('county')
+        self.farmers.create_index('farm_size')
         
         # Alert indexes
         self.alerts.create_index('farmer_id')
@@ -119,10 +101,17 @@ class MongoDBService:
         
         # Reference data indexes
         self.crops.create_index('crop_id', unique=True)
+        self.crops.create_index('category')
         self.regions.create_index('region_id', unique=True)
         self.message_templates.create_index('template_id', unique=True)
         self.message_templates.create_index('category')
         self.agricultural_advice.create_index([('crop', ASCENDING), ('stage', ASCENDING)])
+        
+        # Chat history indexes
+        self.chat_history.create_index('phone')
+        self.chat_history.create_index('farmer_id')
+        self.chat_history.create_index('timestamp')
+        self.chat_history.create_index('created_at', expireAfterSeconds=7776000)  # 90 days
         
         logger.info("✓ Database indexes created")
     
