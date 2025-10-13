@@ -73,10 +73,18 @@ def initialize_earth_engine():
         return True
     
     try:
-        # Get project ID from environment variable
+        # Get project ID and service account from environment variables
         project_id = os.getenv('GEE_PROJECT_ID')
+        service_account_json = os.getenv('GEE_SERVICE_ACCOUNT_JSON')
         
-        if project_id:
+        if service_account_json and project_id:
+            logger.info(f"Initializing Earth Engine with service account for project: {project_id}")
+            # Parse the JSON string and authenticate with service account
+            import json
+            service_account_info = json.loads(service_account_json)
+            credentials = ee.ServiceAccountCredentials(service_account_info['client_email'], service_account_info)
+            ee.Initialize(credentials, project=project_id)
+        elif project_id:
             logger.info(f"Initializing Earth Engine with project: {project_id}")
             ee.Initialize(project=project_id)
         else:
