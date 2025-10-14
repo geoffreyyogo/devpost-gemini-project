@@ -255,18 +255,28 @@ async def security_headers_middleware(request: Request, call_next):
     return response
 
 # CORS configuration
+cors_origins = [
+    "http://localhost:3000",
+    "http://localhost:3001", 
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://172.18.54.46:3000",
+    "http://172.18.54.46:3001",
+    "https://bloomwatch.co.ke",
+    "https://www.bloomwatch.co.ke",
+    "https://bloomwatch-nextjs.onrender.com",
+    "https://bloomwatch-nextjs-oomk.onrender.com",
+    "https://bloomwatch-app.onrender.com"
+]
+
+# Add CORS origins from environment variable if available
+cors_origins_env = os.getenv('CORS_ORIGINS', '')
+if cors_origins_env:
+    cors_origins.extend([origin.strip() for origin in cors_origins_env.split(',')])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
-        "http://172.18.54.46:3000",
-        "http://172.18.54.46:3001",
-        "https://bloomwatch.co.ke",
-        "https://www.bloomwatch.co.ke"
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
