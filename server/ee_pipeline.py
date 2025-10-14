@@ -92,18 +92,28 @@ def initialize_earth_engine():
                     json.dump(service_account_info, f)
                     temp_key_path = f.name
                 
-                # Set the environment variable for Earth Engine to use
-                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_key_path
+                # Use the direct authentication method
+                credentials = ee.ServiceAccountCredentials(
+                    service_account_info['client_email'], 
+                    temp_key_path
+                )
                 
-                # Initialize Earth Engine
-                ee.Initialize(project=project_id)
+                # Initialize Earth Engine with credentials
+                ee.Initialize(credentials, project=project_id)
                 
                 # Clean up the temporary file
                 os.unlink(temp_key_path)
                 
             except Exception as auth_error:
                 logger.error(f"Service account authentication failed: {auth_error}")
+                # Clean up temp file if it exists
+                try:
+                    if 'temp_key_path' in locals():
+                        os.unlink(temp_key_path)
+                except:
+                    pass
                 # Fall back to regular initialization
+                logger.info("Falling back to regular Earth Engine initialization")
                 ee.Initialize(project=project_id)
         elif project_id:
             logger.info(f"Initializing Earth Engine with project: {project_id}")
