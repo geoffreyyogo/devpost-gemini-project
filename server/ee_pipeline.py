@@ -82,20 +82,29 @@ def initialize_earth_engine():
             # Parse the JSON string and authenticate with service account
             import json
             import tempfile
-            service_account_info = json.loads(service_account_json)
-            
-            # Create a temporary file with the service account JSON
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-                json.dump(service_account_info, f)
-                temp_key_path = f.name
-            
-            # Use the temporary file path for authentication
-            credentials = ee.ServiceAccountCredentials(service_account_info['client_email'], temp_key_path)
-            ee.Initialize(credentials, project=project_id)
-            
-            # Clean up the temporary file
             import os
-            os.unlink(temp_key_path)
+            
+            try:
+                service_account_info = json.loads(service_account_json)
+                
+                # Create a temporary file with the service account JSON
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+                    json.dump(service_account_info, f)
+                    temp_key_path = f.name
+                
+                # Set the environment variable for Earth Engine to use
+                os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_key_path
+                
+                # Initialize Earth Engine
+                ee.Initialize(project=project_id)
+                
+                # Clean up the temporary file
+                os.unlink(temp_key_path)
+                
+            except Exception as auth_error:
+                logger.error(f"Service account authentication failed: {auth_error}")
+                # Fall back to regular initialization
+                ee.Initialize(project=project_id)
         elif project_id:
             logger.info(f"Initializing Earth Engine with project: {project_id}")
             ee.Initialize(project=project_id)
