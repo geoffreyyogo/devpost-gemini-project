@@ -72,6 +72,11 @@ def initialize_earth_engine():
     if EE_INITIALIZED:
         return True
     
+    # Import required modules at the top level
+    import json
+    import tempfile
+    import os
+    
     try:
         # Get project ID and service account from environment variables
         project_id = os.getenv('GEE_PROJECT_ID')
@@ -79,10 +84,6 @@ def initialize_earth_engine():
         
         if service_account_json and project_id:
             logger.info(f"Initializing Earth Engine with service account for project: {project_id}")
-            # Parse the JSON string and authenticate with service account
-            import json
-            import tempfile
-            import os
             
             try:
                 service_account_info = json.loads(service_account_json)
