@@ -77,10 +77,11 @@ def initialize_earth_engine():
     import tempfile
     import os
     
+    # Get project ID and service account from environment variables
+    project_id = os.getenv('GEE_PROJECT_ID')
+    service_account_json = os.getenv('GEE_SERVICE_ACCOUNT_JSON')
+    
     try:
-        # Get project ID and service account from environment variables
-        project_id = os.getenv('GEE_PROJECT_ID')
-        service_account_json = os.getenv('GEE_SERVICE_ACCOUNT_JSON')
         
         if service_account_json and project_id:
             logger.info(f"Initializing Earth Engine with service account for project: {project_id}")
