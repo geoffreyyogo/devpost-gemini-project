@@ -4,7 +4,7 @@
 services:
   # FastAPI Backend
   - type: web
-    name: bloomwatch-fastapi
+    name: bloomwatch-api
     env: python
     region: oregon
     plan: free
@@ -41,7 +41,7 @@ services:
       - key: USSD_SHORT_CODE
         value: "*384*42434#"
       - key: USSD_CALLBACK_URL
-        value: "https://bloomwatch-fastapi.onrender.com/ussd/callback"
+        value: "https://bloomwatch-api.onrender.com/ussd/callback"
       
       # Security & Authentication
       - key: SECRET_KEY
@@ -69,7 +69,7 @@ services:
       
       # CORS Configuration
       - key: CORS_ORIGINS
-        value: "https://bloomwatch-nextjs.onrender.com,https://bloomwatch-app.onrender.com"
+        value: "https://bloomwatch-app.onrender.com"
       
       # Notification Scheduler Settings
       - key: BLOOM_CHECK_INTERVAL_HOURS
@@ -101,7 +101,7 @@ services:
 
   # Next.js Frontend
   - type: web
-    name: bloomwatch-nextjs
+    name: bloomwatch-app
     env: node
     region: oregon
     plan: free
@@ -115,7 +115,7 @@ services:
       - key: NODE_VERSION
         value: "20.11.1"
       - key: NEXT_PUBLIC_API_URL
-        value: "https://bloomwatch-fastapi.onrender.com"  # Update after backend deploys
+        value: "https://bloomwatch-api.onrender.com"  # Update after backend deploys
       - key: NODE_ENV
         value: production
     healthCheckPath: /

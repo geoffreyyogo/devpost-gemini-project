@@ -151,7 +151,7 @@ export function CTASection() {
           <button
             key={index}
             onClick={() => setCurrentImageIndex(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+            className={`progress-indicator w-2 h-2 rounded-full transition-all duration-300 ${
               index === currentImageIndex 
                 ? 'bg-white w-8' 
                 : 'bg-white/50 hover:bg-white/75'

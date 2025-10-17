@@ -109,7 +109,7 @@ export function FloraChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-green-600/50 hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center group"
+          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-green-600/50 hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center group sm:w-16 sm:h-16 w-14 h-14"
           aria-label="Chat with Flora AI"
         >
           <MessageSquare className="h-7 w-7 group-hover:scale-110 transition-transform" />
@@ -119,17 +119,17 @@ export function FloraChatWidget() {
 
       {/* Chat Modal */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-full max-w-md z-50 animate-in slide-in-from-bottom-5 duration-300">
-          <Card className="shadow-2xl border-green-200 dark:border-green-800">
-            <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
+        <div className="fixed bottom-6 right-6 w-full max-w-md z-50 animate-in slide-in-from-bottom-5 duration-300 flora-modal-mobile">
+          <Card className="shadow-2xl border-green-200 dark:border-green-800 h-full flex flex-col bg-white dark:bg-gray-900">
+            <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg border-b border-green-500/20 shadow-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                     <Sprout className="h-6 w-6" />
                   </div>
                   <div>
-                    <CardTitle className="text-white">Flora AI</CardTitle>
-                    <CardDescription className="text-green-100 text-xs">
+                    <CardTitle className="text-white font-bold text-lg">Flora AI</CardTitle>
+                    <CardDescription className="text-green-100 text-xs font-medium">
                       Your Agricultural Assistant
                     </CardDescription>
                   </div>

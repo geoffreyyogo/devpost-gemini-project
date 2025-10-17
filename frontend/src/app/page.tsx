@@ -96,7 +96,7 @@ export default function HomePage() {
                     Welcome, {farmer.name.split(' ')[0]}!
                   </span>
                   <Link href="/dashboard">
-                    <Button className="bg-green-600 hover:bg-green-700 text-white rounded-full px-4 md:px-6 h-9 text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                    <Button className="bg-green-600 hover:bg-green-700 text-white rounded-2xl px-4 md:px-6 h-9 text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                       Dashboard
                     </Button>
                   </Link>
@@ -104,13 +104,13 @@ export default function HomePage() {
               ) : (
                 <div className="flex items-center gap-2">
                   <Link href="/login" className="hidden sm:inline">
-                    <Button variant="ghost" className="rounded-full px-4 md:px-5 h-9 text-sm font-medium hover:bg-green-50 dark:hover:bg-green-900/20">
+                    <Button variant="ghost" className="rounded-2xl px-4 md:px-5 h-9 text-sm font-medium hover:bg-green-50 dark:hover:bg-green-900/20">
                       <LogIn className="mr-2 h-4 w-4" />
                       Login
                     </Button>
                   </Link>
                   <Link href="/register">
-                    <Button className="bg-green-600 hover:bg-green-700 text-white rounded-full px-4 md:px-6 h-9 text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                    <Button className="bg-green-600 hover:bg-green-700 text-white rounded-2xl px-4 md:px-6 h-9 text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                       <Rocket className="mr-2 h-4 w-4" />
                       <span className="hidden sm:inline">Get Started</span>
                       <span className="sm:hidden">Start</span>
@@ -151,7 +151,7 @@ export default function HomePage() {
               <Link href="/register">
                 <Button 
                   size="lg" 
-                  className="bg-white text-green-700 hover:bg-green-50 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-full shadow-xl font-bold min-w-[200px]"
+                  className="bg-white text-green-700 hover:bg-green-50 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px]"
                 >
                   <Rocket className="mr-2 h-5 w-5" />
                   Get Started
@@ -161,7 +161,7 @@ export default function HomePage() {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="bg-green-800/30 text-white border-2 border-white hover:bg-white hover:text-green-700 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-full shadow-xl font-bold min-w-[200px] backdrop-blur-sm"
+                  className="bg-green-800/30 text-white border-2 border-white hover:bg-white hover:text-green-700 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px] backdrop-blur-sm"
                 >
                   <LogIn className="mr-2 h-5 w-5" />
                   Farmer Login
@@ -177,7 +177,7 @@ export default function HomePage() {
                   You can also register by dialing:
                 </p>
                 <h2 
-                  className="text-green-700 dark:text-green-400 text-5xl md:text-6xl font-bold text-center tracking-[0.15em] my-4"
+                  className="text-green-700 dark:text-green-400 text-5xl md:text-6xl font-bold text-center tracking-[0.15em] my-4 ussd-code-mobile"
                   style={{ textShadow: '2px 2px 4px rgba(46,125,50,0.2)' }}
                 >
                   *384*42434#
@@ -196,8 +196,8 @@ export default function HomePage() {
         <div className="space-y-8">
           {/* Section Header */}
           <div className="text-center space-y-4" data-aos="fade-down">
-            <h2 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-green-400 flex items-center justify-center gap-3">
-              <MapIcon className="h-10 w-10" />
+            <h2 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-green-400 flex items-center justify-center gap-3 mobile-heading">
+              <MapIcon className="h-8 w-8 md:h-10 md:w-10" />
               Kenya Live Climate & Bloom Data
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 font-semibold">
@@ -234,7 +234,7 @@ export default function HomePage() {
               <Link href={isAuthenticated && farmer ? "/dashboard" : "/login"}>
                 <Button 
                   size="lg" 
-                  className="bg-green-600 hover:bg-green-700 text-white px-10 py-6 rounded-full shadow-xl hover:scale-105 transition-all"
+                  className="bg-green-600 hover:bg-green-700 text-white px-10 py-6 rounded-2xl shadow-xl hover:scale-105 transition-all"
                 >
                   <BarChart3 className="mr-2 h-5 w-5" />
                   {isAuthenticated && farmer ? "View Your Dashboard" : "Explore Your Region's Data"}
@@ -254,7 +254,7 @@ export default function HomePage() {
       {/* Features Section - Why BloomWatch Kenya */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16" data-aos="fade-down">
-          <h2 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-green-400 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
             🌟 Why BloomWatch Kenya?
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto">
@@ -482,7 +482,7 @@ export default function HomePage() {
       <section className="bg-gradient-to-b from-white to-green-50/30 dark:from-gray-950 dark:to-green-950/30 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
               🌺 Meet Flora - Your AI MauaMentor
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg max-w-2xl mx-auto">
@@ -633,7 +633,7 @@ export default function HomePage() {
       <section className="bg-white dark:bg-gray-950 py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16" data-aos="fade-down">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
               BloomWatch Kenya Expected Impact
             </h2>
             <p className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300">
@@ -761,7 +761,7 @@ export default function HomePage() {
       <section className="bg-gradient-to-b from-green-50/50 to-white dark:from-green-950/30 dark:to-gray-950 py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
               👥 Farmer Success Stories
             </h2>
             <p className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300">
@@ -984,8 +984,8 @@ export default function HomePage() {
       <section className="bg-white dark:bg-gray-950 py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 flex items-center justify-center gap-3">
-              <Phone className="h-8 w-8 md:h-10 md:w-10" />
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 flex items-center justify-center gap-3 mobile-heading">
+              <Phone className="h-6 w-6 md:h-8 md:w-8" />
               Access BloomWatch on ANY Phone
             </h2>
             <p className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300">
@@ -1200,7 +1200,7 @@ export default function HomePage() {
       {/* From Kenyan Farms */}
       <section className="bg-gradient-to-b from-green-50/50 to-white dark:from-green-950/30 dark:to-gray-950 py-16 md:py-20">
         <div className="container mx-auto px-4">
-          <h3 className="text-2xl md:text-3xl font-bold text-green-700 dark:text-green-400 mb-8 text-center" data-aos="fade-down">
+          <h3 className="text-2xl md:text-3xl font-bold text-green-700 dark:text-green-400 mb-8 text-center mobile-heading" data-aos="fade-down">
             🌾 From Kenyan Farms
           </h3>
           

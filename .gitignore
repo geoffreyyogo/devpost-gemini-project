@@ -1,15 +1,6 @@
-# Data files - Include critical files for deployment
-# Exclude only .tif files (deprecated, large)
-*.tif
-*.tiff
-data/**/*.tif
-data/**/*.tiff
-
-# Include essential data for deployment
-!data/models/**
-!data/county_data/**
-!data/exports/**
-!data/*.json
+# Data files - Exclude entire data directory
+# The deployed app has its own data, don't push local changes
+data/
 
 # Python
 __pycache__/
