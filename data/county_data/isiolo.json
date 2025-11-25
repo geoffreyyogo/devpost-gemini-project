@@ -11,21 +11,21 @@
     "maize",
     "sorghum"
   ],
-  "last_updated": "2025-10-13T08:13:43.170709",
+  "last_updated": "2025-11-25T16:00:51.471391",
   "satellite_data": {
-    "ndvi": 0.18408101926471743,
-    "ndwi": -0.3270669450820669,
+    "ndvi": 0.372006420307754,
+    "ndwi": -0.4120394633682432,
     "rainfall_mm": 0,
-    "temperature_c": 33.49327999033174,
+    "temperature_c": 28.21167986493452,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 0.0,
-    "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 479.8164382859979,
+    "bloom_percentage": 3.9984703190499826,
+    "bloom_probability": 50.06034872729776,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (50%) - Some blooms likely"
   }
 }

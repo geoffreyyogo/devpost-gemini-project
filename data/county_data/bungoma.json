@@ -12,21 +12,21 @@
     "beans",
     "bananas"
   ],
-  "last_updated": "2025-10-13T07:58:09.962966",
+  "last_updated": "2025-11-25T15:35:30.798810",
   "satellite_data": {
-    "ndvi": 0.6098544567333738,
-    "ndwi": -0.5569072760939824,
+    "ndvi": 0.6007864449544064,
+    "ndwi": -0.5631477228445654,
     "rainfall_mm": 0,
-    "temperature_c": 24.842587876474635,
+    "temperature_c": 25.4349238353891,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
     "bloom_area_km2": 0.0,
     "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_probability": 61.356182188601466,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (61%) - Some blooms likely"
   }
 }

@@ -12,21 +12,21 @@
     "pigeon peas",
     "fruits"
   ],
-  "last_updated": "2025-10-13T07:57:05.148953",
+  "last_updated": "2025-11-25T15:32:42.498589",
   "satellite_data": {
-    "ndvi": 0.2259074856320262,
-    "ndwi": -0.41605320612274843,
+    "ndvi": 0,
+    "ndwi": 0,
     "rainfall_mm": 0,
-    "temperature_c": 33.091689839272206,
-    "data_source": "Sentinel-2",
+    "temperature_c": 26.172115470314207,
+    "data_source": "Unknown",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 702.658773474654,
-    "bloom_percentage": 5.85548977895545,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 568.8182383144451,
+    "bloom_percentage": 4.740151985953709,
+    "bloom_probability": 70.92211547031421,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "High bloom probability (71%) - Expect significant blooms next week"
   }
 }

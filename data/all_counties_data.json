@@ -14,22 +14,22 @@
       "beans",
       "potatoes"
     ],
-    "last_updated": "2025-10-13T07:43:50.737249",
+    "last_updated": "2025-11-25T14:56:08.022983",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.5178687467722376,
+      "ndwi": -0.5078258884480404,
       "rainfall_mm": 0,
-      "temperature_c": 25.405375252016842,
-      "data_source": "Unknown",
+      "temperature_c": 22.770277027168895,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 770.1444474145135,
-      "bloom_percentage": 6.417870395120946,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 504.68549129889493,
+      "bloom_percentage": 4.205712427490791,
+      "bloom_probability": 67.16585728199063,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (67%) - Some blooms likely"
     }
   },
   "kirinyaga": {
@@ -47,22 +47,22 @@
       "coffee",
       "tea"
     ],
-    "last_updated": "2025-10-13T07:44:04.510750",
+    "last_updated": "2025-11-25T14:56:41.537510",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.5421676372201369,
+      "ndwi": -0.5263984772092658,
       "rainfall_mm": 0,
-      "temperature_c": 30.648244883361855,
-      "data_source": "Unknown",
+      "temperature_c": 24.6196494065085,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 721.8497043636514,
-      "bloom_percentage": 6.015414203030429,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 471.90500284173424,
+      "bloom_percentage": 3.9325416903477857,
+      "bloom_probability": 60.516489268058905,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (61%) - Some blooms likely"
     }
   },
   "muranga": {
@@ -80,22 +80,22 @@
       "beans",
       "macadamia"
     ],
-    "last_updated": "2025-10-13T07:44:17.516547",
+    "last_updated": "2025-11-25T14:57:07.263111",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.6070390888277182,
+      "ndwi": -0.581138696226837,
       "rainfall_mm": 0,
-      "temperature_c": 28.49472366539086,
-      "data_source": "Unknown",
+      "temperature_c": 23.56478323649326,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 755.9940583916732,
-      "bloom_percentage": 6.299950486597276,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 488.24232731124624,
+      "bloom_percentage": 4.068686060927052,
+      "bloom_probability": 63.21175730792323,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (63%) - Some blooms likely"
     }
   },
   "nyandarua": {
@@ -113,22 +113,22 @@
       "maize",
       "pyrethrum"
     ],
-    "last_updated": "2025-10-13T07:45:03.379852",
+    "last_updated": "2025-11-25T14:57:48.258320",
     "satellite_data": {
-      "ndvi": 0.46264576367056703,
-      "ndwi": -0.4506095586818156,
+      "ndvi": 0.6264693197882276,
+      "ndwi": -0.5828423542749706,
       "rainfall_mm": 0,
-      "temperature_c": 21.283051579968078,
+      "temperature_c": 18.778063230386937,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 359.9729255527144,
+      "bloom_percentage": 2.9997743796059533,
+      "bloom_probability": 60.28287749546118,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "nyeri": {
@@ -146,22 +146,22 @@
       "beans",
       "dairy"
     ],
-    "last_updated": "2025-10-13T07:45:16.540737",
+    "last_updated": "2025-11-25T14:58:22.475423",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.6584766000244211,
+      "ndwi": -0.600206366262948,
       "rainfall_mm": 0,
-      "temperature_c": 23.336930375949894,
-      "data_source": "Unknown",
+      "temperature_c": 19.637495501974616,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 610.7563409565402,
-      "bloom_percentage": 5.089636174637835,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 324.60148184602724,
+      "bloom_percentage": 2.7050123487168936,
+      "bloom_probability": 63.47483719126933,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (63%) - Some blooms likely"
     }
   },
   "baringo": {
@@ -178,22 +178,22 @@
       "millet",
       "livestock"
     ],
-    "last_updated": "2025-10-13T07:45:49.999824",
+    "last_updated": "2025-11-25T14:59:02.121317",
     "satellite_data": {
-      "ndvi": 0.39651988049344844,
-      "ndwi": -0.37844543570849226,
+      "ndvi": 0.5962298166917864,
+      "ndwi": -0.5684679049565488,
       "rainfall_mm": 0,
-      "temperature_c": 25.899005423559842,
+      "temperature_c": 26.68820831277429,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 344.41610011820484,
+      "bloom_percentage": 2.870134167651707,
+      "bloom_probability": 61.88779473412549,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (62%) - Some blooms likely"
     }
   },
   "bomet": {
@@ -210,22 +210,22 @@
       "pyrethrum",
       "dairy"
     ],
-    "last_updated": "2025-10-13T07:46:33.981496",
+    "last_updated": "2025-11-25T15:00:12.663150",
     "satellite_data": {
-      "ndvi": 0.5076630869582818,
-      "ndwi": -0.5020718932451631,
+      "ndvi": 0.6096650148870887,
+      "ndwi": -0.5655490727893023,
       "rainfall_mm": 0,
-      "temperature_c": 22.085416725876293,
+      "temperature_c": 24.23465318158789,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 64.92370103083165,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (65%) - Some blooms likely"
     }
   },
   "elgeyo_marakwet": {
@@ -242,22 +242,22 @@
       "pyrethrum",
       "dairy"
     ],
-    "last_updated": "2025-10-13T07:47:23.742954",
+    "last_updated": "2025-11-25T15:01:22.919498",
     "satellite_data": {
-      "ndvi": 0.5795519815098521,
-      "ndwi": -0.5689281330333407,
+      "ndvi": 0.5926660376581988,
+      "ndwi": -0.5758864264107088,
       "rainfall_mm": 0,
-      "temperature_c": 21.124138685319465,
+      "temperature_c": 22.873589725013225,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0088894317586263,
-      "bloom_percentage": 0.00020543894269458402,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.017875965881347655,
+      "bloom_percentage": 0.0004131219666256851,
+      "bloom_probability": 61.34587217029767,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (61%) - Some blooms likely"
     }
   },
   "kajiado": {
@@ -274,22 +274,22 @@
       "livestock",
       "horticulture"
     ],
-    "last_updated": "2025-10-13T07:48:08.368339",
+    "last_updated": "2025-11-25T15:02:37.868713",
     "satellite_data": {
-      "ndvi": 0.25895163187716835,
-      "ndwi": -0.36495236644465934,
+      "ndvi": 0.36326549672732106,
+      "ndwi": -0.40669633982803244,
       "rainfall_mm": 0,
-      "temperature_c": 31.670312877273464,
+      "temperature_c": 28.153796670638055,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 380.00580218929287,
-      "bloom_percentage": 3.1667150182441075,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 49.39552935196854,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Low",
+      "message": "Low bloom probability (49%) - Limited bloom activity expected"
     }
   },
   "kericho": {
@@ -306,22 +306,22 @@
       "pyrethrum",
       "dairy"
     ],
-    "last_updated": "2025-10-13T07:48:41.860042",
+    "last_updated": "2025-11-25T15:08:24.010254",
     "satellite_data": {
-      "ndvi": 0.5780590434210519,
-      "ndwi": -0.5198675983377311,
+      "ndvi": 0.7014661864459242,
+      "ndwi": -0.6419493661437958,
       "rainfall_mm": 0,
-      "temperature_c": 22.432299907926964,
+      "temperature_c": 23.453860754998285,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 64.75301109240091,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (65%) - Some blooms likely"
     }
   },
   "laikipia": {
@@ -338,22 +338,22 @@
       "barley",
       "livestock"
     ],
-    "last_updated": "2025-10-13T07:49:42.164825",
+    "last_updated": "2025-11-25T15:09:08.438084",
     "satellite_data": {
-      "ndvi": 0.3203186339409006,
-      "ndwi": -0.3638080625964199,
+      "ndvi": 0.4625768105953663,
+      "ndwi": -0.49346928263486284,
       "rainfall_mm": 0,
-      "temperature_c": 26.860401854902143,
+      "temperature_c": 24.535038113839587,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 477.09311185691706,
+      "bloom_percentage": 3.9757759321409756,
+      "bloom_probability": 55.369255041633075,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (55%) - Some blooms likely"
     }
   },
   "nakuru": {
@@ -370,22 +370,22 @@
       "pyrethrum",
       "horticulture"
     ],
-    "last_updated": "2025-10-13T07:50:33.438263",
+    "last_updated": "2025-11-25T15:13:26.559967",
     "satellite_data": {
-      "ndvi": 0.46243632021546366,
-      "ndwi": -0.449868902224085,
+      "ndvi": 0.5262234849620309,
+      "ndwi": -0.49859560105646333,
       "rainfall_mm": 0,
-      "temperature_c": 22.406600971649418,
+      "temperature_c": 22.69785574089089,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 58.39042418427081,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (58%) - Some blooms likely"
     }
   },
   "nandi": {
@@ -402,22 +402,22 @@
       "pyrethrum",
       "dairy"
     ],
-    "last_updated": "2025-10-13T07:51:25.365970",
+    "last_updated": "2025-11-25T15:14:21.433308",
     "satellite_data": {
-      "ndvi": 0.5800600419719523,
-      "ndwi": -0.5250194818408003,
+      "ndvi": 0.6786689804762174,
+      "ndwi": -0.6321798632584544,
       "rainfall_mm": 0,
-      "temperature_c": 23.659315732524103,
+      "temperature_c": 24.471188809029112,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.000893973876953125,
-      "bloom_percentage": 2.0657953379277558e-05,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 58.72909369372812,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (59%) - Some blooms likely"
     }
   },
   "narok": {
@@ -434,22 +434,22 @@
       "barley",
       "livestock"
     ],
-    "last_updated": "2025-10-13T07:52:28.294227",
+    "last_updated": "2025-11-25T15:15:39.719230",
     "satellite_data": {
-      "ndvi": 0.38125229893320167,
-      "ndwi": -0.43362393378860925,
+      "ndvi": 0.4433468359009542,
+      "ndwi": -0.46462373530599,
       "rainfall_mm": 0,
-      "temperature_c": 25.67258246860609,
+      "temperature_c": 26.768950287512897,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 53.12244711230881,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (53%) - Some blooms likely"
     }
   },
   "trans_nzoia": {
@@ -466,22 +466,22 @@
       "dairy",
       "pyrethrum"
     ],
-    "last_updated": "2025-10-13T07:53:17.605623",
+    "last_updated": "2025-11-25T15:20:26.337110",
     "satellite_data": {
-      "ndvi": 0.5746479711583673,
-      "ndwi": -0.5410437213361908,
+      "ndvi": 0.6149237317659396,
+      "ndwi": -0.6063085493656871,
       "rainfall_mm": 0,
-      "temperature_c": 22.05428464700147,
+      "temperature_c": 25.431460232488718,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.06501986918610218,
+      "bloom_percentage": 0.0017532069609434893,
+      "bloom_probability": 60.60840594079833,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (61%) - Some blooms likely"
     }
   },
   "uasin_gishu": {
@@ -498,22 +498,22 @@
       "pyrethrum",
       "dairy"
     ],
-    "last_updated": "2025-10-13T07:54:36.248243",
+    "last_updated": "2025-11-25T15:21:30.634283",
     "satellite_data": {
-      "ndvi": 0.6043209774550519,
-      "ndwi": -0.5678510891444777,
+      "ndvi": 0.624664797010116,
+      "ndwi": -0.6046695372610561,
       "rainfall_mm": 0,
-      "temperature_c": 21.88776691999673,
+      "temperature_c": 23.25928617430946,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 63.49228901226825,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (63%) - Some blooms likely"
     }
   },
   "west_pokot": {
@@ -529,22 +529,22 @@
       "sorghum",
       "livestock"
     ],
-    "last_updated": "2025-10-13T07:55:20.522989",
+    "last_updated": "2025-11-25T15:24:06.846285",
     "satellite_data": {
-      "ndvi": 0.4338469014616722,
-      "ndwi": -0.44906346081523096,
+      "ndvi": 0.44370943726368556,
+      "ndwi": -0.4687089160701066,
       "rainfall_mm": 0,
-      "temperature_c": 26.842392832983208,
+      "temperature_c": 29.257806326602246,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.01608860595703125,
-      "bloom_percentage": 8.678811354056068e-05,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 2.7882240246299594,
+      "bloom_percentage": 0.015040750197524027,
+      "bloom_probability": 45.44330424946547,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Low",
+      "message": "Low bloom probability (45%) - Limited bloom activity expected"
     }
   },
   "embu": {
@@ -562,22 +562,22 @@
       "beans",
       "miraa"
     ],
-    "last_updated": "2025-10-13T07:55:36.704822",
+    "last_updated": "2025-11-25T15:30:39.944915",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.4819866638695142,
+      "ndwi": -0.4603365551025193,
       "rainfall_mm": 0,
-      "temperature_c": 28.39901893010386,
-      "data_source": "Unknown",
+      "temperature_c": 23.383776252946635,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 775.77700687612,
-      "bloom_percentage": 6.4648083906343325,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 655.9817811175483,
+      "bloom_percentage": 5.4665148426462356,
+      "bloom_probability": 57.81561488477209,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (58%) - Some blooms likely"
     }
   },
   "kitui": {
@@ -595,22 +595,22 @@
       "sorghum",
       "livestock"
     ],
-    "last_updated": "2025-10-13T07:56:06.998787",
+    "last_updated": "2025-11-25T15:31:34.318461",
     "satellite_data": {
-      "ndvi": 0.23470742079318022,
-      "ndwi": -0.4240918737039364,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 32.68796920438599,
-      "data_source": "Sentinel-2",
+      "temperature_c": 25.597526539651202,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 246.6175468755074,
-      "bloom_percentage": 2.055146223962562,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 568.377725684839,
+      "bloom_percentage": 4.736481047373658,
+      "bloom_probability": 70.3475265396512,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "High bloom probability (70%) - Expect significant blooms next week"
     }
   },
   "machakos": {
@@ -627,22 +627,22 @@
       "fruits",
       "vegetables"
     ],
-    "last_updated": "2025-10-13T07:56:20.164560",
+    "last_updated": "2025-11-25T15:32:19.353627",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.40860100310257014,
+      "ndwi": -0.4208086879788527,
       "rainfall_mm": 0,
-      "temperature_c": 30.98436585229697,
-      "data_source": "Unknown",
+      "temperature_c": 24.102211238380796,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 218.48330131710438,
-      "bloom_percentage": 1.8206941776425365,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 395.8826130966563,
+      "bloom_percentage": 3.299021775805469,
+      "bloom_probability": 53.17187714969518,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (53%) - Some blooms likely"
     }
   },
   "makueni": {
@@ -659,22 +659,22 @@
       "pigeon peas",
       "fruits"
     ],
-    "last_updated": "2025-10-13T07:57:05.148953",
+    "last_updated": "2025-11-25T15:32:42.498589",
     "satellite_data": {
-      "ndvi": 0.2259074856320262,
-      "ndwi": -0.41605320612274843,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 33.091689839272206,
-      "data_source": "Sentinel-2",
+      "temperature_c": 26.172115470314207,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 702.658773474654,
-      "bloom_percentage": 5.85548977895545,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 568.8182383144451,
+      "bloom_percentage": 4.740151985953709,
+      "bloom_probability": 70.92211547031421,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "High bloom probability (71%) - Expect significant blooms next week"
     }
   },
   "meru": {
@@ -692,22 +692,22 @@
       "maize",
       "beans"
     ],
-    "last_updated": "2025-10-13T07:57:22.872466",
+    "last_updated": "2025-11-25T15:33:18.944498",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": -0.13612021303383529,
+      "ndvi": 0.4338030412469324,
+      "ndwi": -0.44289692731445035,
       "rainfall_mm": 0,
-      "temperature_c": 29.512378401359076,
-      "data_source": "Unknown",
+      "temperature_c": 24.984534531238676,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 200.35733842248112,
+      "bloom_percentage": 1.6696444868540092,
+      "bloom_probability": 55.4699922902094,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (55%) - Some blooms likely"
     }
   },
   "tharaka_nithi": {
@@ -725,22 +725,22 @@
       "maize",
       "beans"
     ],
-    "last_updated": "2025-10-13T07:57:37.381625",
+    "last_updated": "2025-11-25T15:33:45.090690",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.5296771713855636,
+      "ndwi": -0.5065971294948404,
       "rainfall_mm": 0,
-      "temperature_c": 29.029202349891293,
-      "data_source": "Unknown",
+      "temperature_c": 24.007905581279545,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 301.3900970438141,
-      "bloom_percentage": 2.511584142031784,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 520.2241098983344,
+      "bloom_percentage": 4.335200915819453,
+      "bloom_probability": 59.64576624509388,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "bungoma": {
@@ -757,22 +757,22 @@
       "beans",
       "bananas"
     ],
-    "last_updated": "2025-10-13T07:58:09.962966",
+    "last_updated": "2025-11-25T15:35:30.798810",
     "satellite_data": {
-      "ndvi": 0.6098544567333738,
-      "ndwi": -0.5569072760939824,
+      "ndvi": 0.6007864449544064,
+      "ndwi": -0.5631477228445654,
       "rainfall_mm": 0,
-      "temperature_c": 24.842587876474635,
+      "temperature_c": 25.4349238353891,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 61.356182188601466,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (61%) - Some blooms likely"
     }
   },
   "busia": {
@@ -789,22 +789,22 @@
       "sweet potatoes",
       "millet"
     ],
-    "last_updated": "2025-10-13T07:58:55.392603",
+    "last_updated": "2025-11-25T15:37:02.105901",
     "satellite_data": {
-      "ndvi": 0.4712312531681052,
-      "ndwi": -0.45637203661324927,
+      "ndvi": 0.5641055379291747,
+      "ndwi": -0.5093650336669694,
       "rainfall_mm": 0,
-      "temperature_c": 25.97837291240487,
+      "temperature_c": 26.670810870132005,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 232.4385068003263,
-      "bloom_percentage": 1.936987556669386,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 61.613112979701015,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (62%) - Some blooms likely"
     }
   },
   "kakamega": {
@@ -821,22 +821,22 @@
       "tea",
       "bananas"
     ],
-    "last_updated": "2025-10-13T07:59:39.725167",
+    "last_updated": "2025-11-25T15:39:05.112152",
     "satellite_data": {
-      "ndvi": 0.5031759426265323,
-      "ndwi": -0.44998933007491065,
+      "ndvi": 0.6789968701076422,
+      "ndwi": -0.63288692747555,
       "rainfall_mm": 0,
-      "temperature_c": 24.677902862525272,
+      "temperature_c": 25.0067845654252,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 55.26212520241193,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (55%) - Some blooms likely"
     }
   },
   "vihiga": {
@@ -853,22 +853,22 @@
       "bananas",
       "beans"
     ],
-    "last_updated": "2025-10-13T08:00:14.603802",
+    "last_updated": "2025-11-25T15:40:57.992888",
     "satellite_data": {
-      "ndvi": 0.373913556041542,
-      "ndwi": -0.328663223910813,
+      "ndvi": 0.5848923386736488,
+      "ndwi": -0.5279492172142186,
       "rainfall_mm": 0,
-      "temperature_c": 25.57292255352063,
+      "temperature_c": 25.449453871882188,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 61.541226878536136,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (62%) - Some blooms likely"
     }
   },
   "homa_bay": {
@@ -885,22 +885,22 @@
       "fishing",
       "cotton"
     ],
-    "last_updated": "2025-10-13T08:00:29.798355",
+    "last_updated": "2025-11-25T15:42:04.781017",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.35278868813310843,
+      "ndwi": -0.25798233453368274,
       "rainfall_mm": 0,
-      "temperature_c": 25.555414073294024,
-      "data_source": "Unknown",
+      "temperature_c": 26.154493905659603,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 626.6059661131629,
-      "bloom_percentage": 5.221716384276358,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 61.28424599228631,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (61%) - Some blooms likely"
     }
   },
   "kisii": {
@@ -917,22 +917,22 @@
       "maize",
       "beans"
     ],
-    "last_updated": "2025-10-13T08:01:11.425763",
+    "last_updated": "2025-11-25T15:43:21.570060",
     "satellite_data": {
-      "ndvi": 0.5507419095026963,
-      "ndwi": -0.5231314332411133,
+      "ndvi": 0.6735723960367824,
+      "ndwi": -0.6264963423997071,
       "rainfall_mm": 0,
-      "temperature_c": 24.59403698722339,
+      "temperature_c": 24.70420451881871,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 58.7366270025116,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (59%) - Some blooms likely"
     }
   },
   "kisumu": {
@@ -949,22 +949,22 @@
       "rice",
       "fishing"
     ],
-    "last_updated": "2025-10-13T08:01:55.804290",
+    "last_updated": "2025-11-25T15:47:59.305757",
     "satellite_data": {
-      "ndvi": 0.4594260934825165,
-      "ndwi": -0.40563632048201154,
+      "ndvi": 0.4898053873958211,
+      "ndwi": -0.4267291104975718,
       "rainfall_mm": 0,
-      "temperature_c": 25.491293140886057,
+      "temperature_c": 25.938751902992976,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
+      "bloom_probability": 48.8328351176965,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Low",
+      "message": "Low bloom probability (49%) - Limited bloom activity expected"
     }
   },
   "migori": {
@@ -981,22 +981,22 @@
       "tobacco",
       "sorghum"
     ],
-    "last_updated": "2025-10-13T08:03:25.687533",
+    "last_updated": "2025-11-25T15:49:17.201057",
     "satellite_data": {
-      "ndvi": 0.4346690138079167,
-      "ndwi": -0.4464353657823174,
+      "ndvi": 0.5608394454863708,
+      "ndwi": -0.4948460866670114,
       "rainfall_mm": 0,
-      "temperature_c": 26.590912976783418,
+      "temperature_c": 26.357337120994735,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
       "bloom_area_km2": 0.0,
       "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_probability": 61.698977336281246,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (62%) - Some blooms likely"
     }
   },
   "nyamira": {
@@ -1013,22 +1013,22 @@
       "maize",
       "beans"
     ],
-    "last_updated": "2025-10-13T08:04:26.148122",
+    "last_updated": "2025-11-25T15:50:22.196744",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.6646439895891232,
+      "ndwi": -0.6116568872190644,
       "rainfall_mm": 0,
-      "temperature_c": 23.607376021657533,
-      "data_source": "Unknown",
+      "temperature_c": 24.026167437005856,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 612.3938781390239,
-      "bloom_percentage": 5.103282317825199,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 67.90772203496495,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (68%) - Some blooms likely"
     }
   },
   "siaya": {
@@ -1045,22 +1045,22 @@
       "cassava",
       "fishing"
     ],
-    "last_updated": "2025-10-13T08:04:44.187273",
+    "last_updated": "2025-11-25T15:51:33.496220",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.3253587235023539,
+      "ndwi": -0.21527905766981234,
       "rainfall_mm": 0,
-      "temperature_c": 24.726385625899646,
-      "data_source": "Unknown",
+      "temperature_c": 25.542645514630983,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 330.32576442225803,
-      "bloom_percentage": 2.752714703518817,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 60.06456498137575,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "kilifi": {
@@ -1077,22 +1077,22 @@
       "maize",
       "cassava"
     ],
-    "last_updated": "2025-10-13T08:05:44.700414",
+    "last_updated": "2025-11-25T15:52:04.146247",
     "satellite_data": {
-      "ndvi": 0.23252828197916658,
-      "ndwi": -0.2775670030441764,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 31.651003245354676,
-      "data_source": "Sentinel-2",
+      "temperature_c": 31.594719517091836,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 477.94606327446775,
+      "bloom_percentage": 3.9828838606205648,
+      "bloom_probability": 60.34471951709183,
+      "bloom_prediction": 1,
+      "confidence": "Medium",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "kwale": {
@@ -1109,22 +1109,22 @@
       "maize",
       "cassava"
     ],
-    "last_updated": "2025-10-13T08:06:51.393524",
+    "last_updated": "2025-11-25T15:52:38.541943",
     "satellite_data": {
-      "ndvi": 0.24069264779841518,
-      "ndwi": -0.31019540090485775,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 31.677134034598886,
-      "data_source": "Sentinel-2",
+      "temperature_c": 30.90313618276558,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 322.83809215489015,
+      "bloom_percentage": 2.6903174346240846,
+      "bloom_probability": 59.65313618276558,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "lamu": {
@@ -1140,22 +1140,22 @@
       "fishing",
       "maize"
     ],
-    "last_updated": "2025-10-13T08:07:07.761113",
+    "last_updated": "2025-11-25T15:53:54.119879",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": -0.10760714963124865,
+      "ndvi": 0.059938850766214566,
+      "ndwi": 0.050095011280155026,
       "rainfall_mm": 0,
-      "temperature_c": 28.91205183342657,
-      "data_source": "Unknown",
+      "temperature_c": 29.722145044599998,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 512.9782348381412,
-      "bloom_percentage": 4.274818623651177,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 0.9399932083768956,
+      "bloom_percentage": 0.004610602203461351,
+      "bloom_probability": 54.4707806852292,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (54%) - Some blooms likely"
     }
   },
   "taita_taveta": {
@@ -1172,22 +1172,22 @@
       "horticulture",
       "sisal"
     ],
-    "last_updated": "2025-10-13T08:08:04.099462",
+    "last_updated": "2025-11-25T15:55:54.471248",
     "satellite_data": {
-      "ndvi": 0.22340589834525407,
-      "ndwi": -0.40642749071346046,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 32.22616004429229,
-      "data_source": "Sentinel-2",
+      "temperature_c": 31.18071634915414,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 344.4302337326269,
-      "bloom_percentage": 2.870251947771891,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 767.8080005205686,
+      "bloom_percentage": 6.398400004338072,
+      "bloom_probability": 59.93071634915414,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "tana_river": {
@@ -1204,22 +1204,22 @@
       "mangoes",
       "livestock"
     ],
-    "last_updated": "2025-10-13T08:08:44.825448",
+    "last_updated": "2025-11-25T15:56:31.962740",
     "satellite_data": {
-      "ndvi": 0.1584989884437088,
-      "ndwi": -0.2836341207679507,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 32.38457877826433,
-      "data_source": "Sentinel-2",
+      "temperature_c": 30.670305160804574,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 250.8829242311099,
-      "bloom_percentage": 2.0906910352592494,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 583.6912638282158,
+      "bloom_percentage": 4.864093865235132,
+      "bloom_probability": 59.420305160804574,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (59%) - Some blooms likely"
     }
   },
   "samburu": {
@@ -1235,22 +1235,22 @@
       "maize",
       "sorghum"
     ],
-    "last_updated": "2025-10-13T08:10:08.014969",
+    "last_updated": "2025-11-25T15:57:24.209252",
     "satellite_data": {
-      "ndvi": 0.2430565212107746,
-      "ndwi": -0.35668329728778,
+      "ndvi": 0.32294637574920093,
+      "ndwi": -0.3968264423812045,
       "rainfall_mm": 0,
-      "temperature_c": 33.61809126728787,
+      "temperature_c": 31.003152660203096,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.17337964630126954,
-      "bloom_percentage": 0.0005009778167370151,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 722.0517386158473,
+      "bloom_percentage": 6.017097821798727,
+      "bloom_probability": 42.706468116062965,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Low",
+      "message": "Low bloom probability (43%) - Limited bloom activity expected"
     }
   },
   "turkana": {
@@ -1266,22 +1266,22 @@
       "sorghum",
       "millet"
     ],
-    "last_updated": "2025-10-13T08:12:15.808500",
+    "last_updated": "2025-11-25T16:00:00.944429",
     "satellite_data": {
-      "ndvi": 0.08422125000902034,
-      "ndwi": -0.13619996375018248,
+      "ndvi": 0.18635350548535265,
+      "ndwi": -0.23446204595891268,
       "rainfall_mm": 0,
-      "temperature_c": 33.2600097754551,
+      "temperature_c": 34.61907462353108,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.07149125756835938,
-      "bloom_percentage": 6.297027423925812e-05,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 4.280108564565621,
+      "bloom_percentage": 0.003769965996566532,
+      "bloom_probability": 34.281322874120704,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Medium",
+      "message": "Low bloom probability (34%) - Limited bloom activity expected"
     }
   },
   "isiolo": {
@@ -1297,22 +1297,22 @@
       "maize",
       "sorghum"
     ],
-    "last_updated": "2025-10-13T08:13:43.170709",
+    "last_updated": "2025-11-25T16:00:51.471391",
     "satellite_data": {
-      "ndvi": 0.18408101926471743,
-      "ndwi": -0.3270669450820669,
+      "ndvi": 0.372006420307754,
+      "ndwi": -0.4120394633682432,
       "rainfall_mm": 0,
-      "temperature_c": 33.49327999033174,
+      "temperature_c": 28.21167986493452,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 479.8164382859979,
+      "bloom_percentage": 3.9984703190499826,
+      "bloom_probability": 50.06034872729776,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (50%) - Some blooms likely"
     }
   },
   "marsabit": {
@@ -1327,22 +1327,22 @@
       "livestock",
       "maize"
     ],
-    "last_updated": "2025-10-13T08:16:00.907892",
+    "last_updated": "2025-11-25T16:03:13.586605",
     "satellite_data": {
-      "ndvi": 0.13400511239312632,
-      "ndwi": -0.2781027918911667,
+      "ndvi": 0.13955232756202413,
+      "ndwi": -0.254788323017085,
       "rainfall_mm": 0,
-      "temperature_c": 37.09090070718285,
+      "temperature_c": 31.896063860629326,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.021852650739363124,
-      "bloom_percentage": 3.370677792233192e-05,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 35.86188046597749,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Medium",
+      "message": "Low bloom probability (36%) - Limited bloom activity expected"
     }
   },
   "mombasa": {
@@ -1357,22 +1357,22 @@
       "fishing",
       "coconut"
     ],
-    "last_updated": "2025-10-13T08:16:26.686821",
+    "last_updated": "2025-11-25T16:03:54.741986",
     "satellite_data": {
-      "ndvi": 0.2371461488875377,
-      "ndwi": -0.24314633333672295,
+      "ndvi": 0,
+      "ndwi": 0,
       "rainfall_mm": 0,
-      "temperature_c": 30.14385934574275,
-      "data_source": "Sentinel-2",
+      "temperature_c": 31.220126863868998,
+      "data_source": "Unknown",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 733.3330635627146,
-      "bloom_percentage": 6.111108863022622,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 728.7141574050648,
+      "bloom_percentage": 6.072617978375541,
+      "bloom_probability": 59.970126863869,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (60%) - Some blooms likely"
     }
   },
   "garissa": {
@@ -1387,22 +1387,22 @@
       "livestock",
       "maize"
     ],
-    "last_updated": "2025-10-13T08:18:47.295845",
+    "last_updated": "2025-11-25T16:04:53.169962",
     "satellite_data": {
-      "ndvi": 0.1430202654760166,
-      "ndwi": -0.30855981593964427,
+      "ndvi": 0.14708408947738266,
+      "ndwi": -0.27646315131702254,
       "rainfall_mm": 0,
-      "temperature_c": 34.36310944135049,
+      "temperature_c": 32.854661982573,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0,
-      "bloom_percentage": 0.0,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 638.3745054291167,
+      "bloom_percentage": 5.319787545242638,
+      "bloom_probability": 36.489913364460136,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Medium",
+      "message": "Low bloom probability (36%) - Limited bloom activity expected"
     }
   },
   "mandera": {
@@ -1416,22 +1416,22 @@
     "main_crops": [
       "livestock"
     ],
-    "last_updated": "2025-10-13T08:20:49.383281",
+    "last_updated": "2025-11-25T16:06:40.644243",
     "satellite_data": {
-      "ndvi": 0.15256953605155543,
-      "ndwi": -0.38839344458223446,
+      "ndvi": 0.1155021374023638,
+      "ndwi": -0.3371112814546636,
       "rainfall_mm": 0,
-      "temperature_c": 36.06071315871985,
+      "temperature_c": 34.10785530920352,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0008929927368164063,
-      "bloom_percentage": 1.5077528741983335e-06,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 34.05250497670672,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Medium",
+      "message": "Low bloom probability (34%) - Limited bloom activity expected"
     }
   },
   "wajir": {
@@ -1445,22 +1445,22 @@
     "main_crops": [
       "livestock"
     ],
-    "last_updated": "2025-10-13T08:24:42.027626",
+    "last_updated": "2025-11-25T16:08:20.475860",
     "satellite_data": {
-      "ndvi": 0.14113416371930212,
-      "ndwi": -0.33909832115547894,
+      "ndvi": 0.1180490973182235,
+      "ndwi": -0.2868586622683638,
       "rainfall_mm": 0,
-      "temperature_c": 36.24954461955766,
+      "temperature_c": 33.70114096066047,
       "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 0.0017862235107421875,
-      "bloom_percentage": 1.927299701755431e-06,
-      "bloom_probability": 26.05,
+      "bloom_area_km2": 0.0,
+      "bloom_percentage": 0.0,
+      "bloom_probability": 33.913117579064625,
       "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "confidence": "Medium",
+      "message": "Low bloom probability (34%) - Limited bloom activity expected"
     }
   },
   "nairobi": {
@@ -1475,22 +1475,22 @@
       "urban farming",
       "horticulture"
     ],
-    "last_updated": "2025-10-13T08:24:57.218471",
+    "last_updated": "2025-11-25T16:08:58.565523",
     "satellite_data": {
-      "ndvi": 0,
-      "ndwi": 0,
+      "ndvi": 0.43158010615923614,
+      "ndwi": -0.43915955374528515,
       "rainfall_mm": 0,
-      "temperature_c": 27.087273012609025,
-      "data_source": "Unknown",
+      "temperature_c": 24.034677409776464,
+      "data_source": "Sentinel-2",
       "is_real_data": true
     },
     "bloom_data": {
-      "bloom_area_km2": 623.7796580423042,
-      "bloom_percentage": 5.198163817019202,
-      "bloom_probability": 26.05,
-      "bloom_prediction": 0,
-      "confidence": "High",
-      "message": "Low bloom probability (26%) - Limited bloom activity expected"
+      "bloom_area_km2": 351.18175771456447,
+      "bloom_percentage": 2.926514647621371,
+      "bloom_probability": 54.48471033843582,
+      "bloom_prediction": 1,
+      "confidence": "Low",
+      "message": "Moderate bloom probability (54%) - Some blooms likely"
     }
   }
 }

@@ -9,21 +9,21 @@
   "main_crops": [
     "livestock"
   ],
-  "last_updated": "2025-10-13T08:20:49.383281",
+  "last_updated": "2025-11-25T16:06:40.644243",
   "satellite_data": {
-    "ndvi": 0.15256953605155543,
-    "ndwi": -0.38839344458223446,
+    "ndvi": 0.1155021374023638,
+    "ndwi": -0.3371112814546636,
     "rainfall_mm": 0,
-    "temperature_c": 36.06071315871985,
+    "temperature_c": 34.10785530920352,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 0.0008929927368164063,
-    "bloom_percentage": 1.5077528741983335e-06,
-    "bloom_probability": 26.05,
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 34.05250497670672,
     "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "confidence": "Medium",
+    "message": "Low bloom probability (34%) - Limited bloom activity expected"
   }
 }

@@ -12,21 +12,21 @@
     "maize",
     "cassava"
   ],
-  "last_updated": "2025-10-13T08:05:44.700414",
+  "last_updated": "2025-11-25T15:52:04.146247",
   "satellite_data": {
-    "ndvi": 0.23252828197916658,
-    "ndwi": -0.2775670030441764,
+    "ndvi": 0,
+    "ndwi": 0,
     "rainfall_mm": 0,
-    "temperature_c": 31.651003245354676,
-    "data_source": "Sentinel-2",
+    "temperature_c": 31.594719517091836,
+    "data_source": "Unknown",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 0.0,
-    "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 477.94606327446775,
+    "bloom_percentage": 3.9828838606205648,
+    "bloom_probability": 60.34471951709183,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (60%) - Some blooms likely"
   }
 }

@@ -13,21 +13,21 @@
     "coffee",
     "tea"
   ],
-  "last_updated": "2025-10-13T07:44:04.510750",
+  "last_updated": "2025-11-25T14:56:41.537510",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": 0,
+    "ndvi": 0.5421676372201369,
+    "ndwi": -0.5263984772092658,
     "rainfall_mm": 0,
-    "temperature_c": 30.648244883361855,
-    "data_source": "Unknown",
+    "temperature_c": 24.6196494065085,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 721.8497043636514,
-    "bloom_percentage": 6.015414203030429,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 471.90500284173424,
+    "bloom_percentage": 3.9325416903477857,
+    "bloom_probability": 60.516489268058905,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (61%) - Some blooms likely"
   }
 }

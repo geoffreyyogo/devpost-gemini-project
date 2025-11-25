@@ -6,6 +6,7 @@ Provides real satellite data to Streamlit app
 import os
 import sys
 import json
+import logging
 import pandas as pd
 from datetime import datetime
 from typing import Dict, List
@@ -15,6 +16,9 @@ sys.path.append(os.path.dirname(__file__))
 
 from kenya_counties_config import KENYA_COUNTIES, KENYA_REGIONS
 from kenya_data_fetcher import KenyaDataFetcher
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class StreamlitDataLoader:
@@ -225,9 +229,10 @@ class StreamlitDataLoader:
     def get_climate_summary_stats(self) -> Dict:
         """
         Get aggregated climate statistics for metrics display
+        Calculates deltas by comparing current values with previous period
         
         Returns:
-            Dict with climate stats
+            Dict with climate stats including delta changes
         """
         all_data = self.fetcher.load_all_counties_data()
         
@@ -252,15 +257,134 @@ class StreamlitDataLoader:
                 rainfalls.append(county_data['satellite_data']['rainfall_mm'])
                 bloom_areas.append(county_data['bloom_data']['bloom_area_km2'])
         
+        # Calculate current averages
+        current_bloom = sum(bloom_percentages)/len(bloom_percentages) if bloom_percentages else 0
+        current_temp = sum(temperatures)/len(temperatures) if temperatures else 0
+        current_rainfall = sum(rainfalls)/len(rainfalls) if rainfalls else 0
+        total_bloom_area = sum(bloom_areas) if bloom_areas else 0
+        
+        # Load previous period data and calculate deltas
+        deltas = self._calculate_deltas(current_bloom, current_temp, current_rainfall)
+        
+        # Save current stats as previous for next comparison
+        self._save_current_stats_as_previous(current_bloom, current_temp, current_rainfall)
+        
         return {
-            'avg_bloom_level': f"{sum(bloom_percentages)/len(bloom_percentages):.1f}%" if bloom_percentages else "N/A",
-            'avg_temperature': f"{sum(temperatures)/len(temperatures):.1f}°C" if temperatures else "N/A",
-            'avg_rainfall': f"{sum(rainfalls)/len(rainfalls):.1f}mm" if rainfalls else "N/A",
-            'total_bloom_area': f"{sum(bloom_areas):.0f} km²" if bloom_areas else "N/A",
-            'bloom_level_delta': "+5%",  # Could calculate from historical data
-            'temperature_delta': "+1°C",
-            'rainfall_delta': "+15mm"
+            'avg_bloom_level': f"{current_bloom:.1f}%" if bloom_percentages else "N/A",
+            'avg_temperature': f"{current_temp:.1f}°C" if temperatures else "N/A",
+            'avg_rainfall': f"{current_rainfall:.1f}mm" if rainfalls else "N/A",
+            'total_bloom_area': f"{total_bloom_area:.0f} km²" if bloom_areas else "N/A",
+            'bloom_level_delta': deltas['bloom_delta'],
+            'temperature_delta': deltas['temperature_delta'],
+            'rainfall_delta': deltas['rainfall_delta']
         }
+    
+    def _calculate_deltas(self, current_bloom: float, current_temp: float, current_rainfall: float) -> Dict:
+        """
+        Calculate delta changes from previous period
+        
+        Args:
+            current_bloom: Current average bloom percentage
+            current_temp: Current average temperature
+            current_rainfall: Current average rainfall
+        
+        Returns:
+            Dict with formatted delta strings
+        """
+        import os
+        import json
+        
+        previous_stats_file = os.path.join(
+            os.path.dirname(__file__), '..', 'data', 'previous_climate_stats.json'
+        )
+        
+        try:
+            if os.path.exists(previous_stats_file):
+                with open(previous_stats_file, 'r') as f:
+                    previous = json.load(f)
+                
+                # Parse previous values from formatted strings
+                prev_bloom = float(previous.get('avg_bloom_level', '0%').replace('%', ''))
+                prev_temp = float(previous.get('avg_temperature', '0°C').replace('°C', ''))
+                prev_rainfall = float(previous.get('avg_rainfall', '0mm').replace('mm', ''))
+                
+                # Calculate deltas
+                bloom_diff = current_bloom - prev_bloom
+                temp_diff = current_temp - prev_temp
+                rainfall_diff = current_rainfall - prev_rainfall
+                
+                # Format deltas with + or - prefix
+                bloom_delta = f"+{bloom_diff:.1f}%" if bloom_diff >= 0 else f"{bloom_diff:.1f}%"
+                temp_delta = f"+{temp_diff:.1f}°C" if temp_diff >= 0 else f"{temp_diff:.1f}°C"
+                rainfall_delta = f"+{rainfall_diff:.1f}mm" if rainfall_diff >= 0 else f"{rainfall_diff:.1f}mm"
+                
+                return {
+                    'bloom_delta': bloom_delta,
+                    'temperature_delta': temp_delta,
+                    'rainfall_delta': rainfall_delta
+                }
+        except Exception as e:
+            logger.warning(f"Could not calculate deltas: {e}")
+        
+        # Return neutral deltas if no previous data
+        return {
+            'bloom_delta': "0.0%",
+            'temperature_delta': "0.0°C",
+            'rainfall_delta': "0.0mm"
+        }
+    
+    def _save_current_stats_as_previous(self, bloom: float, temp: float, rainfall: float):
+        """
+        Save current climate stats for future delta calculations
+        Only saves if current data is significantly different or older than 6 hours
+        
+        Args:
+            bloom: Current average bloom percentage
+            temp: Current average temperature
+            rainfall: Current average rainfall
+        """
+        import os
+        import json
+        from datetime import datetime
+        
+        previous_stats_file = os.path.join(
+            os.path.dirname(__file__), '..', 'data', 'previous_climate_stats.json'
+        )
+        
+        try:
+            should_save = True
+            
+            # Check if we should update (avoid overwriting too frequently)
+            if os.path.exists(previous_stats_file):
+                with open(previous_stats_file, 'r') as f:
+                    previous = json.load(f)
+                
+                last_updated = previous.get('last_updated')
+                if last_updated:
+                    try:
+                        last_time = datetime.fromisoformat(last_updated)
+                        hours_since = (datetime.now() - last_time).total_seconds() / 3600
+                        # Only update if more than 6 hours have passed
+                        if hours_since < 6:
+                            should_save = False
+                    except:
+                        pass
+            
+            if should_save:
+                current_stats = {
+                    'avg_bloom_level': f"{bloom:.1f}%",
+                    'avg_temperature': f"{temp:.1f}°C",
+                    'avg_rainfall': f"{rainfall:.1f}mm",
+                    'last_updated': datetime.now().isoformat()
+                }
+                
+                with open(previous_stats_file, 'w') as f:
+                    json.dump(current_stats, f, indent=2)
+                
+                logger.info("Saved current climate stats for future delta calculations")
+                
+        except Exception as e:
+            logger.warning(f"Could not save climate stats: {e}")
     
     def is_data_fresh(self, max_age_hours: int = 6) -> bool:
         """
@@ -334,4 +458,3 @@ class StreamlitDataLoader:
 def load_streamlit_data():
     """Convenience function to get a data loader instance"""
     return StreamlitDataLoader()
-

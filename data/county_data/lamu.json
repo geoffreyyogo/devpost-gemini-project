@@ -11,21 +11,21 @@
     "fishing",
     "maize"
   ],
-  "last_updated": "2025-10-13T08:07:07.761113",
+  "last_updated": "2025-11-25T15:53:54.119879",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": -0.10760714963124865,
+    "ndvi": 0.059938850766214566,
+    "ndwi": 0.050095011280155026,
     "rainfall_mm": 0,
-    "temperature_c": 28.91205183342657,
-    "data_source": "Unknown",
+    "temperature_c": 29.722145044599998,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 512.9782348381412,
-    "bloom_percentage": 4.274818623651177,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 0.9399932083768956,
+    "bloom_percentage": 0.004610602203461351,
+    "bloom_probability": 54.4707806852292,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (54%) - Some blooms likely"
   }
 }

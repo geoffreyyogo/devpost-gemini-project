@@ -12,21 +12,21 @@
     "cassava",
     "fishing"
   ],
-  "last_updated": "2025-10-13T08:04:44.187273",
+  "last_updated": "2025-11-25T15:51:33.496220",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": 0,
+    "ndvi": 0.3253587235023539,
+    "ndwi": -0.21527905766981234,
     "rainfall_mm": 0,
-    "temperature_c": 24.726385625899646,
-    "data_source": "Unknown",
+    "temperature_c": 25.542645514630983,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 330.32576442225803,
-    "bloom_percentage": 2.752714703518817,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 60.06456498137575,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (60%) - Some blooms likely"
   }
 }

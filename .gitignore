@@ -1,6 +1,3 @@
-# Data files - Exclude entire data directory
-# The deployed app has its own data, don't push local changes
-data/
 
 # Python
 __pycache__/

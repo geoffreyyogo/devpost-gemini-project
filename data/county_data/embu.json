@@ -13,21 +13,21 @@
     "beans",
     "miraa"
   ],
-  "last_updated": "2025-10-13T07:55:36.704822",
+  "last_updated": "2025-11-25T15:30:39.944915",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": 0,
+    "ndvi": 0.4819866638695142,
+    "ndwi": -0.4603365551025193,
     "rainfall_mm": 0,
-    "temperature_c": 28.39901893010386,
-    "data_source": "Unknown",
+    "temperature_c": 23.383776252946635,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 775.77700687612,
-    "bloom_percentage": 6.4648083906343325,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 655.9817811175483,
+    "bloom_percentage": 5.4665148426462356,
+    "bloom_probability": 57.81561488477209,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (58%) - Some blooms likely"
   }
 }

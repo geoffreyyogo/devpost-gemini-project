@@ -12,21 +12,21 @@
     "pyrethrum",
     "dairy"
   ],
-  "last_updated": "2025-10-13T07:47:23.742954",
+  "last_updated": "2025-11-25T15:01:22.919498",
   "satellite_data": {
-    "ndvi": 0.5795519815098521,
-    "ndwi": -0.5689281330333407,
+    "ndvi": 0.5926660376581988,
+    "ndwi": -0.5758864264107088,
     "rainfall_mm": 0,
-    "temperature_c": 21.124138685319465,
+    "temperature_c": 22.873589725013225,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 0.0088894317586263,
-    "bloom_percentage": 0.00020543894269458402,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 0.017875965881347655,
+    "bloom_percentage": 0.0004131219666256851,
+    "bloom_probability": 61.34587217029767,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (61%) - Some blooms likely"
   }
 }

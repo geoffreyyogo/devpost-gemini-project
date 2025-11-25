@@ -12,21 +12,21 @@
     "tea",
     "bananas"
   ],
-  "last_updated": "2025-10-13T07:59:39.725167",
+  "last_updated": "2025-11-25T15:39:05.112152",
   "satellite_data": {
-    "ndvi": 0.5031759426265323,
-    "ndwi": -0.44998933007491065,
+    "ndvi": 0.6789968701076422,
+    "ndwi": -0.63288692747555,
     "rainfall_mm": 0,
-    "temperature_c": 24.677902862525272,
+    "temperature_c": 25.0067845654252,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
     "bloom_area_km2": 0.0,
     "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_probability": 55.26212520241193,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (55%) - Some blooms likely"
   }
 }

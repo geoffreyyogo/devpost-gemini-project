@@ -14,22 +14,77 @@ interface MapContentProps {
 }
 
 export default function MapContent({ markers }: MapContentProps) {
-  const getMarkerColor = (bloomProbabilityStr: string, temperatureStr: string) => {
-    // Parse values from strings
-    const bloomProbability = parseFloat(bloomProbabilityStr) / 100 || 0
-    const temperature = parseFloat(temperatureStr) || 0
+  /**
+   * Determine marker color based on bloom risk assessment
+   * 
+   * Color coding:
+   * - Green (#16A34A): Low risk - favorable conditions, low bloom probability
+   * - Yellow (#F59E0B): Medium risk - moderate bloom probability or stress indicators
+   * - Red (#DC2626): High risk - high bloom probability, extreme temperatures, or drought
+   * 
+   * Factors considered:
+   * - Bloom probability (primary factor)
+   * - NDVI (vegetation health - low NDVI in agricultural areas = stress)
+   * - Temperature extremes (>35°C indicates arid/stress conditions)
+   */
+  const getMarkerColor = (marker: CountyMarker) => {
+    // Parse bloom probability from string "52%" -> 52
+    const bloomProbability = parseFloat(marker.bloom_probability) || 0
+    const temperature = parseFloat(marker.temperature) || 25
+    const ndvi = parseFloat(marker.ndvi) || 0.4
     
-    // Red for high bloom probability or high temp
-    if (bloomProbability > 0.7 || temperature > 35) return '#DC2626'
-    // Yellow for medium
-    if (bloomProbability > 0.4 || temperature > 30) return '#F59E0B'
-    // Green for low/good conditions
-    return '#16A34A'
+    // Calculate risk score (0-100)
+    let riskScore = 0
+    
+    // Bloom probability is the main factor (0-60 points)
+    // Higher bloom probability = higher risk for bloom events
+    if (bloomProbability > 70) {
+      riskScore += 60
+    } else if (bloomProbability > 50) {
+      riskScore += 40
+    } else if (bloomProbability > 30) {
+      riskScore += 20
+    } else {
+      riskScore += 10
+    }
+    
+    // Temperature stress factor (0-25 points)
+    // Extreme temperatures indicate harsh conditions
+    if (temperature > 35) {
+      riskScore += 25  // Very hot - arid regions
+    } else if (temperature > 32) {
+      riskScore += 15
+    } else if (temperature < 15) {
+      riskScore += 10  // Cold stress
+    }
+    
+    // Vegetation stress factor based on NDVI (0-15 points)
+    // Low NDVI in agricultural context indicates poor conditions
+    if (ndvi < 0.2) {
+      riskScore += 15  // Sparse vegetation - likely arid
+    } else if (ndvi < 0.3) {
+      riskScore += 10  // Low vegetation
+    } else if (ndvi > 0.6) {
+      riskScore -= 5   // Healthy vegetation - reduce risk
+    }
+    
+    // Determine color based on risk score
+    if (riskScore >= 60) {
+      return '#DC2626'  // Red - High risk
+    } else if (riskScore >= 35) {
+      return '#F59E0B'  // Yellow/Orange - Medium risk
+    } else {
+      return '#16A34A'  // Green - Low risk
+    }
   }
 
   const getMarkerSize = (marker: CountyMarker) => {
-    // Default size for now (bloom_area_km2 not in API response)
-    return 10
+    // Size based on bloom area if available, otherwise default
+    const bloomArea = marker.bloom_area_km2 || 0
+    if (bloomArea > 100) return 14
+    if (bloomArea > 50) return 12
+    if (bloomArea > 10) return 10
+    return 8
   }
 
   return (
@@ -50,7 +105,7 @@ export default function MapContent({ markers }: MapContentProps) {
             key={marker.name + index}
             center={[marker.lat, marker.lon]}
             radius={getMarkerSize(marker)}
-            fillColor={getMarkerColor(marker.bloom_probability, marker.temperature)}
+            fillColor={getMarkerColor(marker)}
             color="#ffffff"
             weight={2}
             opacity={0.9}

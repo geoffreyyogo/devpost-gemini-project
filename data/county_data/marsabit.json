@@ -10,21 +10,21 @@
     "livestock",
     "maize"
   ],
-  "last_updated": "2025-10-13T08:16:00.907892",
+  "last_updated": "2025-11-25T16:03:13.586605",
   "satellite_data": {
-    "ndvi": 0.13400511239312632,
-    "ndwi": -0.2781027918911667,
+    "ndvi": 0.13955232756202413,
+    "ndwi": -0.254788323017085,
     "rainfall_mm": 0,
-    "temperature_c": 37.09090070718285,
+    "temperature_c": 31.896063860629326,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 0.021852650739363124,
-    "bloom_percentage": 3.370677792233192e-05,
-    "bloom_probability": 26.05,
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 35.86188046597749,
     "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "confidence": "Medium",
+    "message": "Low bloom probability (36%) - Limited bloom activity expected"
   }
 }

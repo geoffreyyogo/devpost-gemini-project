@@ -12,21 +12,21 @@
     "fishing",
     "cotton"
   ],
-  "last_updated": "2025-10-13T08:00:29.798355",
+  "last_updated": "2025-11-25T15:42:04.781017",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": 0,
+    "ndvi": 0.35278868813310843,
+    "ndwi": -0.25798233453368274,
     "rainfall_mm": 0,
-    "temperature_c": 25.555414073294024,
-    "data_source": "Unknown",
+    "temperature_c": 26.154493905659603,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 626.6059661131629,
-    "bloom_percentage": 5.221716384276358,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 0.0,
+    "bloom_percentage": 0.0,
+    "bloom_probability": 61.28424599228631,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (61%) - Some blooms likely"
   }
 }

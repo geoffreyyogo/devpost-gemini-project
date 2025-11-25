@@ -12,21 +12,21 @@
     "fruits",
     "vegetables"
   ],
-  "last_updated": "2025-10-13T07:56:20.164560",
+  "last_updated": "2025-11-25T15:32:19.353627",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": 0,
+    "ndvi": 0.40860100310257014,
+    "ndwi": -0.4208086879788527,
     "rainfall_mm": 0,
-    "temperature_c": 30.98436585229697,
-    "data_source": "Unknown",
+    "temperature_c": 24.102211238380796,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 218.48330131710438,
-    "bloom_percentage": 1.8206941776425365,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 395.8826130966563,
+    "bloom_percentage": 3.299021775805469,
+    "bloom_probability": 53.17187714969518,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (53%) - Some blooms likely"
   }
 }

@@ -12,21 +12,21 @@
     "tobacco",
     "sorghum"
   ],
-  "last_updated": "2025-10-13T08:03:25.687533",
+  "last_updated": "2025-11-25T15:49:17.201057",
   "satellite_data": {
-    "ndvi": 0.4346690138079167,
-    "ndwi": -0.4464353657823174,
+    "ndvi": 0.5608394454863708,
+    "ndwi": -0.4948460866670114,
     "rainfall_mm": 0,
-    "temperature_c": 26.590912976783418,
+    "temperature_c": 26.357337120994735,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
     "bloom_area_km2": 0.0,
     "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_probability": 61.698977336281246,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (62%) - Some blooms likely"
   }
 }

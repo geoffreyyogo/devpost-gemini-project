@@ -12,21 +12,21 @@
     "maize",
     "beans"
   ],
-  "last_updated": "2025-10-13T08:01:11.425763",
+  "last_updated": "2025-11-25T15:43:21.570060",
   "satellite_data": {
-    "ndvi": 0.5507419095026963,
-    "ndwi": -0.5231314332411133,
+    "ndvi": 0.6735723960367824,
+    "ndwi": -0.6264963423997071,
     "rainfall_mm": 0,
-    "temperature_c": 24.59403698722339,
+    "temperature_c": 24.70420451881871,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
     "bloom_area_km2": 0.0,
     "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_probability": 58.7366270025116,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (59%) - Some blooms likely"
   }
 }

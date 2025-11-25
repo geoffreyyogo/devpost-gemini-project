@@ -10,21 +10,21 @@
     "urban farming",
     "horticulture"
   ],
-  "last_updated": "2025-10-13T08:24:57.218471",
+  "last_updated": "2025-11-25T16:08:58.565523",
   "satellite_data": {
-    "ndvi": 0,
-    "ndwi": 0,
+    "ndvi": 0.43158010615923614,
+    "ndwi": -0.43915955374528515,
     "rainfall_mm": 0,
-    "temperature_c": 27.087273012609025,
-    "data_source": "Unknown",
+    "temperature_c": 24.034677409776464,
+    "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 623.7796580423042,
-    "bloom_percentage": 5.198163817019202,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 351.18175771456447,
+    "bloom_percentage": 2.926514647621371,
+    "bloom_probability": 54.48471033843582,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (54%) - Some blooms likely"
   }
 }

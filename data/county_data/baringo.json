@@ -12,21 +12,21 @@
     "millet",
     "livestock"
   ],
-  "last_updated": "2025-10-13T07:45:49.999824",
+  "last_updated": "2025-11-25T14:59:02.121317",
   "satellite_data": {
-    "ndvi": 0.39651988049344844,
-    "ndwi": -0.37844543570849226,
+    "ndvi": 0.5962298166917864,
+    "ndwi": -0.5684679049565488,
     "rainfall_mm": 0,
-    "temperature_c": 25.899005423559842,
+    "temperature_c": 26.68820831277429,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 0.0,
-    "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 344.41610011820484,
+    "bloom_percentage": 2.870134167651707,
+    "bloom_probability": 61.88779473412549,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "Moderate bloom probability (62%) - Some blooms likely"
   }
 }

@@ -13,21 +13,21 @@
     "sorghum",
     "livestock"
   ],
-  "last_updated": "2025-10-13T07:56:06.998787",
+  "last_updated": "2025-11-25T15:31:34.318461",
   "satellite_data": {
-    "ndvi": 0.23470742079318022,
-    "ndwi": -0.4240918737039364,
+    "ndvi": 0,
+    "ndwi": 0,
     "rainfall_mm": 0,
-    "temperature_c": 32.68796920438599,
-    "data_source": "Sentinel-2",
+    "temperature_c": 25.597526539651202,
+    "data_source": "Unknown",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 246.6175468755074,
-    "bloom_percentage": 2.055146223962562,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 568.377725684839,
+    "bloom_percentage": 4.736481047373658,
+    "bloom_probability": 70.3475265396512,
+    "bloom_prediction": 1,
+    "confidence": "Medium",
+    "message": "High bloom probability (70%) - Expect significant blooms next week"
   }
 }

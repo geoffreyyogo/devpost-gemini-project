@@ -10,21 +10,21 @@
     "fishing",
     "coconut"
   ],
-  "last_updated": "2025-10-13T11:15:30.334776",
+  "last_updated": "2025-11-25T16:03:54.741986",
   "satellite_data": {
-    "ndvi": 0.2371461488875377,
-    "ndwi": -0.24314633333672295,
+    "ndvi": 0,
+    "ndwi": 0,
     "rainfall_mm": 0,
-    "temperature_c": 30.14385934574275,
-    "data_source": "Sentinel-2",
+    "temperature_c": 31.220126863868998,
+    "data_source": "Unknown",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 623.1941835698694,
-    "bloom_percentage": 5.193284863082245,
-    "bloom_probability": 20.883333333333333,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (21%) - Limited bloom activity expected"
+    "bloom_area_km2": 728.7141574050648,
+    "bloom_percentage": 6.072617978375541,
+    "bloom_probability": 59.970126863869,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (60%) - Some blooms likely"
   }
 }

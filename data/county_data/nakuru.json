@@ -12,21 +12,21 @@
     "pyrethrum",
     "horticulture"
   ],
-  "last_updated": "2025-10-13T07:50:33.438263",
+  "last_updated": "2025-11-25T15:13:26.559967",
   "satellite_data": {
-    "ndvi": 0.46243632021546366,
-    "ndwi": -0.449868902224085,
+    "ndvi": 0.5262234849620309,
+    "ndwi": -0.49859560105646333,
     "rainfall_mm": 0,
-    "temperature_c": 22.406600971649418,
+    "temperature_c": 22.69785574089089,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
     "bloom_area_km2": 0.0,
     "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_probability": 58.39042418427081,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (58%) - Some blooms likely"
   }
 }

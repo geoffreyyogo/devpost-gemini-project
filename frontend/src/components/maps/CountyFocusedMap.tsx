@@ -149,16 +149,44 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
   const zoom = 9 // Zoom in to county level
 
   const getMarkerColor = (bloomProbabilityStr: string, temperatureStr: string) => {
-    const bloomProbability = parseFloat(bloomProbabilityStr) / 100 || 0
-    const temperature = parseFloat(temperatureStr) || 0
-    
-    if (bloomProbability > 0.7 || temperature > 35) return '#DC2626'
-    if (bloomProbability > 0.4 || temperature > 30) return '#F59E0B'
+    // Support both numeric percentages (e.g. 52.3) and strings like "52%"
+    const bpRaw = typeof bloomProbabilityStr === 'number' ? bloomProbabilityStr : parseFloat(String(bloomProbabilityStr))
+    const bloomProbability = Number.isFinite(bpRaw) ? bpRaw : 0
+    const temperature = parseFloat(String(temperatureStr)) || 0
+
+    // Create a simple risk score similar to the main map logic
+    let riskScore = 0
+
+    // Bloom probability (0-60)
+    if (bloomProbability > 70) {
+      riskScore += 60
+    } else if (bloomProbability > 50) {
+      riskScore += 40
+    } else if (bloomProbability > 30) {
+      riskScore += 20
+    } else {
+      riskScore += 10
+    }
+
+    // Temperature stress (0-25)
+    if (temperature > 35) {
+      riskScore += 25
+    } else if (temperature > 32) {
+      riskScore += 15
+    } else if (temperature < 15) {
+      riskScore += 10
+    }
+
+    if (riskScore >= 60) return '#DC2626'
+    if (riskScore >= 35) return '#F59E0B'
     return '#16A34A'
   }
 
   const getMarkerSize = (marker: CountyMarker) => {
-    // Larger size for focused view
+    // Size based on bloom area if available, otherwise a larger default for focused map
+    const bloomArea = marker.bloom_area_km2 || 0
+    if (bloomArea > 100) return 20
+    if (bloomArea > 50) return 18
     return 15
   }
 

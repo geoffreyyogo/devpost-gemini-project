@@ -57,7 +57,9 @@ services:
       - key: GEE_PROJECT_ID
         value: "bloomwatch-474200"
       - key: GEE_SERVICE_ACCOUNT
-        sync: false  # Optional: for Earth Engine service account authentication
+        value: "geoffreyyogo"  # Service account name
+      - key: GEE_SERVICE_ACCOUNT_JSON
+        sync: false  # Set in Render Dashboard: Paste the full JSON key content
       
       # Application Settings
       - key: ENVIRONMENT

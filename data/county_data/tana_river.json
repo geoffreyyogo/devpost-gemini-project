@@ -12,21 +12,21 @@
     "mangoes",
     "livestock"
   ],
-  "last_updated": "2025-10-13T08:08:44.825448",
+  "last_updated": "2025-11-25T15:56:31.962740",
   "satellite_data": {
-    "ndvi": 0.1584989884437088,
-    "ndwi": -0.2836341207679507,
+    "ndvi": 0,
+    "ndwi": 0,
     "rainfall_mm": 0,
-    "temperature_c": 32.38457877826433,
-    "data_source": "Sentinel-2",
+    "temperature_c": 30.670305160804574,
+    "data_source": "Unknown",
     "is_real_data": true
   },
   "bloom_data": {
-    "bloom_area_km2": 250.8829242311099,
-    "bloom_percentage": 2.0906910352592494,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_area_km2": 583.6912638282158,
+    "bloom_percentage": 4.864093865235132,
+    "bloom_probability": 59.420305160804574,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (59%) - Some blooms likely"
   }
 }

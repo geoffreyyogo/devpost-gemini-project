@@ -12,21 +12,21 @@
     "barley",
     "livestock"
   ],
-  "last_updated": "2025-10-13T07:52:28.294227",
+  "last_updated": "2025-11-25T15:15:39.719230",
   "satellite_data": {
-    "ndvi": 0.38125229893320167,
-    "ndwi": -0.43362393378860925,
+    "ndvi": 0.4433468359009542,
+    "ndwi": -0.46462373530599,
     "rainfall_mm": 0,
-    "temperature_c": 25.67258246860609,
+    "temperature_c": 26.768950287512897,
     "data_source": "Sentinel-2",
     "is_real_data": true
   },
   "bloom_data": {
     "bloom_area_km2": 0.0,
     "bloom_percentage": 0.0,
-    "bloom_probability": 26.05,
-    "bloom_prediction": 0,
-    "confidence": "High",
-    "message": "Low bloom probability (26%) - Limited bloom activity expected"
+    "bloom_probability": 53.12244711230881,
+    "bloom_prediction": 1,
+    "confidence": "Low",
+    "message": "Moderate bloom probability (53%) - Some blooms likely"
   }
 }
