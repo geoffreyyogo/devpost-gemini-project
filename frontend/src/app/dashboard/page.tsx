@@ -71,14 +71,14 @@ export default function DashboardPage() {
             <Link href="/" className="flex items-center space-x-3 group">
               <Image
                 src="/BloomWatch.png"
-                alt="BloomWatch Kenya"
+                alt="Shamba Smart"
                 width={40}
                 height={40}
                 className="h-10 w-auto transition-transform group-hover:scale-105"
                 priority
               />
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent hidden sm:inline">
-                BloomWatch Kenya
+                Shamba Smart
               </span>
             </Link>
 

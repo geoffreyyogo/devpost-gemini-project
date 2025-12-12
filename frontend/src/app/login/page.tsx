@@ -74,14 +74,14 @@ export default function LoginPage() {
             <Link href="/" className="flex items-center space-x-3 group">
               <Image
                 src="/BloomWatch.png"
-                alt="BloomWatch Kenya"
+                alt="Shamba Smart"
                 width={40}
                 height={40}
                 className="h-10 w-auto transition-transform group-hover:scale-105"
                 priority
               />
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent hidden sm:inline">
-                BloomWatch Kenya
+                Shamba Smart
               </span>
             </Link>
 
@@ -220,7 +220,7 @@ export default function LoginPage() {
       {/* Footer */}
       <footer className="border-t bg-white dark:bg-gray-950 py-6">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>© 2025 BloomWatch Kenya. All rights reserved.</p>
+          <p>© 2025 Shamba Smart. All rights reserved.</p>
         </div>
       </footer>
     </div>

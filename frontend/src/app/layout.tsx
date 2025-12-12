@@ -8,21 +8,21 @@ import { ThemeProvider } from "@/components/providers/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "BloomWatch Kenya - Smart Crop Monitoring",
+  title: "Shamba Smart - Smart Crop Monitoring",
   description: "NASA-powered bloom tracking platform for Kenyan farmers. Monitor crop health, receive bloom alerts, and optimize harvest timing.",
   keywords: ["agriculture", "Kenya", "crop monitoring", "bloom detection", "farming", "satellite data", "NDVI"],
-  authors: [{ name: "BloomWatch Kenya" }],
+  authors: [{ name: "Geoffrey Yogo" }],
   openGraph: {
     type: "website",
     locale: "en_KE",
     url: "https://bloomwatch.co.ke",
-    title: "BloomWatch Kenya - Smart Crop Monitoring",
+    title: "Shamba Smart - Smart Crop Monitoring",
     description: "NASA-powered bloom tracking platform for Kenyan farmers",
-    siteName: "BloomWatch Kenya",
+    siteName: "Shamba Smart",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BloomWatch Kenya - Smart Crop Monitoring",
+    title: "Shamba Smart - Smart Crop Monitoring",
     description: "NASA-powered bloom tracking platform for Kenyan farmers",
   },
   robots: {

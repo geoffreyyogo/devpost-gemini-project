@@ -266,7 +266,8 @@ cors_origins = [
     "https://www.bloomwatch.co.ke",
     "https://bloomwatch-nextjs.onrender.com",
     "https://bloomwatch-nextjs-oomk.onrender.com",
-    "https://bloomwatch-app.onrender.com"
+    "https://bloomwatch-app.onrender.com",
+    "https://smartfarm-app.onrender.com"
 ]
 
 # Add CORS origins from environment variable if available
@@ -436,7 +437,7 @@ def verify_admin(credentials: HTTPAuthorizationCredentials = Depends(security)) 
 async def root():
     """API root endpoint"""
     return {
-        "name": "BloomWatch Kenya API",
+        "name": "Shamba Smart API",
         "version": "1.0.0",
         "status": "operational",
         "docs": "/api/docs"

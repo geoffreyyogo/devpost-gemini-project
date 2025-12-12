@@ -178,7 +178,7 @@ export default function AdminDashboardPage() {
               <Shield className="h-8 w-8 text-purple-600" />
               <div>
                 <h1 className="text-2xl font-bold text-purple-600">Admin Dashboard</h1>
-                <p className="text-sm text-gray-500">BloomWatch Kenya Management</p>
+                <p className="text-sm text-gray-500">Shamba Smart Management</p>
               </div>
             </div>
             <div className="flex items-center gap-4">

@@ -67,14 +67,14 @@ export default function HomePage() {
             <Link href="/" className="flex items-center space-x-3 group">
               <Image
                 src="/BloomWatch.png"
-                alt="BloomWatch Kenya"
+                alt="Shamba Smart"
                 width={55}
                 height={55}
                 className="h-14 w-auto transition-transform group-hover:scale-105"
                 priority
               />
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent hidden sm:inline">
-                BloomWatch Kenya
+                Shamba Smart
               </span>
             </Link>
 
@@ -133,7 +133,7 @@ export default function HomePage() {
           <div className="relative z-10 hero-content space-y-6 animate-fade-in-up">
             <h1 className="text-5xl md:text-7xl lg:text-[3.5rem] font-bold tracking-tight" 
                 style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}>
-              Welcome to BloomWatch Kenya
+              Welcome to Shamba Smart
             </h1>
             
             <h2 className="text-3xl md:text-4xl lg:text-[2.2rem] font-semibold mt-4" 
@@ -255,7 +255,7 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16" data-aos="fade-down">
           <h2 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
-            🌟 Why BloomWatch Kenya?
+            🌟 Why Shamba Smart?
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto">
             Powered by NASA satellite technology and AI-driven insights
@@ -393,7 +393,7 @@ export default function HomePage() {
                   Dial: *384*42434#
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                  Access bloom data from any phone
+                  Access data from any phone
                 </p>
               </div>
             </CardContent>
@@ -457,15 +457,15 @@ export default function HomePage() {
                 <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1.5">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-3 w-3 text-purple-600" />
-                    OpenAI GPT-4 (Advanced AI)
+                    Gemini 3 Pro for linguistic interaction (Generative AI)
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-3 w-3 text-purple-600" />
-                    Trained ML Model (NASA data)
+                    Trained ML Model (NASA Datasets & IoT Data)
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-3 w-3 text-purple-600" />
-                    Real-time satellite insights
+                    Real-time satellite insights (Retrieval-Augmented Generation)
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-3 w-3 text-purple-600" />
@@ -634,7 +634,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16" data-aos="fade-down">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
-              BloomWatch Kenya Expected Impact
+              Smart Shamba Expected Impact
             </h2>
             <p className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300">
               Empowering thousands of farmers across Kenya
@@ -793,7 +793,7 @@ export default function HomePage() {
                 
                 {/* Quote */}
                 <p className="text-sm md:text-base italic leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-                  "BloomWatch helped me plant at the right time, and my maize yield doubled! The SMS alerts in Kiswahili made it so easy to understand."
+                  "Shamba Smart helped me plant at the right time, and my maize yield doubled! The SMS alerts in Kiswahili made it so easy to understand."
                 </p>
                 
                 {/* Rating */}
@@ -828,7 +828,7 @@ export default function HomePage() {
                 
                 {/* Quote */}
                 <p className="text-sm md:text-base italic leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-                  "The bloom alerts helped me time my coffee harvest perfectly. I upgraded from Grade B to Grade A beans and got 40% better prices!"
+                  "The alerts helped me time my coffee harvest perfectly. I upgraded from Grade B to Grade A beans and got 40% better prices!"
                 </p>
                 
                 {/* Rating */}
@@ -932,7 +932,7 @@ export default function HomePage() {
                   </div>
                   
                   <h5 className="font-bold text-gray-900 dark:text-white mb-4 text-base md:text-lg">
-                    After joining BloomWatch:
+                    After joining Shamba Smart:
                   </h5>
                   
                   <ul className="space-y-3 mb-6">
@@ -966,7 +966,7 @@ export default function HomePage() {
                   <div className="relative border-l-4 border-green-500 pl-4 md:pl-6 py-4 bg-green-50/50 dark:bg-green-950/30 rounded-r-lg group-hover:bg-green-100/50 dark:group-hover:bg-green-950/50 transition-colors duration-500">
                     <MessageSquare className="absolute -top-2 -left-2 h-8 w-8 text-green-500 bg-white dark:bg-gray-900 rounded-full p-1.5" />
                     <p className="text-sm md:text-base italic text-gray-700 dark:text-gray-300 leading-relaxed">
-                      "The USSD system works perfectly on my basic phone. I get instant answers from Flora AI via USSD and receive SMS alerts before every rain. Flora helps me understand what the satellite data means for my farm. BloomWatch changed my life!"
+                      "The USSD system works perfectly on my basic phone. I get instant answers from Flora AI via USSD and receive SMS alerts before every rain. Flora helps me understand what the satellite data means for my farm. Shamba Smart changed my life!"
                     </p>
                     <div className="flex items-center gap-2 mt-3 text-xs text-green-700 dark:text-green-400">
                       <CheckCircle className="h-4 w-4" />
@@ -986,7 +986,7 @@ export default function HomePage() {
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 flex items-center justify-center gap-3 mobile-heading">
               <Phone className="h-6 w-6 md:h-8 md:w-8" />
-              Access BloomWatch on ANY Phone
+              Access Shamba Smart on ANY Phone
             </h2>
             <p className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300">
               No smartphone needed! Use USSD for instant updates
@@ -1092,7 +1092,7 @@ export default function HomePage() {
                     {/* USSD Menu */}
                     <div className="bg-green-50 p-3 rounded-lg mb-2 text-left flex-grow">
                       <p className="text-xs leading-relaxed text-gray-900">
-                        <span className="font-bold text-green-700">🌾 BloomWatch Kenya</span><br />
+                        <span className="font-bold text-green-700">🌾 Shamba Smart Kenya</span><br />
                         <span className="text-gray-600 text-xs">Karibu! Welcome!</span><br /><br />
                         <span className="font-semibold text-xs">Select language:</span><br />
                         <span className="font-semibold text-xs">1. English</span><br />
@@ -1161,7 +1161,7 @@ export default function HomePage() {
                   <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">+254-700-BLOOM</p>
                   <div className="space-y-3 text-sm md:text-base text-gray-900 dark:text-white leading-relaxed">
                     <p className="font-bold text-green-700 dark:text-green-400 text-base md:text-lg">
-                      🌸 BloomWatch Alert
+                      🌸 Shamba  Alert
                     </p>
                     
                     <p>
@@ -1535,7 +1535,7 @@ export default function HomePage() {
                   />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
-                  BloomWatch Kenya
+                  Shamba Smart
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -1548,7 +1548,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                   <Mail className="h-4 w-4 mr-2 text-green-600" />
-                  <span>hello@bloomwatch.ke</span>
+                  <span>hello@shambasmart.ke</span>
                 </div>
               </div>
             </div>
@@ -1617,13 +1617,13 @@ export default function HomePage() {
                 <li>
                   <Link href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors flex items-center">
                     <Twitter className="h-3 w-3 mr-2" />
-                    @BloomWatchKE
+                    @ShambaSmartKE
                   </Link>
                 </li>
                 <li>
                   <Link href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors flex items-center">
                     <Facebook className="h-3 w-3 mr-2" />
-                    /BloomWatchKenya
+                    /ShambaSmartKenya
                   </Link>
                 </li>
                 <li>
@@ -1665,10 +1665,10 @@ export default function HomePage() {
           </div>
           <div className="mt-12 pt-8 border-t">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-              BloomWatch Kenya - NASA Space Apps Challenge 2025 | Powered by Earth Observation Data
+              Shamba Smart | Powered by Earth Observation Data
             </p>
             <p className="text-center text-sm text-gray-500 dark:text-gray-500">
-              &copy; {new Date().getFullYear()} BloomWatch Kenya. All rights reserved. Made with ❤️ for Kenyan farmers
+              &copy; {new Date().getFullYear()} Shamba Smart. All rights reserved. Made with ❤️ for Kenyan farmers
             </p>
           </div>
         </div>
