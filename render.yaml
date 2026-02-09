@@ -1,7 +1,12 @@
 # Smart Shamba — Render Blueprint
-# Next.js Frontend + FastAPI Backend
-# NOTE: Create/link a PostgreSQL database manually in the Render Dashboard
-#       and set DATABASE_URL in the backend service's env vars.
+# Next.js Frontend + FastAPI Backend + Managed PostgreSQL
+
+databases:
+  - name: smart-shamba-db
+    plan: free  # 1 GB, 90-day expiry. Upgrade to 'starter' ($7/mo) for persistence.
+    databaseName: smart_shamba
+    user: smart_shamba_user
+    region: oregon
 
 services:
   # ──────────────────────────────────────────────────────────────────────
@@ -16,10 +21,11 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: cd server && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
-      # ── PostgreSQL (set in Render Dashboard — copy from your DB's connection info) ──
+      # ── PostgreSQL (auto-injected by Render from linked database) ──
       - key: DATABASE_URL
-        sync: false  # Set in Dashboard: paste Internal Database URL from your PostgreSQL instance
-
+        fromDatabase:
+          name: smart-shamba-db
+          property: connectionString
 
       # ── Google Gemini AI ───────────────────────────────────────────
       - key: GEMINI_API_KEY
