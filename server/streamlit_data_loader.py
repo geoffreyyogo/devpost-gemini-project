@@ -24,9 +24,10 @@ logger = logging.getLogger(__name__)
 class StreamlitDataLoader:
     """Load and format data for Streamlit visualizations"""
     
-    def __init__(self):
-        """Initialize the loader"""
-        self.fetcher = KenyaDataFetcher()
+    def __init__(self, db_service=None):
+        """Initialize the loader with optional db_service."""
+        self.fetcher = KenyaDataFetcher(db_service=db_service)
+        self.db = db_service
     
     def get_landing_page_map_data(self) -> Dict:
         """
@@ -291,40 +292,36 @@ class StreamlitDataLoader:
         Returns:
             Dict with formatted delta strings
         """
-        import os
-        import json
-        
-        previous_stats_file = os.path.join(
-            os.path.dirname(__file__), '..', 'data', 'previous_climate_stats.json'
-        )
-        
+        # Use PG-backed climate stats for delta calculation
         try:
-            if os.path.exists(previous_stats_file):
-                with open(previous_stats_file, 'r') as f:
-                    previous = json.load(f)
-                
-                # Parse previous values from formatted strings
-                prev_bloom = float(previous.get('avg_bloom_level', '0%').replace('%', ''))
-                prev_temp = float(previous.get('avg_temperature', '0°C').replace('°C', ''))
-                prev_rainfall = float(previous.get('avg_rainfall', '0mm').replace('mm', ''))
-                
-                # Calculate deltas
-                bloom_diff = current_bloom - prev_bloom
-                temp_diff = current_temp - prev_temp
-                rainfall_diff = current_rainfall - prev_rainfall
-                
-                # Format deltas with + or - prefix
-                bloom_delta = f"+{bloom_diff:.1f}%" if bloom_diff >= 0 else f"{bloom_diff:.1f}%"
-                temp_delta = f"+{temp_diff:.1f}°C" if temp_diff >= 0 else f"{temp_diff:.1f}°C"
-                rainfall_delta = f"+{rainfall_diff:.1f}mm" if rainfall_diff >= 0 else f"{rainfall_diff:.1f}mm"
-                
-                return {
-                    'bloom_delta': bloom_delta,
-                    'temperature_delta': temp_delta,
-                    'rainfall_delta': rainfall_delta
-                }
+            if self.db and hasattr(self.db, 'get_climate_summary_stats'):
+                stats = self.db.get_climate_summary_stats()
+                if stats:
+                    prev_bloom = stats.get('avg_bloom_level', 0)
+                    if isinstance(prev_bloom, str):
+                        prev_bloom = float(prev_bloom.replace('%', ''))
+                    prev_temp = stats.get('avg_temperature', 0)
+                    if isinstance(prev_temp, str):
+                        prev_temp = float(prev_temp.replace('°C', ''))
+                    prev_rainfall = stats.get('avg_rainfall', 0)
+                    if isinstance(prev_rainfall, str):
+                        prev_rainfall = float(prev_rainfall.replace('mm', ''))
+
+                    bloom_diff = current_bloom - prev_bloom
+                    temp_diff = current_temp - prev_temp
+                    rainfall_diff = current_rainfall - prev_rainfall
+
+                    bloom_delta = f"+{bloom_diff:.1f}%" if bloom_diff >= 0 else f"{bloom_diff:.1f}%"
+                    temp_delta = f"+{temp_diff:.1f}°C" if temp_diff >= 0 else f"{temp_diff:.1f}°C"
+                    rainfall_delta = f"+{rainfall_diff:.1f}mm" if rainfall_diff >= 0 else f"{rainfall_diff:.1f}mm"
+
+                    return {
+                        'bloom_delta': bloom_delta,
+                        'temperature_delta': temp_delta,
+                        'rainfall_delta': rainfall_delta
+                    }
         except Exception as e:
-            logger.warning(f"Could not calculate deltas: {e}")
+            logger.warning(f"Could not calculate deltas from PG: {e}")
         
         # Return neutral deltas if no previous data
         return {
@@ -335,56 +332,10 @@ class StreamlitDataLoader:
     
     def _save_current_stats_as_previous(self, bloom: float, temp: float, rainfall: float):
         """
-        Save current climate stats for future delta calculations
-        Only saves if current data is significantly different or older than 6 hours
-        
-        Args:
-            bloom: Current average bloom percentage
-            temp: Current average temperature
-            rainfall: Current average rainfall
+        No-op: climate stats are persisted in PostgreSQL via the data fetcher.
+        Delta calculations are done against PG data in _calculate_deltas().
         """
-        import os
-        import json
-        from datetime import datetime
-        
-        previous_stats_file = os.path.join(
-            os.path.dirname(__file__), '..', 'data', 'previous_climate_stats.json'
-        )
-        
-        try:
-            should_save = True
-            
-            # Check if we should update (avoid overwriting too frequently)
-            if os.path.exists(previous_stats_file):
-                with open(previous_stats_file, 'r') as f:
-                    previous = json.load(f)
-                
-                last_updated = previous.get('last_updated')
-                if last_updated:
-                    try:
-                        last_time = datetime.fromisoformat(last_updated)
-                        hours_since = (datetime.now() - last_time).total_seconds() / 3600
-                        # Only update if more than 6 hours have passed
-                        if hours_since < 6:
-                            should_save = False
-                    except:
-                        pass
-            
-            if should_save:
-                current_stats = {
-                    'avg_bloom_level': f"{bloom:.1f}%",
-                    'avg_temperature': f"{temp:.1f}°C",
-                    'avg_rainfall': f"{rainfall:.1f}mm",
-                    'last_updated': datetime.now().isoformat()
-                }
-                
-                with open(previous_stats_file, 'w') as f:
-                    json.dump(current_stats, f, indent=2)
-                
-                logger.info("Saved current climate stats for future delta calculations")
-                
-        except Exception as e:
-            logger.warning(f"Could not save climate stats: {e}")
+        pass
     
     def is_data_fresh(self, max_age_hours: int = 6) -> bool:
         """

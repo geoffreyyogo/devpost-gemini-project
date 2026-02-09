@@ -4,8 +4,22 @@
 
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { Farmer } from '@/types'
+import type { Farmer, AgrovetRegisterFormData, BuyerRegisterFormData, UserType } from '@/types'
 import { api } from '@/lib/api'
+
+/** Returns the correct dashboard route for a given user_type */
+export function getDashboardRoute(userType?: UserType | string): string {
+  switch (userType) {
+    case 'admin':
+      return '/admin'
+    case 'agrovet':
+      return '/dashboard/agrovet'
+    case 'buyer':
+      return '/dashboard/buyer'
+    default:
+      return '/dashboard'
+  }
+}
 
 interface AuthState {
   farmer: Farmer | null
@@ -19,6 +33,8 @@ interface AuthState {
   setHasHydrated: (hydrated: boolean) => void
   login: (phone: string, password: string) => Promise<boolean>
   register: (data: any) => Promise<boolean>
+  registerAgrovet: (data: AgrovetRegisterFormData) => Promise<boolean>
+  registerBuyer: (data: BuyerRegisterFormData) => Promise<boolean>
   logout: () => Promise<void>
   verifySession: () => Promise<void>
   updateProfile: (data: any) => Promise<boolean>
@@ -89,6 +105,58 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Registration failed'
+          set({ error: message, isLoading: false })
+          return false
+        }
+      },
+
+      registerAgrovet: async (data) => {
+        set({ isLoading: true, error: null })
+        try {
+          const response = await api.registerAgrovet(data)
+          
+          if (response.success && response.farmer) {
+            set({
+              farmer: response.farmer,
+              isAuthenticated: true,
+              isLoading: false,
+            })
+            return true
+          } else {
+            set({
+              error: response.message || 'Agrovet registration failed',
+              isLoading: false,
+            })
+            return false
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Agrovet registration failed'
+          set({ error: message, isLoading: false })
+          return false
+        }
+      },
+
+      registerBuyer: async (data) => {
+        set({ isLoading: true, error: null })
+        try {
+          const response = await api.registerBuyer(data)
+          
+          if (response.success && response.farmer) {
+            set({
+              farmer: response.farmer,
+              isAuthenticated: true,
+              isLoading: false,
+            })
+            return true
+          } else {
+            set({
+              error: response.message || 'Buyer registration failed',
+              isLoading: false,
+            })
+            return false
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Buyer registration failed'
           set({ error: message, isLoading: false })
           return false
         }

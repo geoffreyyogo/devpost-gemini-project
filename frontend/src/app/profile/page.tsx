@@ -118,7 +118,7 @@ export default function ProfilePage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center space-x-2">
             <Sprout className="h-8 w-8 text-green-600" />
-            <span className="text-2xl font-bold text-green-600">Shamba Smart</span>
+            <span className="text-2xl font-bold text-green-600">Smart Shamba</span>
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/dashboard">
@@ -349,7 +349,7 @@ export default function ProfilePage() {
       {/* Footer */}
       <footer className="border-t bg-white dark:bg-gray-950 py-6">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>© 2025 Shamba Smart. All rights reserved.</p>
+          <p>© 2025 Smart Shamba. All rights reserved.</p>
         </div>
       </footer>
     </div>

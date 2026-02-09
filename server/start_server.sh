@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# BloomWatch Kenya - FastAPI Server Startup Script
+# Smart Shamba - FastAPI Server Startup Script
 
-echo "🌾 BloomWatch Kenya - FastAPI Server"
+echo "🌾 Smart Shamba - FastAPI Server"
 echo "===================================="
 echo ""
 

@@ -94,7 +94,7 @@ export function CTASection() {
               Ready to Optimize Your Harvest?
             </h2>
             <p className="text-lg md:text-xl lg:text-2xl opacity-95 leading-relaxed drop-shadow-lg">
-              Join thousands of Kenyan farmers using BloomWatch to increase yields and reduce crop loss
+              Join thousands of Kenyan farmers using Smart Shamba to increase yields and reduce crop loss
             </p>
           </div>
 

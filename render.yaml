@@ -1,145 +1,126 @@
-# Render Blueprint for BloomWatch Kenya - Next.js + FastAPI
-# Modern deployment configuration
+# Smart Shamba — Render Blueprint
+# Next.js Frontend + FastAPI Backend + Managed PostgreSQL
+
+databases:
+  - name: smart-shamba-db
+    plan: free  # 1 GB, 90-day expiry. Upgrade to 'starter' ($7/mo) for persistence.
+    databaseName: smart_shamba
+    user: smart_shamba_user
+    region: oregon
 
 services:
+  # ──────────────────────────────────────────────────────────────────────
   # FastAPI Backend
+  # ──────────────────────────────────────────────────────────────────────
   - type: web
-    name: smartfarm-api
-    env: python
+    name: smart-shamba-api
+    runtime: python
     region: oregon
     plan: free
-    branch: deploy-nextjs-fastapi  # Change to 'main' after testing
-    buildCommand: |
-      cd server
-      python -m pip install --upgrade pip
-      pip install -r requirements-fastapi.txt
-    startCommand: |
-      cd server && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+    branch: deploy-nextjs-fastapi
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd server && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.11.0"
-      
-      # MongoDB Configuration
-      - key: MONGODB_URI
-        sync: false  # Set in Render Dashboard: mongodb+srv://...
-      - key: MONGODB_DATABASE
-        value: "bloomwatch_kenya"
-      
-      # Africa's Talking API
+      # ── PostgreSQL (auto-injected by Render from linked database) ──
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-shamba-db
+          property: connectionString
+
+      # ── Google Gemini AI ───────────────────────────────────────────
+      - key: GEMINI_API_KEY
+        sync: false  # Set in Render Dashboard
+      - key: GEMINI_MODEL
+        value: "gemini-2.5-flash"
+      - key: GOOGLE_GENAI_USE_VERTEXAI
+        value: "false"
+
+      # ── Google Weather API ─────────────────────────────────────────
+      - key: GOOGLE_WEATHER_API_KEY
+        sync: false  # Set in Render Dashboard
+
+      # ── Google Earth Engine ────────────────────────────────────────
+      - key: GEE_PROJECT_ID
+        value: "bloomwatch-474200"
+      - key: GEE_SERVICE_ACCOUNT
+        value: "geoffreyyogo"
+      - key: GEE_SERVICE_ACCOUNT_JSON
+        sync: false  # Set in Render Dashboard: paste the full JSON key content
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: "credentials/gcp-service-account.json"
+
+      # ── Africa's Talking SMS/USSD ──────────────────────────────────
       - key: AT_USERNAME
         sync: false  # Set in Render Dashboard (e.g., 'sandbox' for testing)
       - key: AT_API_KEY
         sync: false  # Set in Render Dashboard
       - key: SMS_SENDER_ID
-        value: "BloomWatch"
+        value: "SmartShamba"
       - key: ENABLE_SMS_NOTIFICATIONS
         value: "True"
       - key: SMS_DAILY_LIMIT
         value: "5"
-      
-      # USSD Configuration
       - key: USSD_SHORT_CODE
         value: "*384*42434#"
       - key: USSD_CALLBACK_URL
-        value: "https://smartfarm-api.onrender.com/ussd/callback"
-      
-      # Security & Authentication
+        value: "https://smart-shamba-api.onrender.com/ussd/callback"
+
+      # ── Security & Authentication ──────────────────────────────────
       - key: SECRET_KEY
-        generateValue: true  # Auto-generated secure key
-      - key: JWT_SECRET_KEY
-        generateValue: true  # Auto-generated secure key
+        generateValue: true
       - key: SESSION_TIMEOUT_DAYS
         value: "7"
       - key: MIN_PASSWORD_LENGTH
         value: "6"
-      
-      # Google Earth Engine
-      - key: GEE_PROJECT_ID
-        value: "bloomwatch-474200"
-      - key: GEE_SERVICE_ACCOUNT
-        value: "geoffreyyogo"  # Service account name
-      - key: GEE_SERVICE_ACCOUNT_JSON
-        sync: false  # Set in Render Dashboard: Paste the full JSON key content
-      
-      # Application Settings
+      - key: ADMIN_PASSWORD
+        sync: false  # Set in Render Dashboard
+
+      # ── Email (SendGrid) ───────────────────────────────────────────
+      - key: SENDGRID_API_KEY
+        sync: false  # Set in Render Dashboard (optional)
+      - key: SENDGRID_FROM_EMAIL
+        value: "noreply@bloomwatchkenya.com"
+      - key: SENDGRID_FROM_NAME
+        value: "Smart Shamba"
+
+      # ── CORS ───────────────────────────────────────────────────────
+      - key: CORS_ORIGINS
+        value: "https://smart-shamba-app.onrender.com"
+
+      # ── Application Settings ───────────────────────────────────────
       - key: ENVIRONMENT
         value: "production"
       - key: DEBUG
         value: "False"
       - key: LOG_LEVEL
         value: "INFO"
-      
-      # CORS Configuration
-      - key: CORS_ORIGINS
-        value: "https://smartfarm-app.onrender.com"
-      
-      # Notification Scheduler Settings
+
+      # ── Notification Scheduler ─────────────────────────────────────
       - key: BLOOM_CHECK_INTERVAL_HOURS
         value: "6"
       - key: MIN_BLOOM_INTENSITY
         value: "0.5"
       - key: DEFAULT_ALERT_RADIUS_KM
         value: "50"
-      
-      # SMS Delivery Reports Callback
-      # Configure in Africa's Talking: https://bloomwatch-fastapi.onrender.com/api/sms/delivery-reports
-      
-      # OpenAI Configuration (for Flora AI Chatbot)
-      - key: OPENAI_API_KEY
-        sync: false  # Set in Render Dashboard (optional)
-      
-      # SendGrid Email Configuration (optional)
-      - key: SENDGRID_API_KEY
-        sync: false  # Set in Render Dashboard (optional)
-      - key: SENDGRID_FROM_EMAIL
-        value: "noreply@bloomwatchkenya.com"
-      - key: SENDGRID_FROM_NAME
-        value: "BloomWatch Kenya"
-      
-      # Admin Configuration
-      - key: ADMIN_PASSWORD
-        sync: false  # Set in Render Dashboard
+
     healthCheckPath: /health
 
+  # ──────────────────────────────────────────────────────────────────────
   # Next.js Frontend
+  # ──────────────────────────────────────────────────────────────────────
   - type: web
-    name: smartfarm-app
-    env: node
+    name: smart-shamba-app
+    runtime: node
     region: oregon
     plan: free
-    branch: deploy-nextjs-fastapi  # Change to 'main' after testing
-    buildCommand: |
-      cd frontend
-      npm ci --legacy-peer-deps --include=dev
-      npm run build
+    branch: deploy-nextjs-fastapi
+    buildCommand: cd frontend && npm ci --legacy-peer-deps --include=dev && npm run build
     startCommand: cd frontend && npm start
     envVars:
       - key: NODE_VERSION
         value: "20.11.1"
       - key: NEXT_PUBLIC_API_URL
-        value: "https://smartfarm-api.onrender.com"  # Update after backend deploys
+        value: "https://smart-shamba-api.onrender.com"
       - key: NODE_ENV
         value: production
     healthCheckPath: /
-
-  # Optional: Keep Flask USSD API if still needed
-  # - type: web
-  #   name: bloomwatch-ussd-api
-  #   env: python
-  #   region: oregon
-  #   plan: free
-  #   branch: deploy-nextjs-fastapi
-  #   rootDirectory: ./backend
-  #   buildCommand: pip install -r requirements.txt
-  #   startCommand: gunicorn ussd_api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
-  #   envVars:
-  #     - key: MONGODB_URI
-  #       sync: false
-  #     - key: AFRICASTALKING_USERNAME
-  #       sync: false
-  #     - key: AFRICASTALKING_API_KEY
-  #       sync: false
-  #     - key: FLASK_ENV
-  #       value: production
-  #   healthCheckPath: /health
-

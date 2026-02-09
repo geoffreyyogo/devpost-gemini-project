@@ -1,340 +1,401 @@
 """
-Automated Scheduler Service for BloomWatch Kenya
-Handles periodic data fetching, archiving, and maintenance tasks
+Automated Scheduler Service for Smart Shamba
+Handles periodic data fetching, archiving, maintenance, and ML retraining.
+
+Uses asyncio tasks (Celery-ready design — swap asyncio.sleep with Celery beat
+when RabbitMQ is available).
 """
 
 import asyncio
 import logging
-from datetime import datetime, timedelta
-from typing import Optional
-import shutil
-import os
-from pathlib import Path
+from datetime import datetime, timedelta, date as date_type
+from typing import Optional, Dict
 
 logger = logging.getLogger(__name__)
+
 
 class SchedulerService:
     """
     Manages automated background tasks:
-    - Weekly data fetching from NASA satellites
+    - Weekly data fetching from NASA satellites (all counties + sub-counties)
     - Historical data archiving
-    - Database cleanup
-    - Alert generation
+    - Database cleanup (expired sessions via PostgreSQL)
+    - Weekly ML model retraining
     """
-    
-    def __init__(self, data_loader, mongo_service, alert_service, bloom_predictor=None):
+
+    def __init__(self, data_loader, db_service, alert_service, bloom_predictor=None):
+        """
+        Args:
+            data_loader: StreamlitDataLoader (legacy — kept for compat)
+            db_service: PostgresService instance
+            alert_service: SmartAlertService instance
+            bloom_predictor: BloomPredictor instance (or None)
+        """
         self.data_loader = data_loader
-        self.mongo = mongo_service
+        self.db = db_service
         self.alerts = alert_service
         self.bloom_predictor = bloom_predictor
         self.is_running = False
         self.tasks = []
-        
-        # Directories
-        self.base_dir = Path(__file__).parent.parent / 'data' / 'exports'
-        self.live_dir = self.base_dir / 'live'
-        self.historical_dir = self.base_dir / 'historical'
-        
-        # Ensure directories exist
-        self.live_dir.mkdir(parents=True, exist_ok=True)
-        self.historical_dir.mkdir(parents=True, exist_ok=True)
-        
+        self._fetcher = None  # lazy-init KenyaDataFetcher
+
         logger.info("✓ Scheduler Service initialized")
-    
+
+    # -------------------------------------------------------------- #
+    # Lazy accessor for fetcher (avoids import at module level)
+    # -------------------------------------------------------------- #
+
+    def _get_fetcher(self):
+        """Lazily import and create KenyaDataFetcher to avoid circular imports."""
+        if self._fetcher is None:
+            from kenya_data_fetcher import KenyaDataFetcher
+            self._fetcher = KenyaDataFetcher(db_service=self.db)
+        return self._fetcher
+
+    # -------------------------------------------------------------- #
+    # Start / Stop
+    # -------------------------------------------------------------- #
+
     async def start(self):
-        """Start all scheduled tasks"""
+        """Start all scheduled tasks."""
         self.is_running = True
         logger.info("🕐 Starting scheduler service...")
-        
-        # Schedule tasks
+
         self.tasks = [
             asyncio.create_task(self._weekly_data_fetch()),
-            asyncio.create_task(self._daily_archive_old_data()),
             asyncio.create_task(self._daily_cleanup()),
-            asyncio.create_task(self._weekly_ml_retrain()),
+            asyncio.create_task(self._periodic_smart_alerts()),
         ]
-        
+
         logger.info(f"✓ {len(self.tasks)} scheduled tasks started")
-    
+
     async def stop(self):
-        """Stop all scheduled tasks"""
+        """Stop all scheduled tasks."""
         self.is_running = False
         for task in self.tasks:
             task.cancel()
         await asyncio.gather(*self.tasks, return_exceptions=True)
         logger.info("Scheduler service stopped")
-    
+
+    # -------------------------------------------------------------- #
+    # 1. Weekly satellite data fetch  (Sunday 2 AM)
+    # -------------------------------------------------------------- #
+
     async def _weekly_data_fetch(self):
-        """
-        Fetch fresh satellite data every week
-        Runs every Sunday at 2 AM
-        """
+        """Fetch fresh satellite data every Sunday at 2 AM, then retrain."""
         while self.is_running:
             try:
-                now = datetime.now()
-                
-                # Calculate next Sunday at 2 AM
-                days_until_sunday = (6 - now.weekday()) % 7
-                if days_until_sunday == 0 and now.hour >= 2:
-                    days_until_sunday = 7
-                
-                next_run = (now + timedelta(days=days_until_sunday)).replace(
-                    hour=2, minute=0, second=0, microsecond=0
+                wait = self._seconds_until(weekday=6, hour=2)  # Sunday
+                logger.info(
+                    f"📅 Next weekly data fetch in {wait / 3600:.1f} hours "
+                    f"({self._next_run_str(weekday=6, hour=2)})"
                 )
-                
-                # Wait until next run
-                wait_seconds = (next_run - now).total_seconds()
-                logger.info(f"📅 Next weekly data fetch scheduled for: {next_run} ({wait_seconds/3600:.1f} hours)")
-                
-                await asyncio.sleep(wait_seconds)
-                
-                # Perform weekly data fetch
-                logger.info("🚀 Starting weekly NASA data fetch for all counties...")
-                
+                await asyncio.sleep(wait)
+
+                logger.info("🚀 Starting weekly satellite data fetch for all counties...")
+                fetch_ok = False
                 try:
-                    # Import here to avoid circular dependencies
-                    from kenya_data_fetcher import fetch_all_counties_data
-                    
-                    counties_data = await asyncio.to_thread(fetch_all_counties_data)
-                    
-                    logger.info(f"✅ Weekly fetch complete: {len(counties_data)} counties updated")
-                    
-                    # Archive previous week's live data to historical
-                    await self._archive_live_to_historical()
-                    
+                    fetcher = self._get_fetcher()
+                    counties_data = await asyncio.to_thread(
+                        fetcher.fetch_all_counties_data,
+                        priority_agricultural=True,
+                    )
+                    logger.info(
+                        f"✅ Weekly county fetch complete: {len(counties_data)} counties updated"
+                    )
+                    fetch_ok = True
+
                 except Exception as e:
-                    logger.error(f"Weekly fetch failed: {e}", exc_info=True)
-                
+                    logger.error(f"Weekly county fetch failed: {e}", exc_info=True)
+
+                # Also fetch sub-county data for priority agricultural counties
+                PRIORITY_SUB_COUNTY_COUNTIES = [
+                    'kisumu', 'siaya', 'homa_bay', 'migori', 'busia',
+                    'kakamega', 'bungoma', 'trans_nzoia', 'uasin_gishu',
+                    'nandi', 'kericho', 'bomet', 'nakuru', 'nyandarua',
+                    'nyeri', 'kirinyaga', 'muranga', 'kiambu', 'meru',
+                    'embu', 'tharaka_nithi', 'machakos', 'makueni',
+                ]
+                sc_fetched = 0
+                try:
+                    fetcher = self._get_fetcher()
+                    for county_id in PRIORITY_SUB_COUNTY_COUNTIES:
+                        try:
+                            result = await asyncio.to_thread(
+                                fetcher.fetch_county_with_sub_counties, county_id
+                            )
+                            sc_count = result.get('sub_counties_fetched', 0) if isinstance(result, dict) else 0
+                            sc_fetched += sc_count
+                        except Exception as e:
+                            logger.warning(f"Sub-county fetch failed for {county_id}: {e}")
+                    logger.info(f"✅ Weekly sub-county fetch complete: {sc_fetched} sub-counties across {len(PRIORITY_SUB_COUNTY_COUNTIES)} counties")
+                except Exception as e:
+                    logger.error(f"Weekly sub-county fetch failed: {e}", exc_info=True)
+
+                # Chain: retrain on old + new data after successful fetch
+                if fetch_ok:
+                    await self._retrain_after_fetch()
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error(f"Error in weekly fetch scheduler: {e}")
-                await asyncio.sleep(3600)  # Wait 1 hour before retrying
-    
-    async def _daily_archive_old_data(self):
-        """
-        Archive old live data to historical directory
-        Runs daily at 3 AM
-        """
-        while self.is_running:
-            try:
-                now = datetime.now()
-                
-                # Calculate next 3 AM
-                next_run = (now + timedelta(days=1)).replace(
-                    hour=3, minute=0, second=0, microsecond=0
-                )
-                if now.hour < 3:
-                    next_run = now.replace(hour=3, minute=0, second=0, microsecond=0)
-                
-                wait_seconds = (next_run - now).total_seconds()
-                logger.info(f"📦 Next archive scheduled for: {next_run}")
-                
-                await asyncio.sleep(wait_seconds)
-                
-                # Archive data older than 7 days
-                await self._archive_live_to_historical(days_old=7)
-                
-            except asyncio.CancelledError:
-                break
-            except Exception as e:
-                logger.error(f"Error in archive scheduler: {e}")
                 await asyncio.sleep(3600)
-    
+
+    # -------------------------------------------------------------- #
+    # 2. Daily cleanup (4 AM) — PostgreSQL session cleanup
+    # -------------------------------------------------------------- #
+
     async def _daily_cleanup(self):
         """
-        Clean up expired sessions and temporary files
-        Runs daily at 4 AM
-        NOTE: Historical data is PRESERVED for ML training (not deleted)
+        Clean up expired sessions and old temporary data (daily at 4 AM).
         """
         while self.is_running:
             try:
-                now = datetime.now()
-                
-                # Calculate next 4 AM
-                next_run = (now + timedelta(days=1)).replace(
-                    hour=4, minute=0, second=0, microsecond=0
-                )
-                if now.hour < 4:
-                    next_run = now.replace(hour=4, minute=0, second=0, microsecond=0)
-                
-                wait_seconds = (next_run - now).total_seconds()
-                logger.info(f"🧹 Next cleanup scheduled for: {next_run}")
-                
-                await asyncio.sleep(wait_seconds)
-                
-                # Clean up expired sessions (older than 30 days)
+                wait = self._seconds_until_today_or_tomorrow(hour=4)
+                logger.info(f"🧹 Next cleanup scheduled in {wait / 3600:.1f} hours")
+                await asyncio.sleep(wait)
+
+                # 1) Clean expired user sessions via PostgreSQL
                 try:
-                    cutoff = datetime.now() - timedelta(days=30)
-                    result = self.mongo.db.sessions.delete_many({
-                        "created_at": {"$lt": cutoff}
-                    })
-                    logger.info(f"Cleaned up {result.deleted_count} expired sessions")
+                    deleted = await asyncio.to_thread(
+                        self.db.cleanup_expired_sessions
+                    )
+                    logger.info(f"Cleaned up {deleted} expired user sessions")
                 except Exception as e:
                     logger.error(f"Session cleanup failed: {e}")
-                
-                # Clean up VERY old historical data (older than 2 years for storage management)
-                # Keep 2 years of data for robust ML training
+
+                # 2) Clean expired USSD sessions (older than 24 hours)
                 try:
-                    await self._cleanup_old_historical_data(months_old=24)
+                    deleted_ussd = await asyncio.to_thread(
+                        self._cleanup_expired_ussd_sessions
+                    )
+                    logger.info(f"Cleaned up {deleted_ussd} expired USSD sessions")
                 except Exception as e:
-                    logger.error(f"Historical data cleanup failed: {e}")
-                
+                    logger.error(f"USSD session cleanup failed: {e}")
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error(f"Error in cleanup scheduler: {e}")
                 await asyncio.sleep(3600)
-    
-    async def _archive_live_to_historical(self, days_old: int = 7):
+
+    # -------------------------------------------------------------- #
+    # 3. Auto-retrain after data fetch (chained, not standalone)
+    # -------------------------------------------------------------- #
+
+    async def _retrain_after_fetch(self):
         """
-        Move old live data files to historical directory
-        
-        Args:
-            days_old: Archive files older than this many days
+        Retrain ML model immediately after a successful data fetch.
+        Uses ALL historical data (old + new) from PostgreSQL.
+        Called automatically by _weekly_data_fetch and trigger_immediate_fetch.
         """
+        if not self.bloom_predictor:
+            logger.warning("ML predictor not available, skipping post-fetch retraining")
+            return
+
+        logger.info("🤖 Starting ML model retraining (chained after data fetch)...")
         try:
-            logger.info(f"📦 Archiving live data older than {days_old} days...")
-            
-            cutoff_date = datetime.now() - timedelta(days=days_old)
-            archived_count = 0
-            
-            # Get all CSV files in live directory
-            for file_path in self.live_dir.glob('*.csv'):
-                # Get file modification time
-                file_mtime = datetime.fromtimestamp(file_path.stat().st_mtime)
-                
-                if file_mtime < cutoff_date:
-                    # Create year/month subdirectory in historical
-                    year_month = file_mtime.strftime('%Y-%m')
-                    archive_subdir = self.historical_dir / year_month
-                    archive_subdir.mkdir(parents=True, exist_ok=True)
-                    
-                    # Move file to historical
-                    dest_path = archive_subdir / file_path.name
-                    shutil.move(str(file_path), str(dest_path))
-                    archived_count += 1
-                    logger.info(f"Archived: {file_path.name} → historical/{year_month}/")
-            
-            logger.info(f"✅ Archived {archived_count} files to historical directory")
-            
-            # Also save a metadata file
-            if archived_count > 0:
-                metadata_file = self.historical_dir / f"archive_log_{datetime.now().strftime('%Y%m%d')}.txt"
-                with open(metadata_file, 'a') as f:
-                    f.write(f"{datetime.now()}: Archived {archived_count} files\n")
-            
+            result = await asyncio.to_thread(
+                self.bloom_predictor.train_model,
+                include_weather=True,
+                optimize_hyperparameters=False,
+            )
+            if "error" not in result:
+                logger.info("✅ Post-fetch ML retrain complete!")
+                logger.info(f"   Accuracy: {result.get('accuracy', 'N/A')}")
+                logger.info(f"   F1 Score: {result.get('f1_score', 'N/A')}")
+                logger.info(
+                    f"   Training samples: {result.get('n_samples', 'N/A')}"
+                )
+            else:
+                logger.error(f"Post-fetch ML retraining failed: {result['error']}")
         except Exception as e:
-            logger.error(f"Error archiving data: {e}", exc_info=True)
-    
-    async def _cleanup_old_historical_data(self, months_old: int = 6):
-        """Delete historical data older than specified months"""
-        try:
-            cutoff_date = datetime.now() - timedelta(days=months_old * 30)
-            deleted_count = 0
-            
-            for file_path in self.historical_dir.rglob('*.csv'):
-                file_mtime = datetime.fromtimestamp(file_path.stat().st_mtime)
-                
-                if file_mtime < cutoff_date:
-                    file_path.unlink()
-                    deleted_count += 1
-            
-            if deleted_count > 0:
-                logger.info(f"🧹 Deleted {deleted_count} old historical files (>{months_old} months)")
-            
-        except Exception as e:
-            logger.error(f"Error cleaning up historical data: {e}")
-    
-    async def _weekly_ml_retrain(self):
+            logger.error(f"Post-fetch ML retraining error: {e}", exc_info=True)
+
+    # -------------------------------------------------------------- #
+    # 4. Periodic smart alert scan (every 6 hours)
+    # -------------------------------------------------------------- #
+
+    async def _periodic_smart_alerts(self):
         """
-        Retrain ML model weekly with fresh data
-        Runs every Monday at 5 AM (after data fetch and archiving)
+        Scan all farmers every 6 hours for extreme weather events,
+        IoT sensor anomalies, and satellite-data alerts.
+
+        Uses SmartAlertService.run_scheduled_smart_alerts() which:
+          - Fetches weather forecast for each farmer's location
+          - Pulls latest IoT sensor readings from their farms
+          - Pulls satellite data for their county
+          - Detects extreme events and auto-sends alerts
         """
         while self.is_running:
             try:
-                now = datetime.now()
-                
-                # Calculate next Monday at 5 AM
-                days_until_monday = (7 - now.weekday()) % 7
-                if days_until_monday == 0 and now.hour >= 5:
-                    days_until_monday = 7
-                
-                next_run = (now + timedelta(days=days_until_monday)).replace(
-                    hour=5, minute=0, second=0, microsecond=0
+                wait = self._seconds_until_today_or_tomorrow(hour=6)
+                # Run at 6AM, 12PM, 6PM, 12AM — every 6 hours
+                wait = min(wait, 6 * 3600)
+                logger.info(
+                    f"🔔 Next smart alert scan in {wait / 3600:.1f} hours"
                 )
-                
-                wait_seconds = (next_run - now).total_seconds()
-                logger.info(f"🤖 Next ML retraining scheduled for: {next_run}")
-                
-                await asyncio.sleep(wait_seconds)
-                
-                # Retrain model with latest data (live + historical)
-                if self.bloom_predictor:
-                    logger.info("🤖 Starting ML model retraining with live + historical data...")
-                    
-                    try:
-                        result = await asyncio.to_thread(
-                            self.bloom_predictor.train_model,
-                            include_weather=True,
-                            optimize_hyperparameters=False
-                        )
-                        
-                        if 'error' not in result:
-                            logger.info(f"✅ ML model retrained successfully!")
-                            logger.info(f"   Accuracy: {result.get('accuracy', 'N/A')}")
-                            logger.info(f"   F1 Score: {result.get('f1_score', 'N/A')}")
-                            logger.info(f"   Training samples: {result.get('n_samples', 'N/A')}")
-                        else:
-                            logger.error(f"ML retraining failed: {result['error']}")
-                            
-                    except Exception as e:
-                        logger.error(f"ML retraining error: {e}", exc_info=True)
-                else:
-                    logger.warning("ML predictor not available, skipping retraining")
-                
+                await asyncio.sleep(wait)
+
+                logger.info("🔔 Starting periodic smart alert scan...")
+                try:
+                    result = await self.alerts.run_scheduled_smart_alerts()
+                    logger.info(
+                        f"✅ Alert scan complete: "
+                        f"{result.get('farmers_scanned', 0)} farmers scanned, "
+                        f"{result.get('extreme_alerts_sent', 0)} extreme alerts, "
+                        f"{result.get('condition_alerts_sent', 0)} condition alerts"
+                    )
+                except Exception as e:
+                    logger.error(f"Periodic alert scan failed: {e}", exc_info=True)
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"Error in ML retrain scheduler: {e}")
+                logger.error(f"Error in smart alert scheduler: {e}")
                 await asyncio.sleep(3600)
-    
-    async def trigger_immediate_fetch(self):
-        """Manually trigger data fetch (for admin/testing)"""
-        logger.info("🚀 Manual data fetch triggered...")
+
+    # -------------------------------------------------------------- #
+    # Manual trigger helpers (for admin endpoints)
+    # -------------------------------------------------------------- #
+
+    async def trigger_immediate_fetch(
+        self,
+        scope: str = "country",
+        county_id: str = None,
+        region: str = None,
+        sub_county_id: str = None,
+        retrain: bool = True,
+    ) -> Dict:
+        """
+        Manually trigger data fetch at any granularity.
+
+        Args:
+            scope: 'country' | 'region' | 'county' | 'sub_county'
+            county_id: required when scope is 'county' or 'sub_county'
+            region: required when scope is 'region'
+            sub_county_id: required when scope is 'sub_county'
+            retrain: If True, chain ML retrain after fetch (default True)
+        """
+        logger.info(f"🚀 Manual data fetch triggered (scope={scope})...")
         try:
-            from kenya_data_fetcher import fetch_all_counties_data
-            counties_data = await asyncio.to_thread(fetch_all_counties_data)
-            logger.info(f"✅ Manual fetch complete: {len(counties_data)} counties")
-            return {"success": True, "counties": len(counties_data)}
+            fetcher = self._get_fetcher()
+
+            if scope == "sub_county" and county_id and sub_county_id:
+                data = await asyncio.to_thread(
+                    fetcher.fetch_sub_county_data, county_id, sub_county_id
+                )
+                result = {"success": "error" not in data, "scope": "sub_county", "data": data}
+
+            elif scope == "county" and county_id:
+                data = await asyncio.to_thread(fetcher.fetch_county_data, county_id)
+                result = {"success": "error" not in data, "scope": "county", "data": data}
+
+            elif scope == "region" and region:
+                data = await asyncio.to_thread(fetcher.fetch_region_data, region)
+                result = {"success": True, "scope": "region", "counties": len(data)}
+
+            else:  # country
+                data = await asyncio.to_thread(fetcher.fetch_all_counties_data)
+                result = {"success": True, "scope": "country", "counties": len(data)}
+
+            # Chain retrain on old + new data if fetch succeeded
+            if retrain and result.get("success"):
+                await self._retrain_after_fetch()
+                result["retrained"] = True
+
+            return result
+
         except Exception as e:
             logger.error(f"Manual fetch failed: {e}")
             return {"success": False, "error": str(e)}
-    
-    async def trigger_immediate_retrain(self):
-        """Manually trigger ML model retraining"""
+
+    async def trigger_immediate_retrain(self) -> Dict:
+        """Manually trigger ML model retraining."""
         logger.info("🤖 Manual ML retraining triggered...")
         try:
             if not self.bloom_predictor:
                 return {"success": False, "error": "ML predictor not available"}
-            
+
             result = await asyncio.to_thread(
                 self.bloom_predictor.train_model,
                 include_weather=True,
-                optimize_hyperparameters=False
+                optimize_hyperparameters=False,
             )
-            
-            if 'error' not in result:
-                logger.info(f"✅ Manual retrain complete: Accuracy {result.get('accuracy', 'N/A')}")
+
+            if "error" not in result:
+                logger.info(
+                    f"✅ Manual retrain complete: Accuracy {result.get('accuracy', 'N/A')}"
+                )
                 return {
                     "success": True,
-                    "accuracy": result.get('accuracy'),
-                    "f1_score": result.get('f1_score'),
-                    "n_samples": result.get('n_samples')
+                    "accuracy": result.get("accuracy"),
+                    "f1_score": result.get("f1_score"),
+                    "n_samples": result.get("n_samples"),
                 }
-            else:
-                return {"success": False, "error": result['error']}
+            return {"success": False, "error": result["error"]}
         except Exception as e:
             logger.error(f"Manual retrain failed: {e}")
             return {"success": False, "error": str(e)}
+
+    # -------------------------------------------------------------- #
+    # Internal helpers
+    # -------------------------------------------------------------- #
+
+    def _cleanup_expired_ussd_sessions(self) -> int:
+        """Delete USSD sessions older than 24 hours via PostgreSQL."""
+        if not self.db or not self.db._connected:
+            return 0
+        try:
+            from sqlmodel import Session as DBSession, delete
+            from database.connection import engine
+            from database.models import USSDSession
+
+            cutoff = datetime.utcnow() - timedelta(hours=24)
+            with DBSession(engine) as session:
+                result = session.exec(
+                    delete(USSDSession).where(USSDSession.created_at < cutoff)
+                )
+                session.commit()
+                return result.rowcount or 0  # type: ignore[union-attr]
+        except Exception as e:
+            logger.error(f"USSD session cleanup error: {e}")
+            return 0
+
+    # -------------------------------------------------------------- #
+    # Time calculation helpers
+    # -------------------------------------------------------------- #
+
+    @staticmethod
+    def _seconds_until(weekday: int, hour: int) -> float:
+        """Seconds until next occurrence of *weekday* at *hour*:00."""
+        now = datetime.now()
+        days_ahead = (weekday - now.weekday()) % 7
+        if days_ahead == 0 and now.hour >= hour:
+            days_ahead = 7
+        target = (now + timedelta(days=days_ahead)).replace(
+            hour=hour, minute=0, second=0, microsecond=0
+        )
+        return max((target - now).total_seconds(), 0)
+
+    @staticmethod
+    def _seconds_until_today_or_tomorrow(hour: int) -> float:
+        """Seconds until next *hour*:00 today or tomorrow."""
+        now = datetime.now()
+        target = now.replace(hour=hour, minute=0, second=0, microsecond=0)
+        if now >= target:
+            target += timedelta(days=1)
+        return max((target - now).total_seconds(), 0)
+
+    @staticmethod
+    def _next_run_str(weekday: int, hour: int) -> str:
+        now = datetime.now()
+        days_ahead = (weekday - now.weekday()) % 7
+        if days_ahead == 0 and now.hour >= hour:
+            days_ahead = 7
+        target = (now + timedelta(days=days_ahead)).replace(
+            hour=hour, minute=0, second=0, microsecond=0
+        )
+        return target.strftime("%A %Y-%m-%d %H:%M")
 

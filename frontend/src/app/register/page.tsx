@@ -26,6 +26,7 @@ interface RegionData {
     name: string
     category: string
   }>
+  sub_counties?: Record<string, string[]>
 }
 
 export default function RegisterPage() {
@@ -48,6 +49,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [region, setRegion] = useState('')
   const [county, setCounty] = useState('')
+  const [subCounty, setSubCounty] = useState('')
   const [selectedCrops, setSelectedCrops] = useState<string[]>([])
   const [otherCrops, setOtherCrops] = useState('')
   const [farmSize, setFarmSize] = useState(1.0)
@@ -58,6 +60,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1)
   const [regionsData, setRegionsData] = useState<RegionData | null>(null)
   const [availableCounties, setAvailableCounties] = useState<string[]>([])
+  const [availableSubCounties, setAvailableSubCounties] = useState<string[]>([])
   const [availableCrops, setAvailableCrops] = useState<string[]>([])
   
   const displayError = localError || authError
@@ -91,6 +94,10 @@ export default function RegisterPage() {
       console.log('Available counties:', counties)
       setAvailableCounties(counties)
       
+      // Reset sub-county when region changes
+      setSubCounty('')
+      setAvailableSubCounties([])
+      
       // Set first county as default
       if (counties.length > 0 && !county) {
         setCounty(counties[0])
@@ -107,6 +114,24 @@ export default function RegisterPage() {
       setAvailableCrops(combinedCrops)
     }
   }, [region, regionsData])
+
+  // Update sub-counties when county changes
+  useEffect(() => {
+    if (county && regionsData?.sub_counties) {
+      const subs = regionsData.sub_counties[county] || []
+      console.log('Available sub-counties for', county, ':', subs)
+      setAvailableSubCounties(subs)
+      // Reset sub-county selection
+      if (subs.length > 0) {
+        setSubCounty(subs[0])
+      } else {
+        setSubCounty('')
+      }
+    } else {
+      setAvailableSubCounties([])
+      setSubCounty('')
+    }
+  }, [county, regionsData])
 
   const handleCropToggle = (crop: string) => {
     setSelectedCrops(prev => 
@@ -193,6 +218,7 @@ export default function RegisterPage() {
       password,
       region,
       county,
+      sub_county: subCounty || undefined,
       crops: allCrops,
       language,
       farm_size: farmSize,
@@ -225,14 +251,14 @@ export default function RegisterPage() {
             <Link href="/" className="flex items-center space-x-3 group">
               <Image
                 src="/BloomWatch.png"
-                alt="Shamba Smart"
+                alt="Smart Shamba"
                 width={40}
                 height={40}
                 className="h-10 w-auto transition-transform group-hover:scale-105"
                 priority
               />
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent hidden sm:inline">
-                Shamba Smart
+                Smart Shamba
               </span>
             </Link>
 
@@ -270,7 +296,7 @@ export default function RegisterPage() {
               Register as Farmer
             </CardTitle>
             <CardDescription className="text-base">
-              Join Shamba Smart and start monitoring your crops
+              Join Smart Shamba and start monitoring your crops
             </CardDescription>
             
             {/* Progress Bar */}
@@ -439,6 +465,27 @@ export default function RegisterPage() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {availableSubCounties.length > 0 && (
+                    <div className="space-y-2">
+                      <Label htmlFor="sub-county" className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        Sub-County
+                      </Label>
+                      <Select value={subCounty} onValueChange={setSubCounty}>
+                        <SelectTrigger className="h-12">
+                          <SelectValue placeholder="Select your sub-county" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableSubCounties.map((sc) => (
+                            <SelectItem key={sc} value={sc}>
+                              {sc}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="farm-size" className="flex items-center gap-2">
@@ -613,7 +660,7 @@ export default function RegisterPage() {
       {/* Footer */}
       <footer className="border-t bg-white dark:bg-gray-950 py-6">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>© 2025 Shamba Smart. All rights reserved.</p>
+          <p>© 2025 Smart Shamba. All rights reserved.</p>
         </div>
       </footer>
     </div>

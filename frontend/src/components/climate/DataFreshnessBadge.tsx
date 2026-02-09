@@ -7,7 +7,7 @@
 
 import { useEffect, useState } from 'react'
 import { getDataFreshness, type DataFreshness } from '@/lib/mapApi'
-import { CheckCircle, AlertTriangle, Info, RefreshCw } from 'lucide-react'
+import { CheckCircle, Clock, Info, RefreshCw } from 'lucide-react'
 
 export function DataFreshnessBadge() {
   const [freshness, setFreshness] = useState<DataFreshness | null>(null)
@@ -53,16 +53,16 @@ export function DataFreshnessBadge() {
       <div className="flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
         <CheckCircle className="h-5 w-5 text-green-600" />
         <span className="text-sm font-medium text-green-700 dark:text-green-400">
-          ✓ Live NASA satellite data | Last updated: {freshness.age_str}
+          Live NASA satellite data — 47 counties | Updated {freshness.age_str} ago
         </span>
       </div>
     )
   } else if (freshness.last_updated !== 'Never') {
     return (
       <div className="flex items-center gap-2 px-4 py-2 bg-yellow-50 dark:bg-yellow-950 rounded-lg border border-yellow-200 dark:border-yellow-800">
-        <AlertTriangle className="h-5 w-5 text-yellow-600" />
+        <Clock className="h-5 w-5 text-yellow-600" />
         <span className="text-sm font-medium text-yellow-700 dark:text-yellow-400">
-          ⚠ Data is {freshness.age_str} old | Consider refreshing
+          Satellite data last updated {freshness.age_str} ago — consider refreshing
         </span>
       </div>
     )
@@ -71,7 +71,7 @@ export function DataFreshnessBadge() {
       <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
         <Info className="h-5 w-5 text-blue-600" />
         <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
-          ℹ Using demo data | Run data fetcher to get real satellite data
+          Using demo data | Run data fetcher to get real satellite data
         </span>
       </div>
     )

@@ -4,19 +4,41 @@ import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { MessageSquare, X, Send, Loader2, Sprout, AlertCircle, Bot } from 'lucide-react'
+import { MessageSquare, X, Send, Loader2, Sprout, AlertCircle, Bot, ImagePlus, XCircle, ChevronDown, ChevronRight, BrainCircuit } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
-import { getFallbackResponse } from './FloraFallback'
 import type { ChatMessage } from '@/types'
+import ReactMarkdown from 'react-markdown'
 
-export function FloraChatWidget() {
+interface FloraChatWidgetProps {
+  initialOpen?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export function FloraChatWidget({ initialOpen, onOpenChange }: FloraChatWidgetProps = {}) {
   const { farmer } = useAuthStore()
   const [isOpen, setIsOpen] = useState(false)
+
+  // Sync with external open state
+  useEffect(() => {
+    if (initialOpen) {
+      setIsOpen(true)
+    }
+  }, [initialOpen])
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    onOpenChange?.(open)
+  }
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [floraAvailable, setFloraAvailable] = useState(true)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [expandedReasoning, setExpandedReasoning] = useState<Set<number>>(new Set())
+  const [conversationId, setConversationId] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom
@@ -42,12 +64,32 @@ export function FloraChatWidget() {
     }
   }, [isOpen, farmer])
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || loading) return
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) return
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image must be under 10MB')
+      return
+    }
+    setSelectedImage(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
 
+  const clearImage = () => {
+    setSelectedImage(null)
+    if (imagePreview) URL.revokeObjectURL(imagePreview)
+    setImagePreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleSendMessage = async () => {
+    if ((!input.trim() && !selectedImage) || loading) return
+
+    const messageText = input.trim() || (selectedImage ? "What's wrong with my crop?" : '')
     const userMessage: ChatMessage = {
       role: 'user',
-      content: input,
+      content: selectedImage ? `📷 [Image attached] ${messageText}` : messageText,
       timestamp: new Date().toISOString()
     }
 
@@ -56,41 +98,47 @@ export function FloraChatWidget() {
     setLoading(true)
 
     try {
-      // Try to send to Flora AI via API
-      const response = await api.sendChatMessage(input, messages)
-      
+      let response: string
+      let reasoning: string | null = null
+
+      if (selectedImage) {
+        // Send with image — uses disease classification + RAG
+        const result = await api.sendChatMessageWithImage(messageText, selectedImage, conversationId || undefined)
+        response = result.reply
+        reasoning = result.reasoning || null
+        if (result.conversation_id) setConversationId(result.conversation_id)
+
+        // Show classification info if a disease was detected
+        if (result.classification?.disease && result.classification.disease !== 'unknown' && result.classification.disease !== 'healthy') {
+          const conf = (result.classification.confidence * 100).toFixed(0)
+          response = `🔬 **Disease Detected:** ${result.classification.disease.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())} (${conf}% confidence)\n\n${response}`
+        }
+
+        clearImage()
+      } else {
+        // Text-only chat
+        const result = await api.sendChatMessage(messageText, messages, conversationId || undefined)
+        response = result.reply
+        reasoning = result.reasoning || null
+        if (result.conversation_id) setConversationId(result.conversation_id)
+      }
+
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response,
+        reasoning: reasoning,
         timestamp: new Date().toISOString()
       }
-      
       setMessages(prev => [...prev, assistantMessage])
       setFloraAvailable(true)
     } catch (error: any) {
       console.error('Flora AI error:', error)
-      
-      // Check if it's because OpenAI is not configured
-      if (error.message?.includes('OpenAI') || error.message?.includes('API key') || error.message?.includes('Flora')) {
-        setFloraAvailable(false)
-        
-        // Use fallback response
-        const fallbackResponse = getFallbackResponse(input, farmer?.language || 'en')
-        const assistantMessage: ChatMessage = {
-          role: 'assistant',
-          content: fallbackResponse,
-          timestamp: new Date().toISOString()
-        }
-        setMessages(prev => [...prev, assistantMessage])
-      } else {
-        // Show error message
-        const errorMessage: ChatMessage = {
-          role: 'assistant',
-          content: "I'm having trouble processing your request right now. Please try again in a moment.",
-          timestamp: new Date().toISOString()
-        }
-        setMessages(prev => [...prev, errorMessage])
+      const errorMessage: ChatMessage = {
+        role: 'assistant',
+        content: "I'm having trouble processing your request right now. Please try again in a moment.",
+        timestamp: new Date().toISOString()
       }
+      setMessages(prev => [...prev, errorMessage])
     } finally {
       setLoading(false)
     }
@@ -108,8 +156,8 @@ export function FloraChatWidget() {
       {/* Floating Chat Button */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-green-600/50 hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center group sm:w-16 sm:h-16 w-14 h-14"
+          onClick={() => handleOpenChange(true)}
+          className="fixed bottom-6 right-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-2xl hover:shadow-green-600/50 hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center group"
           aria-label="Chat with Flora AI"
         >
           <MessageSquare className="h-7 w-7 group-hover:scale-110 transition-transform" />
@@ -137,7 +185,7 @@ export function FloraChatWidget() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => handleOpenChange(false)}
                   className="text-white hover:bg-white/20"
                 >
                   <X className="h-4 w-4" />
@@ -163,7 +211,7 @@ export function FloraChatWidget() {
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                    className={`max-w-[85%] rounded-2xl px-4 py-2 ${
                       message.role === 'user'
                         ? 'bg-green-600 text-white'
                         : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
@@ -175,7 +223,49 @@ export function FloraChatWidget() {
                         <span className="text-xs font-semibold text-green-600">Flora</span>
                       </div>
                     )}
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    {message.role === 'user' ? (
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    ) : (
+                      <div className="text-sm prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-headings:text-green-700 dark:prose-headings:text-green-400 prose-strong:text-green-700 dark:prose-strong:text-green-400 prose-a:text-green-600">
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      </div>
+                    )}
+                    
+                    {/* Collapsible reasoning toggle */}
+                    {message.role === 'assistant' && message.reasoning && (
+                      <div className="mt-2 border-t border-gray-200 dark:border-gray-700 pt-2">
+                        <button
+                          onClick={() => {
+                            setExpandedReasoning(prev => {
+                              const next = new Set(prev)
+                              if (next.has(index)) next.delete(index)
+                              else next.add(index)
+                              return next
+                            })
+                          }}
+                          className="flex items-center gap-1.5 text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors font-medium"
+                        >
+                          <BrainCircuit className="h-3.5 w-3.5" />
+                          {expandedReasoning.has(index) ? (
+                            <>
+                              <ChevronDown className="h-3 w-3" />
+                              Hide Flora&apos;s Thinking
+                            </>
+                          ) : (
+                            <>
+                              <ChevronRight className="h-3 w-3" />
+                              Read Flora&apos;s Mind
+                            </>
+                          )}
+                        </button>
+                        {expandedReasoning.has(index) && (
+                          <div className="mt-2 p-3 bg-purple-50 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-800 text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap max-h-60 overflow-y-auto">
+                            {message.reasoning}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     <p className={`text-xs mt-1 ${message.role === 'user' ? 'text-green-100' : 'text-gray-500'}`}>
                       {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
@@ -198,28 +288,60 @@ export function FloraChatWidget() {
               <div ref={messagesEndRef} />
             </CardContent>
 
-            <CardFooter className="bg-white dark:bg-gray-950 border-t p-4">
-              <div className="flex gap-2 w-full">
-                <Input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask Flora anything..."
-                  disabled={loading}
-                  className="flex-1"
-                />
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={loading || !input.trim()}
-                  size="icon"
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </Button>
+            <CardFooter className="bg-white dark:bg-gray-950 border-t p-3">
+              <div className="w-full space-y-2">
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="relative inline-block">
+                    <img src={imagePreview} alt="Upload preview" className="h-16 w-16 object-cover rounded-lg border border-green-300" />
+                    <button
+                      onClick={clearImage}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 transition-colors"
+                    >
+                      <XCircle className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                )}
+                {/* Input Row */}
+                <div className="flex gap-2 w-full items-center">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={loading}
+                    className="text-green-600 hover:bg-green-50 dark:hover:bg-green-950 flex-shrink-0"
+                    title="Upload crop image"
+                  >
+                    <ImagePlus className="h-5 w-5" />
+                  </Button>
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder={selectedImage ? "Describe the issue..." : "Ask Flora anything..."}
+                    disabled={loading}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={loading || (!input.trim() && !selectedImage)}
+                    size="icon"
+                    className="bg-green-600 hover:bg-green-700 flex-shrink-0"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
             </CardFooter>
           </Card>

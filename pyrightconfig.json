@@ -1,0 +1,16 @@
+{
+  "venvPath": "/home/yogo/bloom-detector",
+  "venv": "venv",
+  "pythonVersion": "3.12",
+  "include": ["server"],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingModuleSource": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportOptionalCall": "none",
+  "reportPossiblyUnbound": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportCallIssue": "none",
+  "reportOperatorIssue": "none",
+  "reportArgumentType": "none"
+}

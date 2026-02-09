@@ -14,7 +14,7 @@ import {
   Search, Filter, Plus, Send, Trash2, Eye, BarChart3,
   UserPlus, PhoneCall, Mail, MapPin, Sprout, Calendar,
   AlertCircle, CheckCircle, Clock, ArrowLeft, LogOut,
-  Download, RefreshCw
+  Download, RefreshCw, Store, ShoppingBag, DollarSign, BadgeCheck
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { useAuthStore } from '@/store/authStore'
@@ -57,6 +57,20 @@ export default function AdminDashboardPage() {
   const [retrainingModel, setRetrainingModel] = useState(false)
   const [schedulerStatus, setSchedulerStatus] = useState<any>(null)
 
+  // Granular fetch state
+  const [fetchScope, setFetchScope] = useState('country')
+  const [fetchCountyId, setFetchCountyId] = useState('')
+  const [fetchRegion, setFetchRegion] = useState('')
+  const [fetchSubCountyId, setFetchSubCountyId] = useState('')
+  const [granularFetching, setGranularFetching] = useState(false)
+
+  // Agrovet/Buyer/Transaction state
+  const [agrovets, setAgrovets] = useState<any[]>([])
+  const [buyers, setBuyers] = useState<any[]>([])
+  const [transactions, setTransactions] = useState<any[]>([])
+  const [agrovetSearch, setAgrovetSearch] = useState('')
+  const [buyerSearch, setBuyerSearch] = useState('')
+
   // Check authentication and admin role - wait for hydration first
   useEffect(() => {
     // Wait for store to hydrate from localStorage
@@ -86,6 +100,10 @@ export default function AdminDashboardPage() {
     fetchStatistics()
     fetchRecentRegistrations(7)
     fetchFarmers()
+    // Fetch new admin data
+    api.adminGetAgrovets().then(setAgrovets).catch(() => {})
+    api.adminGetBuyers().then(setBuyers).catch(() => {})
+    api.adminGetTransactions(100).then(setTransactions).catch(() => {})
   }, [hasHydrated, isAuthenticated, farmer, router, fetchStatistics, fetchRecentRegistrations, fetchFarmers, toast])
 
   const handleLogout = async () => {
@@ -178,7 +196,7 @@ export default function AdminDashboardPage() {
               <Shield className="h-8 w-8 text-purple-600" />
               <div>
                 <h1 className="text-2xl font-bold text-purple-600">Admin Dashboard</h1>
-                <p className="text-sm text-gray-500">Shamba Smart Management</p>
+                <p className="text-sm text-gray-500">Smart Shamba Management</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -207,30 +225,33 @@ export default function AdminDashboardPage() {
           <>
             {/* Tabs */}
             <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-6">
-                <TabsTrigger value="overview" className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  Overview
+              <TabsList className="flex flex-wrap gap-1 w-full bg-white dark:bg-gray-900 border p-1 rounded-xl">
+                <TabsTrigger value="overview" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <BarChart3 className="h-3.5 w-3.5" /> Overview
                 </TabsTrigger>
-                <TabsTrigger value="farmers" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Farmers
+                <TabsTrigger value="farmers" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <Users className="h-3.5 w-3.5" /> Farmers
                 </TabsTrigger>
-                <TabsTrigger value="alerts" className="flex items-center gap-2">
-                  <Send className="h-4 w-4" />
-                  Send Alerts
+                <TabsTrigger value="agrovets" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <Store className="h-3.5 w-3.5" /> Agrovets
                 </TabsTrigger>
-                <TabsTrigger value="registrations" className="flex items-center gap-2">
-                  <UserPlus className="h-4 w-4" />
-                  Registrations
+                <TabsTrigger value="buyers" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <ShoppingBag className="h-3.5 w-3.5" /> Buyers
                 </TabsTrigger>
-                <TabsTrigger value="analytics" className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  Analytics
+                <TabsTrigger value="transactions" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <DollarSign className="h-3.5 w-3.5" /> Transactions
                 </TabsTrigger>
-                <TabsTrigger value="system" className="flex items-center gap-2">
-                  <RefreshCw className="h-4 w-4" />
-                  System
+                <TabsTrigger value="alerts" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <Send className="h-3.5 w-3.5" /> Alerts
+                </TabsTrigger>
+                <TabsTrigger value="registrations" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <UserPlus className="h-3.5 w-3.5" /> Registrations
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <TrendingUp className="h-3.5 w-3.5" /> Analytics
+                </TabsTrigger>
+                <TabsTrigger value="system" className="flex items-center gap-1 rounded-lg text-xs px-3">
+                  <RefreshCw className="h-3.5 w-3.5" /> System
                 </TabsTrigger>
               </TabsList>
 
@@ -538,6 +559,190 @@ export default function AdminDashboardPage() {
                 </div>
               </TabsContent>
 
+              {/* Agrovets Tab */}
+              <TabsContent value="agrovets" className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Registered Agrovets ({agrovets.length})</h3>
+                  <div className="relative w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input value={agrovetSearch} onChange={e => setAgrovetSearch(e.target.value)} placeholder="Search agrovets..." className="pl-10" />
+                  </div>
+                </div>
+                {agrovets.length === 0 ? (
+                  <Card className="p-12 text-center">
+                    <Store className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No agrovets registered yet.</p>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {agrovets.filter(a => !agrovetSearch || (a.shop_name || a.name || '').toLowerCase().includes(agrovetSearch.toLowerCase())).map((ag: any) => (
+                      <Card key={ag.id || ag.user_id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h4 className="font-semibold">{ag.shop_name || ag.name || 'Unknown'}</h4>
+                              <p className="text-sm text-gray-500">{ag.name || ''} &middot; {ag.phone || ''}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {ag.verified ? (
+                                <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 flex items-center gap-1"><BadgeCheck className="h-3 w-3" /> Verified</span>
+                              ) : (
+                                <Button size="sm" variant="outline" className="text-xs h-7" onClick={async () => {
+                                  try {
+                                    await api.adminVerifyUser(ag.user_id || ag.id)
+                                    toast({ title: 'Agrovet verified!' })
+                                    api.adminGetAgrovets().then(setAgrovets)
+                                  } catch { toast({ title: 'Error', variant: 'destructive' }) }
+                                }}>
+                                  <BadgeCheck className="h-3 w-3 mr-1" /> Verify
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1 text-xs text-gray-500">
+                            <span><MapPin className="h-3 w-3 inline" /> {ag.shop_county || 'N/A'}</span>
+                            <span>{ag.shop_sub_county || ''}</span>
+                            <span>Categories: {(ag.categories || []).join(', ') || 'N/A'}</span>
+                            <span>M-Pesa: {ag.mpesa_till_number || ag.mpesa_paybill || 'Not set'}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Buyers Tab */}
+              <TabsContent value="buyers" className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Registered Buyers ({buyers.length})</h3>
+                  <div className="relative w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input value={buyerSearch} onChange={e => setBuyerSearch(e.target.value)} placeholder="Search buyers..." className="pl-10" />
+                  </div>
+                </div>
+                {buyers.length === 0 ? (
+                  <Card className="p-12 text-center">
+                    <ShoppingBag className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No buyers registered yet.</p>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {buyers.filter(b => !buyerSearch || (b.business_name || b.name || '').toLowerCase().includes(buyerSearch.toLowerCase())).map((buyer: any) => (
+                      <Card key={buyer.id || buyer.user_id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h4 className="font-semibold">{buyer.business_name || buyer.name || 'Unknown'}</h4>
+                              <p className="text-sm text-gray-500">{buyer.business_type || 'Individual'} &middot; {buyer.phone || ''}</p>
+                            </div>
+                            {buyer.verified ? (
+                              <span className="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 flex items-center gap-1"><BadgeCheck className="h-3 w-3" /> Verified</span>
+                            ) : (
+                              <Button size="sm" variant="outline" className="text-xs h-7" onClick={async () => {
+                                try {
+                                  await api.adminVerifyUser(buyer.user_id || buyer.id)
+                                  toast({ title: 'Buyer verified!' })
+                                  api.adminGetBuyers().then(setBuyers)
+                                } catch { toast({ title: 'Error', variant: 'destructive' }) }
+                              }}>
+                                <BadgeCheck className="h-3 w-3 mr-1" /> Verify
+                              </Button>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-2 gap-1 text-xs text-gray-500">
+                            <span><MapPin className="h-3 w-3 inline" /> {buyer.county || 'N/A'}</span>
+                            <span>Preferred: {(buyer.preferred_produce || []).slice(0, 3).join(', ') || 'Any'}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Transactions Tab */}
+              <TabsContent value="transactions" className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Platform Transactions ({transactions.length})</h3>
+                  <Button variant="outline" size="sm" onClick={() => api.adminGetTransactions(100).then(setTransactions)}>
+                    <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+                  </Button>
+                </div>
+
+                {/* Transaction Summary */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Card className="border-l-4 border-l-green-500">
+                    <CardContent className="p-4">
+                      <p className="text-xs text-gray-500">Total Volume</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        KES {transactions.reduce((s: number, t: any) => s + (t.amount || 0), 0).toLocaleString()}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-l-4 border-l-blue-500">
+                    <CardContent className="p-4">
+                      <p className="text-xs text-gray-500">Completed</p>
+                      <p className="text-2xl font-bold text-blue-600">
+                        {transactions.filter((t: any) => t.status === 'completed').length}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-l-4 border-l-yellow-500">
+                    <CardContent className="p-4">
+                      <p className="text-xs text-gray-500">Pending</p>
+                      <p className="text-2xl font-bold text-yellow-600">
+                        {transactions.filter((t: any) => t.status === 'pending').length}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-l-4 border-l-red-500">
+                    <CardContent className="p-4">
+                      <p className="text-xs text-gray-500">Failed</p>
+                      <p className="text-2xl font-bold text-red-600">
+                        {transactions.filter((t: any) => t.status === 'failed').length}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Transaction List */}
+                {transactions.length === 0 ? (
+                  <Card className="p-12 text-center">
+                    <DollarSign className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No transactions yet.</p>
+                  </Card>
+                ) : (
+                  <div className="space-y-2">
+                    {transactions.map((tx: any) => (
+                      <Card key={tx.id} className="hover:shadow-sm transition-shadow">
+                        <CardContent className="p-3 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs ${
+                              tx.transaction_type === 'marketplace' ? 'bg-blue-500' : tx.transaction_type === 'agrovet' ? 'bg-amber-500' : 'bg-gray-500'
+                            }`}>
+                              {tx.transaction_type === 'marketplace' ? <ShoppingBag className="h-4 w-4" /> : <Store className="h-4 w-4" />}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">{tx.transaction_type} &middot; {tx.payment_method || 'mpesa'}</p>
+                              <p className="text-xs text-gray-500">{tx.reference || `TX-${tx.id}`}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-sm">KES {(tx.amount || 0).toLocaleString()}</p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              tx.status === 'completed' ? 'bg-green-100 text-green-700' :
+                              tx.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>{tx.status}</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
               {/* Send Alerts Tab */}
               <TabsContent value="alerts" className="space-y-6">
                 <Card>
@@ -822,6 +1027,144 @@ export default function AdminDashboardPage() {
                               <p className="text-sm text-blue-700 dark:text-blue-300">
                                 Processing all 47 counties. This may take up to 15 minutes. 
                                 You can safely navigate away - the process continues in the background.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Granular Fetch Section */}
+                    <div className="border rounded-lg p-6 space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-lg flex items-center gap-2">
+                          <MapPin className="h-5 w-5 text-emerald-600" />
+                          Granular Data Fetch
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Fetch satellite data for a specific region, county, or sub-county.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Scope</Label>
+                          <Select value={fetchScope} onValueChange={(v) => { setFetchScope(v); setFetchCountyId(''); setFetchRegion(''); setFetchSubCountyId(''); }}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select scope" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="country">All Counties</SelectItem>
+                              <SelectItem value="region">By Region</SelectItem>
+                              <SelectItem value="county">By County</SelectItem>
+                              <SelectItem value="sub_county">By Sub-County</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {fetchScope === 'region' && (
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">Region</Label>
+                            <Select value={fetchRegion} onValueChange={setFetchRegion}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select region" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {['lake_victoria', 'western', 'rift_valley', 'central', 'eastern', 'coast', 'north_eastern', 'nairobi'].map(r => (
+                                  <SelectItem key={r} value={r}>{r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {(fetchScope === 'county' || fetchScope === 'sub_county') && (
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">County</Label>
+                            <Select value={fetchCountyId} onValueChange={(v) => { setFetchCountyId(v); setFetchSubCountyId(''); }}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select county" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {[
+                                  'kisumu','siaya','homa_bay','migori','busia','kakamega','bungoma',
+                                  'trans_nzoia','uasin_gishu','nandi','kericho','bomet','nakuru',
+                                  'nyandarua','nyeri','kirinyaga','muranga','kiambu','meru','embu',
+                                  'tharaka_nithi','machakos','makueni','kitui','nairobi','mombasa',
+                                  'kilifi','kwale','taita_taveta','lamu','tana_river','garissa',
+                                  'wajir','mandera','marsabit','isiolo','samburu','turkana',
+                                  'west_pokot','baringo','elgeyo_marakwet','laikipia','kajiado',
+                                  'narok','nyamira','vihiga','bungoma'
+                                ].sort().map(c => (
+                                  <SelectItem key={c} value={c}>{c.replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase())}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+
+                        {fetchScope === 'sub_county' && fetchCountyId && (
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">Sub-County ID</Label>
+                            <Input
+                              placeholder="e.g. kisumu_central"
+                              value={fetchSubCountyId}
+                              onChange={(e) => setFetchSubCountyId(e.target.value)}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <Button
+                        onClick={async () => {
+                          setGranularFetching(true)
+                          try {
+                            const result = await api.triggerGranularFetch(
+                              fetchScope,
+                              fetchCountyId || undefined,
+                              fetchRegion || undefined,
+                              fetchSubCountyId || undefined
+                            )
+                            toast({
+                              title: 'Granular Fetch Initiated',
+                              description: result.message || `Fetching ${fetchScope} data. Check logs for progress.`,
+                            })
+                          } catch (error: any) {
+                            toast({
+                              title: 'Fetch Failed',
+                              description: error.message || 'Failed to trigger granular fetch',
+                              variant: 'destructive',
+                            })
+                          } finally {
+                            setGranularFetching(false)
+                          }
+                        }}
+                        disabled={granularFetching || (fetchScope === 'region' && !fetchRegion) || (fetchScope === 'county' && !fetchCountyId) || (fetchScope === 'sub_county' && (!fetchCountyId || !fetchSubCountyId))}
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                      >
+                        {granularFetching ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Fetching...
+                          </>
+                        ) : (
+                          <>
+                            <Download className="mr-2 h-4 w-4" />
+                            Fetch {fetchScope.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} Data
+                          </>
+                        )}
+                      </Button>
+
+                      {granularFetching && (
+                        <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4">
+                          <div className="flex items-center gap-3">
+                            <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
+                            <div>
+                              <p className="font-medium text-emerald-900 dark:text-emerald-100">
+                                Fetching {fetchScope.replace(/_/g, ' ')} satellite data...
+                              </p>
+                              <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                                The process runs in the background. You can navigate away safely.
                               </p>
                             </div>
                           </div>

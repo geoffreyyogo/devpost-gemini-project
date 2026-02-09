@@ -1,6 +1,6 @@
 """
 Kenya Regions, Counties, and Crops Data
-Comprehensive mapping for BloomWatch Kenya
+Comprehensive mapping for Smart Shamba
 """
 
 # Region to Counties Mapping (all 47 counties)

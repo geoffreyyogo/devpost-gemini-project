@@ -1,0 +1,50 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Eclipse Mosquitto MQTT — Deployment + Service
+# ═══════════════════════════════════════════════════════════════════════
+apiVersion: v1
+kind: Service
+metadata:
+  name: mqtt
+  namespace: smart-shamba
+  labels:
+    app: mqtt
+spec:
+  type: ClusterIP
+  ports:
+    - name: mqtt
+      port: 1883
+      targetPort: 1883
+    - name: ws
+      port: 9001
+      targetPort: 9001
+  selector:
+    app: mqtt
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqtt
+  namespace: smart-shamba
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mqtt
+  template:
+    metadata:
+      labels:
+        app: mqtt
+    spec:
+      containers:
+        - name: mosquitto
+          image: eclipse-mosquitto:2
+          ports:
+            - containerPort: 1883
+            - containerPort: 9001
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

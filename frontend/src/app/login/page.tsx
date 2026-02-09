@@ -12,7 +12,7 @@ import { Loader2, LogIn, Phone, Lock, ArrowLeft, Sprout, AlertCircle } from 'luc
 import { ThemeSwitcher } from '@/components/ui/theme-switcher'
 import { LanguageSelector } from '@/components/ui/language-selector'
 import { useToast } from '@/components/ui/use-toast'
-import { useAuthStore } from '@/store/authStore'
+import { useAuthStore, getDashboardRoute } from '@/store/authStore'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -26,7 +26,8 @@ export default function LoginPage() {
   // Redirect if already logged in (industry standard)
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard')
+      const { farmer } = useAuthStore.getState()
+      router.push(getDashboardRoute(farmer?.user_type))
     }
   }, [isAuthenticated, router])
 
@@ -51,12 +52,8 @@ export default function LoginPage() {
         description: `Welcome back, ${farmer?.name}!`,
       })
       
-      // Redirect based on user role
-      if (farmer?.is_admin) {
-        router.push('/admin')
-      } else {
-        router.push('/dashboard')
-      }
+      // Redirect based on user type
+      router.push(getDashboardRoute(farmer?.user_type))
     } else {
       setLocalError(authError || 'Login failed. Please check your credentials.')
     }
@@ -74,14 +71,14 @@ export default function LoginPage() {
             <Link href="/" className="flex items-center space-x-3 group">
               <Image
                 src="/BloomWatch.png"
-                alt="Shamba Smart"
+                alt="Smart Shamba"
                 width={40}
                 height={40}
                 className="h-10 w-auto transition-transform group-hover:scale-105"
                 priority
               />
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent hidden sm:inline">
-                Shamba Smart
+                Smart Shamba
               </span>
             </Link>
 
@@ -116,10 +113,10 @@ export default function LoginPage() {
               <LogIn className="h-10 w-10 text-green-600" />
             </div>
             <CardTitle className="text-3xl font-bold text-green-700 dark:text-green-400">
-              Farmer Login
+              Welcome Back
             </CardTitle>
             <CardDescription className="text-base">
-              Access your dashboard and monitor your crops
+              Sign in to access your dashboard
             </CardDescription>
           </CardHeader>
 
@@ -194,20 +191,35 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-white dark:bg-gray-950 px-2 text-gray-500">
-                  Don't have an account?
+                  Don&apos;t have an account?
                 </span>
               </div>
             </div>
 
-            <Link href="/register" className="w-full">
-              <Button variant="outline" className="w-full h-12 text-lg border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950">
-                Register Now
-              </Button>
-            </Link>
+            <div className="w-full grid grid-cols-1 gap-2">
+              <Link href="/register" className="w-full">
+                <Button variant="outline" className="w-full h-11 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-950">
+                  <Sprout className="mr-2 h-4 w-4" />
+                  Register as Farmer
+                </Button>
+              </Link>
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/register/agrovet">
+                  <Button variant="outline" className="w-full h-10 text-sm border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950">
+                    Register as Agrovet
+                  </Button>
+                </Link>
+                <Link href="/register/buyer">
+                  <Button variant="outline" className="w-full h-10 text-sm border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950">
+                    Register as Buyer
+                  </Button>
+                </Link>
+              </div>
+            </div>
 
             <div className="text-center space-y-2">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                or register via USSD (no internet required)
+                Farmers can also register via USSD (no internet)
               </p>
               <p className="text-2xl font-bold text-green-600">
                 *384*42434#
@@ -220,7 +232,7 @@ export default function LoginPage() {
       {/* Footer */}
       <footer className="border-t bg-white dark:bg-gray-950 py-6">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>© 2025 Shamba Smart. All rights reserved.</p>
+          <p>© 2025 Smart Shamba. All rights reserved.</p>
         </div>
       </footer>
     </div>

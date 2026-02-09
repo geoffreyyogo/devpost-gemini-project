@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# BloomWatch Kenya Frontend - Installation Script
+# Smart Shamba Frontend - Installation Script
 # This script sets up the Next.js frontend automatically
 
 set -e  # Exit on error
 
-echo "🌾 BloomWatch Kenya - Frontend Installation"
+echo "🌾 Smart Shamba - Frontend Installation"
 echo "==========================================="
 echo ""
 
@@ -62,7 +62,7 @@ if [ ! -f .env.local ]; then
     cat > .env.local << EOF
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_APP_NAME=BloomWatch Kenya
+NEXT_PUBLIC_APP_NAME=Smart Shamba
 
 # NextAuth
 NEXTAUTH_URL=http://localhost:3000

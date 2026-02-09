@@ -1,2 +1,0 @@
-date,time,region,bbox,ndwi_mean,ndwi_min,ndwi_max,landsat_images,cloud_threshold,temperature_mean_c,temperature_min_c,temperature_max_c,temperature_images
-2025-10-10,12:55:23,Kenya,"[37.0, 1.0, 38.5, 4.5]",-0.18069512449082134,-0.9820844531059265,0.048592377454042435,1,20,36.97452862142161,18.340000000000032,53.29000000000002,5

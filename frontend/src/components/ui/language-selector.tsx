@@ -1,6 +1,6 @@
 /**
  * Language Selector Component
- * Switch between English and Swahili
+ * Switch between English and Swahili using i18next
  */
 
 'use client'
@@ -8,6 +8,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Globe, Check, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
@@ -15,18 +16,10 @@ const languages = [
 ]
 
 export function LanguageSelector() {
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[0])
+  const { i18n } = useTranslation()
+  const currentLang = languages.find(l => l.code === i18n.language) || languages[0]
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    // Load saved language from localStorage
-    const savedLang = localStorage.getItem('language')
-    if (savedLang) {
-      const lang = languages.find(l => l.code === savedLang)
-      if (lang) setSelectedLanguage(lang)
-    }
-  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,10 +33,9 @@ export function LanguageSelector() {
   }, [])
 
   const handleLanguageChange = (language: typeof languages[0]) => {
-    setSelectedLanguage(language)
-    localStorage.setItem('language', language.code)
+    i18n.changeLanguage(language.code)
+    localStorage.setItem('preferredLanguage', language.code)
     setIsOpen(false)
-    // Here you would typically trigger a translation update
   }
 
   return (
@@ -57,7 +49,7 @@ export function LanguageSelector() {
       >
         <Globe className="h-4 w-4 text-gray-700 dark:text-gray-300" />
         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline">
-          {selectedLanguage.code.toUpperCase()}
+          {currentLang.code.toUpperCase()}
         </span>
         <ChevronDown className={`h-3 w-3 text-gray-700 dark:text-gray-300 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </Button>
@@ -77,7 +69,7 @@ export function LanguageSelector() {
                   {language.name}
                 </span>
               </div>
-              {selectedLanguage.code === language.code && (
+              {currentLang.code === language.code && (
                 <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
               )}
             </button>
@@ -87,4 +79,3 @@ export function LanguageSelector() {
     </div>
   )
 }
-

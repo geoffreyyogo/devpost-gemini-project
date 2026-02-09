@@ -1,5 +1,5 @@
 """
-Email Service for BloomWatch Kenya
+Email Service for Smart Shamba
 Uses SendGrid for professional, beautiful email alerts
 """
 
@@ -32,7 +32,7 @@ class EmailService:
         """Initialize SendGrid client"""
         self.api_key = os.getenv('SENDGRID_API_KEY')
         self.from_email = os.getenv('SENDGRID_FROM_EMAIL', 'noreply@bloomwatchkenya.com')
-        self.from_name = os.getenv('SENDGRID_FROM_NAME', 'BloomWatch Kenya')
+        self.from_name = os.getenv('SENDGRID_FROM_NAME', 'Smart Shamba')
         
         if SENDGRID_AVAILABLE and self.api_key:
             try:
@@ -88,7 +88,7 @@ class EmailService:
                                 <!-- Header -->
                                 <tr>
                                     <td style="background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%); padding: 40px 30px; text-align: center;">
-                                        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">🌾 BloomWatch Kenya</h1>
+                                        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">🌾 Smart Shamba</h1>
                                         <p style="color: #e8f5e9; margin: 10px 0 0 0; font-size: 16px;">Teknolojia ya Satelaiti kwa Wakulima wa Kenya</p>
                                     </td>
                                 </tr>
@@ -98,7 +98,7 @@ class EmailService:
                                     <td style="padding: 40px 30px;">
                                         <h2 style="color: #2e7d32; margin: 0 0 20px 0; font-size: 24px;">Karibu, {name}! 🎉</h2>
                                         <p style="color: #424242; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                            Hongera kwa kujiunga na BloomWatch Kenya, jukwaa la kisasa la kufuatilia afya ya mazao kwa kutumia data za satelaiti na akili bandia.
+                                            Hongera kwa kujiunga na Smart Shamba, jukwaa la kisasa la kufuatilia afya ya mazao kwa kutumia data za satelaiti na akili bandia.
                                         </p>
                                         <p style="color: #424242; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
                                             Tunatumia satelaiti za NASA, Sentinel-2, na teknolojia ya GPT-5 kukupatia taarifa sahihi na ushauri wa kilimo.
@@ -201,7 +201,7 @@ class EmailService:
                                             Ungana na maelfu ya wakulima wanaotumia teknolojia ya kisasa kupandisha mavuno.
                                         </p>
                                         <p style="color: #a5d6a7; margin: 0; font-size: 12px;">
-                                            © 2025 BloomWatch Kenya | Imetumia NASA, Sentinel-2, na OpenAI GPT-5
+                                            © 2025 Smart Shamba | Imetumia NASA, Sentinel-2, na OpenAI GPT-5
                                         </p>
                                         <p style="color: #a5d6a7; margin: 10px 0 0 0; font-size: 12px;">
                                             Maswali? Wasiliana nasi: support@bloomwatchkenya.com
@@ -233,7 +233,7 @@ class EmailService:
                                 <!-- Header -->
                                 <tr>
                                     <td style="background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%); padding: 40px 30px; text-align: center;">
-                                        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">🌾 BloomWatch Kenya</h1>
+                                        <h1 style="color: #ffffff; margin: 0; font-size: 32px; font-weight: 700;">🌾 Smart Shamba</h1>
                                         <p style="color: #e8f5e9; margin: 10px 0 0 0; font-size: 16px;">Satellite Intelligence for Kenyan Farmers</p>
                                     </td>
                                 </tr>
@@ -243,7 +243,7 @@ class EmailService:
                                     <td style="padding: 40px 30px;">
                                         <h2 style="color: #2e7d32; margin: 0 0 20px 0; font-size: 24px;">Welcome, {name}! 🎉</h2>
                                         <p style="color: #424242; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
-                                            Congratulations on joining BloomWatch Kenya, the cutting-edge platform that uses satellite data and artificial intelligence to monitor crop health.
+                                            Congratulations on joining Smart Shamba, the cutting-edge platform that uses satellite data and artificial intelligence to monitor crop health.
                                         </p>
                                         <p style="color: #424242; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
                                             We use NASA satellites, Sentinel-2, and GPT-5 technology to provide you with accurate insights and agricultural advice.
@@ -346,7 +346,7 @@ class EmailService:
                                             Join thousands of farmers using modern technology to increase their yields.
                                         </p>
                                         <p style="color: #a5d6a7; margin: 0; font-size: 12px;">
-                                            © 2025 BloomWatch Kenya | Powered by NASA, Sentinel-2, and OpenAI GPT-5
+                                            © 2025 Smart Shamba | Powered by NASA, Sentinel-2, and OpenAI GPT-5
                                         </p>
                                         <p style="color: #a5d6a7; margin: 10px 0 0 0; font-size: 12px;">
                                             Questions? Contact us: support@bloomwatchkenya.com
@@ -416,7 +416,7 @@ class EmailService:
                             <!-- Header -->
                             <tr>
                                 <td style="background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%); padding: 30px; text-align: center;">
-                                    <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">🌾 BloomWatch Kenya</h1>
+                                    <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">🌾 Smart Shamba</h1>
                                     <p style="color: #e8f5e9; margin: 10px 0 0 0; font-size: 14px;">{title}</p>
                                 </td>
                             </tr>
@@ -469,7 +469,7 @@ class EmailService:
                             <tr>
                                 <td style="background: #f5f5f5; padding: 20px; text-align: center;">
                                     <p style="color: #757575; margin: 0; font-size: 12px;">
-                                        © 2025 BloomWatch Kenya | Data: {data_source}
+                                        © 2025 Smart Shamba | Data: {data_source}
                                     </p>
                                 </td>
                             </tr>
@@ -501,9 +501,9 @@ class EmailService:
         
         # Subject
         if language == 'sw':
-            subject = f"🌾 Karibu BloomWatch Kenya, {name}!"
+            subject = f"🌾 Karibu Smart Shamba, {name}!"
         else:
-            subject = f"🌾 Welcome to BloomWatch Kenya, {name}!"
+            subject = f"🌾 Welcome to Smart Shamba, {name}!"
         
         # Generate HTML
         html_content = self._create_welcome_email_html(farmer_data, bloom_data, language)

@@ -28,7 +28,7 @@ const images: CarouselImage[] = [
   },
   {
     url: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=1200',
-    caption: '👨‍🌾 Kenyan farmers - The heart of BloomWatch'
+    caption: '👨‍🌾 Kenyan farmers - The heart of Smart Shamba'
   }
 ]
 

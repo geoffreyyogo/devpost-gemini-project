@@ -1,5 +1,5 @@
 /**
- * Home Page - Landing/Welcome page for BloomWatch Kenya
+ * Home Page - Landing/Welcome page for Smart Shamba
  */
 
 'use client'
@@ -39,6 +39,9 @@ import {
   Twitter,
   Facebook,
   Github,
+  Store,
+  ShoppingBag,
+  LayoutDashboard,
 } from 'lucide-react'
 import { KenyaClimateMap } from '@/components/maps/KenyaClimateMap'
 import { ClimateStatsCards } from '@/components/climate/ClimateStatsCards'
@@ -49,14 +52,15 @@ import { CTASection } from '@/components/sections/CTASection'
 import { ThemeSwitcher } from '@/components/ui/theme-switcher'
 import { LanguageSelector } from '@/components/ui/language-selector'
 import { useAuthStore } from '@/store/authStore'
+import { getDashboardRoute } from '@/store/authStore'
 import { useAOSInit } from '@/lib/aos'
 
 export default function HomePage() {
   const { isAuthenticated, farmer } = useAuthStore()
-  
+
   // Initialize scroll animations
   useAOSInit()
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white dark:from-gray-950 dark:to-gray-900">
       {/* Navigation */}
@@ -67,14 +71,14 @@ export default function HomePage() {
             <Link href="/" className="flex items-center space-x-3 group">
               <Image
                 src="/BloomWatch.png"
-                alt="Shamba Smart"
-                width={55}
-                height={55}
-                className="h-14 w-auto transition-transform group-hover:scale-105"
+                alt="Smart Shamba"
+                width={40}
+                height={40}
+                className="h-10 w-auto transition-transform group-hover:scale-105"
                 priority
               />
               <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent hidden sm:inline">
-                Shamba Smart
+                Smart Shamba
               </span>
             </Link>
 
@@ -82,20 +86,20 @@ export default function HomePage() {
             <div className="flex items-center gap-2 md:gap-3">
               {/* Theme Switcher */}
               <ThemeSwitcher />
-              
+
               {/* Language Selector */}
               <LanguageSelector />
-              
+
               {/* Divider */}
               <div className="hidden md:block w-px h-6 bg-gray-300 dark:bg-gray-700" />
-              
+
               {/* Auth Buttons */}
               {isAuthenticated && farmer ? (
                 <div className="flex items-center gap-2 md:gap-3">
                   <span className="text-sm text-gray-600 dark:text-gray-400 hidden lg:inline font-medium">
                     Welcome, {farmer.name.split(' ')[0]}!
                   </span>
-                  <Link href="/dashboard">
+                  <Link href={getDashboardRoute(farmer?.user_type)}>
                     <Button className="bg-green-600 hover:bg-green-700 text-white rounded-2xl px-4 md:px-6 h-9 text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                       Dashboard
                     </Button>
@@ -128,65 +132,93 @@ export default function HomePage() {
         <div className="hero-section-enhanced relative overflow-hidden rounded-3xl p-16 text-center text-white shadow-2xl min-h-[650px] flex flex-col justify-center">
           {/* Background Pattern Overlay */}
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1200')] bg-center bg-cover opacity-15 animate-parallax" />
-          
+
           {/* Content */}
           <div className="relative z-10 hero-content space-y-6 animate-fade-in-up">
-            <h1 className="text-5xl md:text-7xl lg:text-[3.5rem] font-bold tracking-tight" 
-                style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}>
-              Welcome to Shamba Smart
+            <h1 className="text-5xl md:text-7xl lg:text-[3.5rem] font-bold tracking-tight"
+              style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.3)' }}>
+              Welcome to Smart Shamba
             </h1>
-            
-            <h2 className="text-3xl md:text-4xl lg:text-[2.2rem] font-semibold mt-4" 
-                style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
-              Track Maua, Master Ukulima
+
+            <h2 className="text-3xl md:text-4xl lg:text-[2.2rem] font-semibold mt-4"
+              style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+              From Soil to Sale, Farming Made Intelligent
             </h2>
-            
-            <p className="text-lg md:text-xl lg:text-[1.3rem] max-w-4xl mx-auto opacity-95 mt-6" 
-               style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.3)' }}>
-              Use NASA satellite data and Flora, our AI MauaMentor, to monitor blooming and climate for better harvests.
+
+            <p className="text-lg md:text-xl lg:text-[1.3rem] max-w-4xl mx-auto opacity-95 mt-6"
+              style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.3)' }}>
+              Satellite imagery, IoT soil sensors, AI-powered crop advisory via Flora, real-time weather forecasts, disease detection, and SMS/USSD alerts — all working together to help Kenyan farmers grow smarter.
             </p>
 
             {/* Floating CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
-              <Link href="/register">
-                <Button 
-                  size="lg" 
-                  className="bg-white text-green-700 hover:bg-green-50 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px]"
-                >
-                  <Rocket className="mr-2 h-5 w-5" />
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="bg-green-800/30 text-white border-2 border-white hover:bg-white hover:text-green-700 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px] backdrop-blur-sm"
-                >
-                  <LogIn className="mr-2 h-5 w-5" />
-                  Farmer Login
-                </Button>
-              </Link>
+              {isAuthenticated && farmer ? (
+                <>
+                  <Link href={getDashboardRoute(farmer.user_type)}>
+                    <Button
+                      size="lg"
+                      className="bg-white text-green-700 hover:bg-green-50 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px]"
+                    >
+                      <LayoutDashboard className="mr-2 h-5 w-5" />
+                      My Dashboard
+                    </Button>
+                  </Link>
+                  <Link href="/marketplace">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="bg-green-800/30 text-white border-2 border-white hover:bg-white hover:text-green-700 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px] backdrop-blur-sm"
+                    >
+                      <ShoppingBag className="mr-2 h-5 w-5" />
+                      Marketplace
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <Button
+                      size="lg"
+                      className="bg-white text-green-700 hover:bg-green-50 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px]"
+                    >
+                      <Rocket className="mr-2 h-5 w-5" />
+                      Get Started
+                    </Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="bg-green-800/30 text-white border-2 border-white hover:bg-white hover:text-green-700 hover:scale-105 transition-all duration-300 text-lg px-10 py-7 rounded-2xl shadow-xl font-bold min-w-[200px] backdrop-blur-sm"
+                    >
+                      <LogIn className="mr-2 h-5 w-5" />
+                      Login
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
-            {/* USSD Registration Box - Matching Streamlit */}
-            <div className="relative z-10 mt-12 max-w-2xl mx-auto" data-aos="zoom-in" data-aos-delay="200">
-              <div className="ussd-floating-box bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-2xl border border-green-100 dark:border-green-900">
-                <p className="text-green-700 dark:text-green-400 text-lg font-semibold flex items-center justify-center mb-2">
-                  <Phone className="mr-2 h-5 w-5" />
-                  You can also register by dialing:
-                </p>
-                <h2 
-                  className="text-green-700 dark:text-green-400 text-5xl md:text-6xl font-bold text-center tracking-[0.15em] my-4 ussd-code-mobile"
-                  style={{ textShadow: '2px 2px 4px rgba(46,125,50,0.2)' }}
-                >
-                  *384*42434#
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400 text-sm text-center">
-                  Works on any phone - No internet required
-                </p>
+            {/* USSD Registration Box - only show when not logged in */}
+            {!isAuthenticated && (
+              <div className="relative z-10 mt-12 max-w-2xl mx-auto" data-aos="zoom-in" data-aos-delay="200">
+                <div className="ussd-floating-box bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-2xl border border-green-100 dark:border-green-900">
+                  <p className="text-green-700 dark:text-green-400 text-lg font-semibold flex items-center justify-center mb-2">
+                    <Phone className="mr-2 h-5 w-5" />
+                    You can also register by dialing:
+                  </p>
+                  <h2
+                    className="text-green-700 dark:text-green-400 text-5xl md:text-6xl font-bold text-center tracking-[0.15em] my-4 ussd-code-mobile"
+                    style={{ textShadow: '2px 2px 4px rgba(46,125,50,0.2)' }}
+                  >
+                    *384*42434#
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm text-center">
+                    Works on any phone - No internet required
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
@@ -220,20 +252,14 @@ export default function HomePage() {
             <ClimateStatsCards />
           </div>
 
-          {/* Real Data Indicator & CTA */}
+          {/* CTA */}
           <div className="text-center space-y-4">
-            <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-6 max-w-4xl mx-auto">
-              <p className="text-green-700 dark:text-green-400 font-semibold flex items-center justify-center gap-2">
-                <Satellite className="h-5 w-5" />
-                ✓ Displaying real NASA satellite data from Google Earth Engine | Covering all 47 Kenya counties
-              </p>
-            </div>
 
             {/* CTA Button */}
             <div>
-              <Link href={isAuthenticated && farmer ? "/dashboard" : "/login"}>
-                <Button 
-                  size="lg" 
+              <Link href={isAuthenticated && farmer ? getDashboardRoute(farmer?.user_type) : "/login"}>
+                <Button
+                  size="lg"
                   className="bg-green-600 hover:bg-green-700 text-white px-10 py-6 rounded-2xl shadow-xl hover:scale-105 transition-all"
                 >
                   <BarChart3 className="mr-2 h-5 w-5" />
@@ -241,8 +267,8 @@ export default function HomePage() {
                 </Button>
               </Link>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                {isAuthenticated && farmer 
-                  ? "✓ Access your personalized dashboard and insights" 
+                {isAuthenticated && farmer
+                  ? "✓ Access your personalized dashboard and insights"
                   : "🔐 Please log in to access personalized regional data and alerts"
                 }
               </p>
@@ -251,26 +277,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Section - Why BloomWatch Kenya */}
+      {/* Features Section - Why Smart Shamba */}
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16" data-aos="fade-down">
           <h2 className="text-4xl md:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
-            🌟 Why Shamba Smart?
+            🌟 Why Smart Shamba?
           </h2>
           <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto">
             Powered by NASA satellite technology and AI-driven insights
           </p>
         </div>
-        
+
         <div className="grid md:grid-cols-3 gap-8">
           {/* NASA Satellites Card */}
           <Card data-aos="fade-up" className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-[20px] border-2 border-transparent hover:border-green-600 dark:hover:border-green-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[500px]">
             {/* Gradient overlay on hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-green-50/40 to-green-100/40 dark:from-green-950/40 dark:to-green-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none" />
-            
+
             {/* Subtle shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
-            
+
             <CardHeader className="text-center relative z-10">
               <div className="flex justify-center mb-6">
                 <div className="p-6 bg-green-50 dark:bg-green-950 rounded-full group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 ease-out shadow-md group-hover:shadow-xl">
@@ -305,7 +331,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 p-4 bg-green-100 dark:bg-green-900/30 rounded-lg border border-green-300 dark:border-green-700">
                 <p className="font-bold text-sm text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
                   <Globe className="h-4 w-4" />
@@ -341,10 +367,10 @@ export default function HomePage() {
           <Card data-aos="fade-up" data-aos-delay="200" className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-[20px] border-2 border-transparent hover:border-blue-600 dark:hover:border-blue-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[500px]">
             {/* Gradient overlay on hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 to-blue-100/40 dark:from-blue-950/40 dark:to-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none" />
-            
+
             {/* Subtle shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
-            
+
             <CardHeader className="text-center relative z-10">
               <div className="flex justify-center mb-6">
                 <div className="p-6 bg-blue-50 dark:bg-blue-950 rounded-full group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 ease-out shadow-md group-hover:shadow-xl">
@@ -386,7 +412,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-900/30 rounded-lg border-2 border-blue-300 dark:border-blue-700 text-center hover:bg-blue-200 dark:hover:bg-blue-900/50 hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-500 hover:shadow-lg cursor-pointer group/cta">
                 <p className="text-2xl font-bold text-blue-800 dark:text-blue-300 flex items-center justify-center gap-2 group-hover/cta:scale-105 transition-transform duration-300">
                   <Phone className="h-6 w-6 group-hover/cta:rotate-12 transition-transform duration-300" />
@@ -403,10 +429,10 @@ export default function HomePage() {
           <Card data-aos="fade-up" data-aos-delay="400" className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-[20px] border-2 border-transparent hover:border-purple-600 dark:hover:border-purple-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[500px]">
             {/* Gradient overlay on hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-50/40 to-purple-100/40 dark:from-purple-950/40 dark:to-purple-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out pointer-events-none" />
-            
+
             {/* Subtle shine effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
-            
+
             <CardHeader className="text-center relative z-10">
               <div className="flex justify-center mb-6">
                 <div className="p-6 bg-purple-50 dark:bg-purple-950 rounded-full group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 ease-out shadow-md group-hover:shadow-xl">
@@ -423,7 +449,7 @@ export default function HomePage() {
                   <Sprout className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0 group-hover/item:scale-125 group-hover/item:rotate-12 transition-all duration-300" />
                   <div>
                     <p className="font-bold text-gray-900 dark:text-white">Meet Flora</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Your MauaMentor AI assistant</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Your Smart Shamba AI assistant</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-300">
@@ -448,7 +474,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 p-4 bg-purple-100 dark:bg-purple-900/30 rounded-lg border border-purple-300 dark:border-purple-700">
                 <p className="font-bold text-sm text-purple-800 dark:text-purple-300 mb-3 flex items-center gap-2">
                   <BrainCircuit className="h-4 w-4" />
@@ -478,36 +504,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Meet Flora - AI MauaMentor Section */}
+      {/* Meet Flora - AI Agricultural Advisor Section */}
       <section className="bg-gradient-to-b from-white to-green-50/30 dark:from-gray-950 dark:to-green-950/30 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 mobile-heading">
-              🌺 Meet Flora - Your AI MauaMentor
+              🌺 Meet Flora - Your AI Agricultural Advisor
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg max-w-2xl mx-auto">
               Get instant agricultural guidance powered by advanced AI
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Left Side - Flora Description */}
             <Card className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border-2 border-green-200 dark:border-green-800 shadow-lg hover:shadow-2xl transition-all duration-700 ease-in-out hover:-translate-y-2">
               {/* Subtle gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 to-transparent dark:from-green-950/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               <CardHeader className="relative z-10">
                 <CardTitle className="flex items-center gap-3 text-xl md:text-2xl text-green-700 dark:text-green-400 mb-4">
                   <MessageSquare className="h-6 w-6 md:h-7 md:w-7" />
                   Flora, Your Agricultural AI Assistant
                 </CardTitle>
               </CardHeader>
-              
+
               <CardContent className="relative z-10 px-4 md:px-6">
                 <p className="text-base md:text-lg leading-relaxed mb-6 text-gray-700 dark:text-gray-300">
                   Flora uses advanced AI to provide <span className="font-bold text-green-600">instant agricultural guidance</span>:
                 </p>
-                
+
                 <ul className="space-y-3 md:space-y-4 mb-6">
                   <li className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-300">
                     <Sprout className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0 group-hover/item:scale-125 group-hover/item:rotate-12 transition-all duration-300" />
@@ -552,8 +578,8 @@ export default function HomePage() {
                     </div>
                   </li>
                 </ul>
-                
-                <Link href={isAuthenticated && farmer ? "/dashboard" : "/login"}>
+
+                <Link href={isAuthenticated && farmer ? getDashboardRoute(farmer?.user_type) : "/login"}>
                   <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-base md:text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                     <MessageSquare className="mr-2 h-5 w-5" />
                     Chat with Flora Now
@@ -580,7 +606,7 @@ export default function HomePage() {
                   <p className="text-xs text-gray-600 dark:text-gray-400">Example conversation</p>
                 </div>
               </div>
-              
+
               <div className="flex-1 space-y-4 overflow-y-auto">
                 {/* User Message 1 */}
                 <div className="flex justify-end animate-fade-in" style={{ animationDelay: '0.2s' }}>
@@ -590,7 +616,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Flora Response 1 */}
                 <div className="flex justify-start animate-fade-in" style={{ animationDelay: '0.4s' }}>
                   <div className="bg-green-600 dark:bg-green-700 rounded-xl rounded-tl-sm px-4 py-3 max-w-[85%] shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -599,7 +625,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* User Message 2 */}
                 <div className="flex justify-end animate-fade-in" style={{ animationDelay: '0.6s' }}>
                   <div className="bg-white dark:bg-gray-800 rounded-xl rounded-tr-sm px-4 py-3 max-w-[85%] shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -608,7 +634,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Flora Response 2 */}
                 <div className="flex justify-start animate-fade-in" style={{ animationDelay: '0.8s' }}>
                   <div className="bg-green-600 dark:bg-green-700 rounded-xl rounded-tl-sm px-4 py-3 max-w-[85%] shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -618,7 +644,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-4 pt-4 border-t border-green-300 dark:border-green-700">
                 <p className="text-xs text-center text-gray-600 dark:text-gray-400">
                   💡 Flora combines NASA satellite data with AI to provide real-time farming advice
@@ -629,7 +655,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* BloomWatch Kenya Expected Impact */}
+      {/* Smart Shamba Expected Impact */}
       <section className="bg-white dark:bg-gray-950 py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16" data-aos="fade-down">
@@ -640,29 +666,29 @@ export default function HomePage() {
               Empowering thousands of farmers across Kenya
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Stat 1: Farmers Registered */}
             <Card data-aos="fade-up" className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl border-2 border-green-100 dark:border-green-900 hover:border-green-500 dark:hover:border-green-400 shadow-lg hover:shadow-[0_20px_40px_rgba(46,125,50,0.15)] transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[350px] md:min-h-[400px] flex flex-col justify-center">
               {/* Subtle gradient glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-green-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
-              
+
               <CardContent className="text-center p-6 md:p-10 relative z-10">
                 {/* Icon */}
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center shadow-[0_4px_15px_rgba(46,125,50,0.3)] group-hover:shadow-[0_8px_25px_rgba(46,125,50,0.4)] group-hover:scale-110 group-hover:rotate-[5deg] transition-all duration-500">
                   <Users className="h-10 w-10 text-white" />
                 </div>
-                
+
                 {/* Number */}
                 <h3 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-green-700 dark:text-green-400 mb-3 group-hover:scale-105 group-hover:drop-shadow-[0_2px_10px_rgba(46,125,50,0.2)] transition-all duration-300 ease-in-out">
                   5,000+
                 </h3>
-                
+
                 {/* Label */}
                 <p className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Farmers Registered
                 </p>
-                
+
                 {/* Subtitle */}
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Across Kenya
@@ -674,23 +700,23 @@ export default function HomePage() {
             <Card data-aos="fade-up" data-aos-delay="200" className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl border-2 border-orange-100 dark:border-orange-900 hover:border-orange-500 dark:hover:border-orange-400 shadow-lg hover:shadow-[0_20px_40px_rgba(245,124,0,0.15)] transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[350px] md:min-h-[400px] flex flex-col justify-center">
               {/* Subtle gradient glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-orange-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
-              
+
               <CardContent className="text-center p-6 md:p-10 relative z-10">
                 {/* Icon */}
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-orange-600 to-orange-400 flex items-center justify-center shadow-[0_4px_15px_rgba(245,124,0,0.3)] group-hover:shadow-[0_8px_25px_rgba(245,124,0,0.4)] group-hover:scale-110 group-hover:rotate-[5deg] transition-all duration-500">
                   <TrendingUp className="h-10 w-10 text-white" />
                 </div>
-                
+
                 {/* Number */}
                 <h3 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-orange-600 dark:text-orange-400 mb-3 group-hover:scale-105 group-hover:drop-shadow-[0_2px_10px_rgba(245,124,0,0.2)] transition-all duration-300 ease-in-out">
                   30%
                 </h3>
-                
+
                 {/* Label */}
                 <p className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Avg Yield Increase
                 </p>
-                
+
                 {/* Subtitle */}
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Validated with farmers
@@ -702,23 +728,23 @@ export default function HomePage() {
             <Card data-aos="fade-up" data-aos-delay="400" className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl border-2 border-blue-100 dark:border-blue-900 hover:border-blue-500 dark:hover:border-blue-400 shadow-lg hover:shadow-[0_20px_40px_rgba(25,118,210,0.15)] transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[350px] md:min-h-[400px] flex flex-col justify-center">
               {/* Subtle gradient glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
-              
+
               <CardContent className="text-center p-6 md:p-10 relative z-10">
                 {/* Icon */}
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center shadow-[0_4px_15px_rgba(25,118,210,0.3)] group-hover:shadow-[0_8px_25px_rgba(25,118,210,0.4)] group-hover:scale-110 group-hover:rotate-[5deg] transition-all duration-500">
                   <MapPin className="h-10 w-10 text-white" />
                 </div>
-                
+
                 {/* Number */}
                 <h3 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-blue-600 dark:text-blue-400 mb-3 group-hover:scale-105 group-hover:drop-shadow-[0_2px_10px_rgba(25,118,210,0.2)] transition-all duration-300 ease-in-out">
                   47
                 </h3>
-                
+
                 {/* Label */}
                 <p className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Counties Covered
                 </p>
-                
+
                 {/* Subtitle */}
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Nationwide reach
@@ -730,23 +756,23 @@ export default function HomePage() {
             <Card data-aos="fade-up" data-aos-delay="600" className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl border-2 border-emerald-100 dark:border-emerald-900 hover:border-emerald-500 dark:hover:border-emerald-400 shadow-lg hover:shadow-[0_20px_40px_rgba(56,142,60,0.15)] transition-all duration-700 ease-out hover:-translate-y-3 hover:scale-[1.03] min-h-[350px] md:min-h-[400px] flex flex-col justify-center">
               {/* Subtle gradient glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-emerald-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
-              
+
               <CardContent className="text-center p-6 md:p-10 relative z-10">
                 {/* Icon */}
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-400 flex items-center justify-center shadow-[0_4px_15px_rgba(56,142,60,0.3)] group-hover:shadow-[0_8px_25px_rgba(56,142,60,0.4)] group-hover:scale-110 group-hover:rotate-[5deg] transition-all duration-500">
                   <BarChart3 className="h-10 w-10 text-white" />
                 </div>
-                
+
                 {/* Number */}
                 <h3 className="text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-emerald-600 dark:text-emerald-400 mb-3 group-hover:scale-105 group-hover:drop-shadow-[0_2px_10px_rgba(56,142,60,0.2)] transition-all duration-300 ease-in-out">
                   $500
                 </h3>
-                
+
                 {/* Label */}
                 <p className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Extra Income/Season
                 </p>
-                
+
                 {/* Subtitle */}
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Per farmer average
@@ -768,34 +794,34 @@ export default function HomePage() {
               Real farmers, real results across Kenya's diverse regions
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
             {/* Testimonial 1: Jane Wanjiru */}
             <Card className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border-2 border-green-100 dark:border-green-800 hover:border-green-600 dark:hover:border-green-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-2 hover:scale-[1.02]">
               {/* Subtle glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               <CardContent className="text-center p-6 md:p-8 relative z-10">
                 {/* Avatar */}
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center text-white text-3xl font-bold shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
                   JW
                 </div>
-                
+
                 {/* Name */}
                 <h3 className="text-xl md:text-2xl font-bold text-green-700 dark:text-green-400 mb-2">
                   Jane Wanjiru
                 </h3>
-                
+
                 {/* Role */}
                 <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-gray-400 mb-4">
                   Maize Farmer - Nakuru
                 </p>
-                
+
                 {/* Quote */}
                 <p className="text-sm md:text-base italic leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
-                  "Shamba Smart helped me plant at the right time, and my maize yield doubled! The SMS alerts in Kiswahili made it so easy to understand."
+                  "Smart Shamba helped me plant at the right time, and my maize yield doubled! The SMS alerts in Kiswahili made it so easy to understand."
                 </p>
-                
+
                 {/* Rating */}
                 <div className="flex justify-center gap-1 text-orange-500">
                   {[...Array(5)].map((_, i) => (
@@ -809,28 +835,28 @@ export default function HomePage() {
             <Card className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border-2 border-green-100 dark:border-green-800 hover:border-green-600 dark:hover:border-green-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-2 hover:scale-[1.02]">
               {/* Subtle glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               <CardContent className="text-center p-6 md:p-8 relative z-10">
                 {/* Avatar */}
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center text-white text-3xl font-bold shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
                   PK
                 </div>
-                
+
                 {/* Name */}
                 <h3 className="text-xl md:text-2xl font-bold text-green-700 dark:text-green-400 mb-2">
                   Peter Kamau
                 </h3>
-                
+
                 {/* Role */}
                 <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-gray-400 mb-4">
                   Coffee Farmer - Kericho
                 </p>
-                
+
                 {/* Quote */}
                 <p className="text-sm md:text-base italic leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
                   "The alerts helped me time my coffee harvest perfectly. I upgraded from Grade B to Grade A beans and got 40% better prices!"
                 </p>
-                
+
                 {/* Rating */}
                 <div className="flex justify-center gap-1 text-orange-500">
                   {[...Array(5)].map((_, i) => (
@@ -844,28 +870,28 @@ export default function HomePage() {
             <Card className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border-2 border-green-100 dark:border-green-800 hover:border-green-600 dark:hover:border-green-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-2 hover:scale-[1.02]">
               {/* Subtle glow on hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               <CardContent className="text-center p-6 md:p-8 relative z-10">
                 {/* Avatar */}
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white text-3xl font-bold shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
                   MA
                 </div>
-                
+
                 {/* Name */}
                 <h3 className="text-xl md:text-2xl font-bold text-green-700 dark:text-green-400 mb-2">
                   Mary Atieno
                 </h3>
-                
+
                 {/* Role */}
                 <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-gray-400 mb-4">
                   Vegetable Grower - Machakos
                 </p>
-                
+
                 {/* Quote */}
                 <p className="text-sm md:text-base italic leading-relaxed text-gray-700 dark:text-gray-300 mb-4">
                   "Flora taught me about intercropping and climate patterns. I prevented 20% crop loss with timely fungicide application!"
                 </p>
-                
+
                 {/* Rating */}
                 <div className="flex justify-center gap-1 text-orange-500">
                   {[...Array(5)].map((_, i) => (
@@ -880,23 +906,23 @@ export default function HomePage() {
           <Card className="group relative overflow-hidden bg-gradient-to-br from-white to-green-50/30 dark:from-gray-900 dark:to-green-950/30 rounded-2xl border-2 border-green-200 dark:border-green-800 hover:border-green-600 dark:hover:border-green-500 shadow-xl hover:shadow-2xl transition-all duration-700 ease-out">
             {/* Glow overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            
+
             {/* Decorative corner accent */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            
+
             <CardContent className="p-0">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
                 {/* Left: Farmer Image */}
                 <div className="lg:col-span-1 p-0 bg-gradient-to-br from-green-600 to-green-400 flex flex-col items-center justify-center text-white relative overflow-hidden min-h-[300px] lg:min-h-[500px]">
                   {/* Image */}
                   <div className="absolute inset-0 w-full h-full">
-                    <img 
-                      src="/John_Kisumu.png" 
+                    <img
+                      src="/John_Kisumu.png"
                       alt="John Odhiambo - Maize Farmer from Kisumu"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   </div>
-                  
+
                   {/* Overlay with name on image */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col items-center justify-end p-8 text-center z-10">
                     <h3 className="text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">John Odhiambo</h3>
@@ -909,7 +935,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Right: Story */}
                 <div className="lg:col-span-2 p-6 md:p-10 relative z-10">
                   <div className="flex flex-col sm:flex-row items-start gap-3 mb-6">
@@ -930,11 +956,11 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <h5 className="font-bold text-gray-900 dark:text-white mb-4 text-base md:text-lg">
-                    After joining Shamba Smart:
+                    After joining Smart Shamba:
                   </h5>
-                  
+
                   <ul className="space-y-3 mb-6">
                     <li className="flex items-start gap-3 group/item hover:translate-x-1 transition-transform duration-300">
                       <BarChart3 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0 group-hover/item:scale-125 transition-transform duration-300" />
@@ -961,12 +987,12 @@ export default function HomePage() {
                       </span>
                     </li>
                   </ul>
-                  
+
                   {/* Quote */}
                   <div className="relative border-l-4 border-green-500 pl-4 md:pl-6 py-4 bg-green-50/50 dark:bg-green-950/30 rounded-r-lg group-hover:bg-green-100/50 dark:group-hover:bg-green-950/50 transition-colors duration-500">
                     <MessageSquare className="absolute -top-2 -left-2 h-8 w-8 text-green-500 bg-white dark:bg-gray-900 rounded-full p-1.5" />
                     <p className="text-sm md:text-base italic text-gray-700 dark:text-gray-300 leading-relaxed">
-                      "The USSD system works perfectly on my basic phone. I get instant answers from Flora AI via USSD and receive SMS alerts before every rain. Flora helps me understand what the satellite data means for my farm. Shamba Smart changed my life!"
+                      "The USSD system works perfectly on my basic phone. I get instant answers from Flora AI via USSD and receive SMS alerts before every rain. Flora helps me understand what the satellite data means for my farm. Smart Shamba changed my life!"
                     </p>
                     <div className="flex items-center gap-2 mt-3 text-xs text-green-700 dark:text-green-400">
                       <CheckCircle className="h-4 w-4" />
@@ -980,31 +1006,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Access BloomWatch on ANY Phone */}
+      {/* Access Smart Shamba on ANY Phone */}
       <section className="bg-white dark:bg-gray-950 py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-green-700 dark:text-green-400 mb-4 flex items-center justify-center gap-3 mobile-heading">
               <Phone className="h-6 w-6 md:h-8 md:w-8" />
-              Access Shamba Smart on ANY Phone
+              Access Smart Shamba on ANY Phone
             </h2>
             <p className="text-base md:text-lg font-semibold text-gray-700 dark:text-gray-300">
               No smartphone needed! Use USSD for instant updates
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
             {/* Left: How USSD Works */}
             <Card className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border-2 border-green-100 dark:border-green-800 hover:border-green-600 dark:hover:border-green-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-2">
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               <CardHeader className="relative z-10">
                 <CardTitle className="flex items-center gap-2 text-xl md:text-2xl text-green-700 dark:text-green-400">
                   <Phone className="h-6 w-6" />
                   How USSD Works
                 </CardTitle>
               </CardHeader>
-              
+
               <CardContent className="relative z-10 space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
@@ -1040,7 +1066,7 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 p-4 bg-green-50 dark:bg-green-950/30 rounded-xl border border-green-200 dark:border-green-700">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
@@ -1081,25 +1107,25 @@ export default function HomePage() {
                       </div>
                       <p className="text-sm font-bold text-gray-900 text-center">Dialing...</p>
                     </div>
-                    
+
                     {/* Dial code display */}
                     <div className="bg-gray-100 p-2 rounded-lg mb-2 animate-pulse">
                       <p className="text-xl font-bold text-green-700 text-center font-mono tracking-widest">
                         *384*42434#
                       </p>
                     </div>
-                    
+
                     {/* USSD Menu */}
                     <div className="bg-green-50 p-3 rounded-lg mb-2 text-left flex-grow">
                       <p className="text-xs leading-relaxed text-gray-900">
-                        <span className="font-bold text-green-700">🌾 Shamba Smart Kenya</span><br />
+                        <span className="font-bold text-green-700">🌾 Smart Shamba Kenya</span><br />
                         <span className="text-gray-600 text-xs">Karibu! Welcome!</span><br /><br />
                         <span className="font-semibold text-xs">Select language:</span><br />
                         <span className="font-semibold text-xs">1. English</span><br />
                         <span className="font-semibold text-xs">2. Kiswahili</span>
                       </p>
                     </div>
-                    
+
                     {/* Full Keypad */}
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9, '*', 0, '#'].map((key, index) => (
@@ -1111,7 +1137,7 @@ export default function HomePage() {
                         </button>
                       ))}
                     </div>
-                    
+
                     {/* Call buttons */}
                     <div className="grid grid-cols-2 gap-3">
                       <button className="bg-red-500 hover:bg-red-600 p-2.5 rounded-lg text-white font-semibold text-sm transition-colors duration-200 flex items-center justify-center gap-1.5">
@@ -1124,13 +1150,13 @@ export default function HomePage() {
                       </button>
                     </div>
                   </div>
-                  
+
                   {/* Home button */}
                   <div className="mt-4 flex justify-center">
                     <div className="w-14 h-14 bg-gray-700 rounded-full shadow-lg group-hover/phone:bg-gray-600 transition-colors duration-300"></div>
                   </div>
                 </div>
-                
+
                 {/* Floating labels */}
                 <div className="absolute -left-6 top-1/4 hidden xl:block">
                   <div className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-semibold animate-bounce">
@@ -1148,14 +1174,14 @@ export default function HomePage() {
             {/* Right: Sample SMS Alert */}
             <Card className="group relative overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border-2 border-blue-100 dark:border-blue-800 hover:border-blue-600 dark:hover:border-blue-500 shadow-lg hover:shadow-2xl transition-all duration-700 ease-out hover:-translate-y-2">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              
+
               <CardHeader className="relative z-10">
                 <CardTitle className="flex items-center gap-2 text-xl md:text-2xl text-blue-700 dark:text-blue-400">
                   <MessageSquare className="h-6 w-6" />
                   Sample SMS Alert
                 </CardTitle>
               </CardHeader>
-              
+
               <CardContent className="relative z-10">
                 <div className="bg-blue-50 dark:bg-blue-950/30 p-4 md:p-6 rounded-xl border-l-4 border-blue-600">
                   <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">+254-700-BLOOM</p>
@@ -1163,24 +1189,24 @@ export default function HomePage() {
                     <p className="font-bold text-green-700 dark:text-green-400 text-base md:text-lg">
                       🌸 Shamba  Alert
                     </p>
-                    
+
                     <p>
                       Habari Jane! Maize blooming detected in Nakuru (2.3km from your farm).
                     </p>
-                    
+
                     <div className="space-y-1">
                       <p><span className="font-bold">Intensity:</span> 85% (High)</p>
                       <p><span className="font-bold">Action:</span> Optimal time for pollination management. Ensure adequate moisture.</p>
                     </div>
-                    
+
                     <p><span className="font-bold">Weather:</span> 24°C, 60% humidity</p>
-                    
+
                     <p className="text-gray-700 dark:text-gray-300 pt-2 border-t border-blue-200 dark:border-blue-800">
                       Reply HELP for tips. - Flora 🌺
                     </p>
                   </div>
                 </div>
-                
+
                 <p className="text-xs text-center text-gray-600 dark:text-gray-400 mt-4 flex items-center justify-center gap-2">
                   <Zap className="h-3 w-3" />
                   Delivered in &lt; 30 seconds
@@ -1194,6 +1220,64 @@ export default function HomePage() {
       {/* Statistics */}
       <StatisticsSection />
 
+      {/* Join Our Platform */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-green-50/30 dark:from-gray-950 dark:to-green-950/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12" data-aos="fade-up">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Join Our Platform
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Whether you grow it, sell it, or buy it — Smart Shamba connects Kenya&apos;s agricultural ecosystem
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Farmer Card */}
+            <div className="group relative rounded-2xl border-2 border-green-200 dark:border-green-800 bg-white dark:bg-gray-900 p-8 text-center hover:shadow-xl hover:border-green-400 dark:hover:border-green-600 transition-all duration-300" data-aos="fade-up" data-aos-delay="0">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Sprout className="w-8 h-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Farmer</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                Monitor your farms with satellite &amp; IoT data, get AI-powered bloom predictions, and sell your produce directly.
+              </p>
+              <Link href="/register" className="inline-flex items-center justify-center w-full px-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition-colors">
+                Register as Farmer
+              </Link>
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">Also available via USSD</p>
+            </div>
+
+            {/* Agrovet Card */}
+            <div className="group relative rounded-2xl border-2 border-amber-200 dark:border-amber-800 bg-white dark:bg-gray-900 p-8 text-center hover:shadow-xl hover:border-amber-400 dark:hover:border-amber-600 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Store className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Agrovet</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                List your agricultural products, manage orders, track revenue analytics, and reach farmers across Kenya.
+              </p>
+              <Link href="/register/agrovet" className="inline-flex items-center justify-center w-full px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold transition-colors">
+                Register as Agrovet
+              </Link>
+            </div>
+
+            {/* Buyer Card */}
+            <div className="group relative rounded-2xl border-2 border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-900 p-8 text-center hover:shadow-xl hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <ShoppingBag className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Buyer</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                Browse fresh produce from verified farmers, place bids on marketplace listings, and source directly from farms.
+              </p>
+              <Link href="/register/buyer" className="inline-flex items-center justify-center w-full px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors">
+                Register as Buyer
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <CTASection />
 
@@ -1203,7 +1287,7 @@ export default function HomePage() {
           <h3 className="text-2xl md:text-3xl font-bold text-green-700 dark:text-green-400 mb-8 text-center mobile-heading" data-aos="fade-down">
             🌾 From Kenyan Farms
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Maize Blooming Card */}
             <div data-aos="fade-up" className="relative group overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
@@ -1256,13 +1340,13 @@ export default function HomePage() {
           <h3 className="text-center text-gray-600 dark:text-gray-400 font-bold text-lg md:text-xl mb-10 md:mb-14 tracking-[0.15em] uppercase">
             Powered By
           </h3>
-          
+
           {/* Marquee Container with Overflow Hidden */}
           <div className="relative w-full overflow-hidden">
             {/* Gradient Fade Overlays */}
             <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-white via-white/90 to-transparent dark:from-gray-950 dark:via-gray-950/90 dark:to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-white via-white/90 to-transparent dark:from-gray-950 dark:via-gray-950/90 dark:to-transparent z-10 pointer-events-none" />
-            
+
             {/* Scrolling Logo Track - True Infinite Scroll with Multiple Duplicates */}
             <div className="marquee-container">
               <div className="marquee-content items-center">
@@ -1273,7 +1357,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png"
@@ -1281,7 +1365,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://earthengine.google.com/static/images/earth_engine_logo.png"
@@ -1289,7 +1373,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png"
@@ -1297,7 +1381,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp"
@@ -1305,7 +1389,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <div className="bg-white dark:bg-gray-100 rounded-xl p-3 shadow-md">
                     <img
@@ -1315,7 +1399,7 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png"
@@ -1323,7 +1407,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png"
@@ -1331,7 +1415,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png"
@@ -1339,7 +1423,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png"
@@ -1347,8 +1431,8 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-              
-              {/* Duplicate Set 1 - For seamless infinite scroll */}
+
+                {/* Duplicate Set 1 - For seamless infinite scroll */}
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg"
@@ -1356,7 +1440,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png"
@@ -1364,7 +1448,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://earthengine.google.com/static/images/earth_engine_logo.png"
@@ -1372,7 +1456,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png"
@@ -1380,7 +1464,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp"
@@ -1388,7 +1472,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <div className="bg-white dark:bg-gray-100 rounded-xl p-3 shadow-md">
                     <img
@@ -1398,7 +1482,7 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png"
@@ -1406,7 +1490,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png"
@@ -1414,7 +1498,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png"
@@ -1422,7 +1506,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png"
@@ -1430,8 +1514,8 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-              
-              {/* Duplicate Set 2 - For extra smooth infinite scroll */}
+
+                {/* Duplicate Set 2 - For extra smooth infinite scroll */}
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg"
@@ -1439,7 +1523,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://learn.digitalearthafrica.org/static/NewThemeUpdated/images/logo.79a4f6b72027.png"
@@ -1447,7 +1531,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://earthengine.google.com/static/images/earth_engine_logo.png"
@@ -1455,7 +1539,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.esri.com/content/dam/esrisites/en-us/common/icons/product-logos/ArcGIS-Enterprise.png"
@@ -1463,7 +1547,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://www.star-idaz.net/wp-content/uploads/2024/07/kalro-logo.webp"
@@ -1471,7 +1555,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <div className="bg-white dark:bg-gray-100 rounded-xl p-3 shadow-md">
                     <img
@@ -1481,7 +1565,7 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://mespt.org/wp-content/uploads/2019/07/MESPT_Logo-jpg.png"
@@ -1489,7 +1573,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://res.cloudinary.com/startup-grind/image/upload/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-africastalking/events/484x304.png"
@@ -1497,7 +1581,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://enablinginnovation.africa/wp-content/uploads/2022/07/riis-logo-transparent.png"
@@ -1505,7 +1589,7 @@ export default function HomePage() {
                     className="max-w-full max-h-full object-contain filter grayscale-[30%] hover:grayscale-0 transition-all duration-300"
                   />
                 </div>
-                
+
                 <div className="flex-shrink-0 w-32 md:w-40 h-16 md:h-20 flex items-center justify-center transition-transform duration-300 hover:scale-110">
                   <img
                     src="https://uonbi.ac.ke/sites/default/files/UoN_Logo.png"
@@ -1528,18 +1612,18 @@ export default function HomePage() {
                 <div className="flex items-center">
                   <Image
                     src="/BloomWatch.png"
-                    alt="BloomWatch Kenya Logo"
-                    width={70}
-                    height={70}
-                    className="h-auto ml-6"
+                    alt="Smart Shamba Logo"
+                    width={40}
+                    height={40}
+                    className="h-10 w-auto"
                   />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
-                  Shamba Smart
+                  Smart Shamba
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                Empowering Kenyan farmers with NASA satellite technology for smart crop monitoring and bloom detection
+                Empowering Kenyan farmers with satellite data, IoT sensors, AI crop advisory, disease detection, weather forecasts, and SMS/USSD alerts
               </p>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
@@ -1617,13 +1701,13 @@ export default function HomePage() {
                 <li>
                   <Link href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors flex items-center">
                     <Twitter className="h-3 w-3 mr-2" />
-                    @ShambaSmartKE
+                    @SmartShambaKE
                   </Link>
                 </li>
                 <li>
                   <Link href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 transition-colors flex items-center">
                     <Facebook className="h-3 w-3 mr-2" />
-                    /ShambaSmartKenya
+                    /SmartShambaKenya
                   </Link>
                 </li>
                 <li>
@@ -1641,11 +1725,11 @@ export default function HomePage() {
               </h4>
               <div className="space-y-2 mb-4">
                 <p className="text-xs text-gray-500 dark:text-gray-500 font-semibold">Powered by:</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">• NASA Space Apps</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">• NASA</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">• Digital Earth Africa</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">• Africa's Talking</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">• Google Earth Engine</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">• MongoDB Atlas</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">• PostgreSQL</p>
               </div>
               <ul className="space-y-3 mt-4">
                 <li>
@@ -1665,10 +1749,10 @@ export default function HomePage() {
           </div>
           <div className="mt-12 pt-8 border-t">
             <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-2">
-              Shamba Smart | Powered by Earth Observation Data
+              Smart Shamba | Powered by Earth Observation Data
             </p>
             <p className="text-center text-sm text-gray-500 dark:text-gray-500">
-              &copy; {new Date().getFullYear()} Shamba Smart. All rights reserved. Made with ❤️ for Kenyan farmers
+              &copy; {new Date().getFullYear()} Smart Shamba. All rights reserved. Made with ❤️ for Kenyan farmers
             </p>
           </div>
         </div>

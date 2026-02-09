@@ -1,0 +1,5 @@
+ id |    name    |     phone     | county |       crops        | language 
+----+------------+---------------+--------+--------------------+----------
+  1 | John Kamau | +254712345678 | Kiambu | ["maize", "beans"] | en
+(1 row)
+

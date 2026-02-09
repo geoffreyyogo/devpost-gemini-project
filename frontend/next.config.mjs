@@ -2,11 +2,11 @@
 const nextConfig = {
   reactStrictMode: false, // Disabled due to Leaflet map initialization conflicts
   // swcMinify is now default in Next.js 15+ and deprecated
-  
+
   // Environment variables
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-    NEXT_PUBLIC_APP_NAME: 'BloomWatch Kenya',
+    NEXT_PUBLIC_APP_NAME: 'Smart Shamba',
   },
 
   // Image optimization (updated for Next.js 15)

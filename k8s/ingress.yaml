@@ -1,0 +1,37 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Smart Shamba — Ingress (Traefik — default in k3s)
+# ═══════════════════════════════════════════════════════════════════════
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shamba-ingress
+  namespace: smart-shamba
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    cert-manager.io/cluster-issuer: letsencrypt-prod  # enable after cert-manager install
+spec:
+  rules:
+    # Frontend
+    - host: shamba.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+          # API proxy
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
+  # Uncomment after cert-manager setup
+  # tls:
+  #   - hosts:
+  #       - shamba.example.com
+  #     secretName: shamba-tls

@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import "@/lib/i18n"
 import { Toaster } from "@/components/ui/toaster"
 import { FloraChatWidget } from "@/components/chat/FloraChat"
 import { ThemeProvider } from "@/components/providers/theme-provider"
@@ -8,7 +9,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Shamba Smart - Smart Crop Monitoring",
+  title: "Smart Shamba - Smart Crop Monitoring",
   description: "NASA-powered bloom tracking platform for Kenyan farmers. Monitor crop health, receive bloom alerts, and optimize harvest timing.",
   keywords: ["agriculture", "Kenya", "crop monitoring", "bloom detection", "farming", "satellite data", "NDVI"],
   authors: [{ name: "Geoffrey Yogo" }],
@@ -16,13 +17,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_KE",
     url: "https://bloomwatch.co.ke",
-    title: "Shamba Smart - Smart Crop Monitoring",
+    title: "Smart Shamba - Smart Crop Monitoring",
     description: "NASA-powered bloom tracking platform for Kenyan farmers",
-    siteName: "Shamba Smart",
+    siteName: "Smart Shamba",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shamba Smart - Smart Crop Monitoring",
+    title: "Smart Shamba - Smart Crop Monitoring",
     description: "NASA-powered bloom tracking platform for Kenyan farmers",
   },
   robots: {

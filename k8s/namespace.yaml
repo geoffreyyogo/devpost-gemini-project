@@ -1,0 +1,9 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Smart Shamba — k3s / Kubernetes Namespace
+# ═══════════════════════════════════════════════════════════════════════
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: smart-shamba
+  labels:
+    app.kubernetes.io/part-of: smart-shamba

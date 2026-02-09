@@ -35,6 +35,11 @@ ENV/
 env.bak/
 venv.bak/
 
+# Credentials (NEVER commit)
+credentials/
+*.json.key
+*-service-account.json
+
 # IDEs
 .vscode/
 .idea/

@@ -1,5 +1,5 @@
 """
-Enhanced Earth Engine Pipeline for BloomWatch Kenya
+Enhanced Earth Engine Pipeline for Smart Shamba
 Fetches near-real-time satellite data with cloud filtering and error handling
 Processes NDVI, NDWI, rainfall data for bloom detection and ML training
 """
@@ -7,7 +7,6 @@ Processes NDVI, NDWI, rainfall data for bloom detection and ML training
 import ee
 import os
 import json
-import csv
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
@@ -46,15 +45,6 @@ except ImportError:
         start_date = end_date - timedelta(days=days_back)
         logger.info(f"Fetching most recent available data: {start_date.date()} to {end_date.date()}")
         return start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
-
-# Export directories
-EXPORT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'exports'))
-LIVE_DATA_DIR = os.path.join(EXPORT_DIR, 'live')
-HISTORICAL_DIR = os.path.join(EXPORT_DIR, 'historical')
-
-# Create directories
-for dir_path in [EXPORT_DIR, LIVE_DATA_DIR, HISTORICAL_DIR]:
-    os.makedirs(dir_path, exist_ok=True)
 
 # Kenya agricultural regions (Central Kenya and Rift Valley)
 KENYA_BBOX = [36.0, -1.5, 37.5, 0.5]  # [min_lon, min_lat, max_lon, max_lat]
@@ -210,7 +200,11 @@ class EarthEnginePipeline:
             temperature_data = self._fetch_temperature_data(start_str, end_str)
             results['temperature'] = temperature_data
             
-            # 5. Sentinel-2 high-resolution data (PRIMARY SOURCE - 10m resolution!)
+            # 5. Soil data (SoilGrids via OpenLandMap — static, updates rarely)
+            soil_data = self._fetch_soil_data()
+            results['soil'] = soil_data
+            
+            # 6. Sentinel-2 high-resolution data (PRIMARY SOURCE - 10m resolution!)
             # Priority: Sentinel-2 > MODIS > Landsat
             # Reason: Highest resolution (10m), best for bloom detection, includes ARI flower index
             if self.sentinel2_fetcher:
@@ -246,8 +240,8 @@ class EarthEnginePipeline:
             results['end_date'] = end_str
             results['region_bbox'] = self.bbox
             
-            # Save live data as CSV summaries
-            self._save_live_csv_data(results, end_datetime)
+            # Data persistence is handled by the caller (scheduler/fetcher)
+            # via db_service.save_county_data() — no CSV writes needed
             
             # Schedule GeoTIFF exports (optional - only if EE available)
             # Note: GeoTIFF exports are OPTIONAL and often fail
@@ -489,94 +483,112 @@ class EarthEnginePipeline:
             logger.error(f"Error fetching temperature data: {e}")
             return {'error': str(e)}
 
-    def _save_live_csv_data(self, results: Dict, timestamp: datetime):
-        """Save live data summaries as CSV files"""
+    def _fetch_soil_data(self) -> Dict:
+        """
+        Fetch soil properties from OpenLandMap / SoilGrids via Google Earth Engine.
+
+        Datasets (all static — no date filter needed):
+          - OpenLandMap/SOL/SOL_CLAY-WFRACTION_USDA-3A1A1A_M/v02  → clay %
+          - OpenLandMap/SOL/SOL_SAND-WFRACTION_USDA-3A1A1A_M/v02  → sand %
+          - OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02   → SOC g/kg
+          - OpenLandMap/SOL/SOL_PH-H2O_USDA-4C1A2A_M/v02         → pH × 10
+          - OpenLandMap/SOL/SOL_TEXTURE-CLASS_USDA-TT_M/v02       → USDA class
+
+        All values are sampled at 0 cm depth (b0 band) and reduced over
+        the region geometry.  Soil data changes extremely slowly so this is
+        effectively a one-time fetch per region.
+        """
         try:
-            # Prepare summary data
-            summary_data = {
-                'date': timestamp.strftime('%Y-%m-%d'),
-                'time': timestamp.strftime('%H:%M:%S'),
-                'region': 'Kenya',
-                'bbox': str(self.bbox)
+            # --- Clay fraction (%) ---
+            clay_img = ee.Image("OpenLandMap/SOL/SOL_CLAY-WFRACTION_USDA-3A1A1A_M/v02").select('b0')
+            clay_stats = clay_img.reduceRegion(
+                reducer=ee.Reducer.mean(), geometry=self.geometry,
+                scale=250, maxPixels=1e9,
+            ).getInfo()
+            clay_pct = clay_stats.get('b0', 0) or 0
+
+            # --- Sand fraction (%) ---
+            sand_img = ee.Image("OpenLandMap/SOL/SOL_SAND-WFRACTION_USDA-3A1A1A_M/v02").select('b0')
+            sand_stats = sand_img.reduceRegion(
+                reducer=ee.Reducer.mean(), geometry=self.geometry,
+                scale=250, maxPixels=1e9,
+            ).getInfo()
+            sand_pct = sand_stats.get('b0', 0) or 0
+
+            # --- Soil organic carbon (g/kg) ---
+            soc_img = ee.Image("OpenLandMap/SOL/SOL_ORGANIC-CARBON_USDA-6A1C_M/v02").select('b0')
+            soc_stats = soc_img.reduceRegion(
+                reducer=ee.Reducer.mean(), geometry=self.geometry,
+                scale=250, maxPixels=1e9,
+            ).getInfo()
+            soc_g_kg = (soc_stats.get('b0', 0) or 0) / 10.0  # raw is dg/kg → g/kg
+
+            # --- pH (in water) ---
+            ph_img = ee.Image("OpenLandMap/SOL/SOL_PH-H2O_USDA-4C1A2A_M/v02").select('b0')
+            ph_stats = ph_img.reduceRegion(
+                reducer=ee.Reducer.mean(), geometry=self.geometry,
+                scale=250, maxPixels=1e9,
+            ).getInfo()
+            ph_val = (ph_stats.get('b0', 0) or 0) / 10.0  # stored as pH × 10
+
+            # --- Texture class (categorical — use mode) ---
+            tex_img = ee.Image("OpenLandMap/SOL/SOL_TEXTURE-CLASS_USDA-TT_M/v02").select('b0')
+            tex_stats = tex_img.reduceRegion(
+                reducer=ee.Reducer.mode(), geometry=self.geometry,
+                scale=250, maxPixels=1e9,
+            ).getInfo()
+            tex_class = int(tex_stats.get('b0', 0) or 0)
+
+            # Map USDA texture class code to human-readable name
+            USDA_TEXTURE = {
+                1: 'Clay', 2: 'Silty clay', 3: 'Sandy clay',
+                4: 'Clay loam', 5: 'Silty clay loam', 6: 'Sandy clay loam',
+                7: 'Loam', 8: 'Silt loam', 9: 'Sandy loam',
+                10: 'Silt', 11: 'Loamy sand', 12: 'Sand',
             }
-            
-            # Add data from each source
-            for data_type, data in results.items():
-                if isinstance(data, dict) and 'error' not in data:
-                    if data_type == 'ndvi':
-                        summary_data.update({
-                            'ndvi_mean': data.get('ndvi_mean', 0),
-                            'ndvi_min': data.get('ndvi_min', 0),
-                            'ndvi_max': data.get('ndvi_max', 0),
-                            'ndvi_std': data.get('ndvi_std', 0),
-                            'modis_images': data.get('image_count', 0)
-                        })
-                    elif data_type == 'ndwi':
-                        summary_data.update({
-                            'ndwi_mean': data.get('ndwi_mean', 0),
-                            'ndwi_min': data.get('ndwi_min', 0),
-                            'ndwi_max': data.get('ndwi_max', 0),
-                            'landsat_images': data.get('image_count', 0),
-                            'cloud_threshold': data.get('cloud_threshold', 0)
-                        })
-                    elif data_type == 'rainfall':
-                        summary_data.update({
-                            'rainfall_total_mm': data.get('total_rainfall_mm', 0),
-                            'rainfall_avg_daily_mm': data.get('avg_daily_mm', 0),
-                            'rainfall_images': data.get('image_count', 0)
-                        })
-                    elif data_type == 'temperature':
-                        summary_data.update({
-                            'temperature_mean_c': data.get('temp_mean_c', 0),
-                            'temperature_min_c': data.get('temp_min_c', 0),
-                            'temperature_max_c': data.get('temp_max_c', 0),
-                            'temperature_images': data.get('image_count', 0)
-                        })
-                    elif data_type == 'sentinel2':
-                        summary_data.update({
-                            'sentinel2_images': data.get('image_count', 0),
-                            'sentinel2_resolution_m': data.get('resolution', '10m'),
-                            'sentinel2_ari_mean': data.get('ari_mean', 0),
-                            'sentinel2_ari_min': data.get('ari_min', 0),
-                            'sentinel2_ari_max': data.get('ari_max', 0),
-                            'sentinel2_ndvi_mean': data.get('ndvi_mean', 0),
-                            'sentinel2_ndvi_min': data.get('ndvi_min', 0),
-                            'sentinel2_ndvi_max': data.get('ndvi_max', 0),
-                            'sentinel2_ndwi_mean': data.get('ndwi_mean', 0),
-                            'sentinel2_ndwi_min': data.get('ndwi_min', 0),
-                            'sentinel2_ndwi_max': data.get('ndwi_max', 0)
-                        })
-                    elif data_type == 'bloom_area':
-                        summary_data.update({
-                            'bloom_area_km2': data.get('bloom_area_km2', 0),
-                            'bloom_percentage': data.get('bloom_percentage', 0),
-                            'bloom_method': data.get('method', 'N/A')
-                        })
-            
-            # Save to CSV file
-            csv_filename = f"live_data_{timestamp.strftime('%Y%m%d_%H%M%S')}.csv"
-            csv_path = os.path.join(LIVE_DATA_DIR, csv_filename)
-            
-            # Write CSV
-            with open(csv_path, 'w', newline='') as csvfile:
-                fieldnames = list(summary_data.keys())
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerow(summary_data)
-            
-            logger.info(f"Live data saved to: {csv_path}")
-            
-            # Also save latest data (for easy access)
-            latest_csv = os.path.join(LIVE_DATA_DIR, 'latest_live_data.csv')
-            with open(latest_csv, 'w', newline='') as csvfile:
-                fieldnames = list(summary_data.keys())
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerow(summary_data)
-            
+            soil_type = USDA_TEXTURE.get(tex_class, f'Class {tex_class}')
+
+            # --- Soil moisture proxy from ERA5-Land (dynamic) ---
+            # ERA5-Land volumetric soil water layer 1 (0-7 cm)
+            try:
+                from datetime import datetime as _dt, timedelta as _td
+                end_d = _dt.now() - _td(days=5)
+                start_d = end_d - _td(days=7)
+                sm_col = (ee.ImageCollection("ECMWF/ERA5_LAND/DAILY_AGGR")
+                          .filterBounds(self.geometry)
+                          .filterDate(start_d.strftime('%Y-%m-%d'), end_d.strftime('%Y-%m-%d'))
+                          .select('volumetric_soil_water_layer_1'))
+                sm_mean_img = sm_col.mean()
+                sm_stats = sm_mean_img.reduceRegion(
+                    reducer=ee.Reducer.mean(), geometry=self.geometry,
+                    scale=11132, maxPixels=1e9,
+                ).getInfo()
+                soil_moisture_pct = (sm_stats.get('volumetric_soil_water_layer_1', 0) or 0) * 100
+            except Exception as sm_err:
+                logger.warning(f"ERA5 soil moisture fetch failed, using estimate: {sm_err}")
+                soil_moisture_pct = None
+
+            logger.info(f"✅ Soil data: clay={clay_pct:.1f}%, sand={sand_pct:.1f}%, "
+                        f"SOC={soc_g_kg:.1f}g/kg, pH={ph_val:.1f}, type={soil_type}, "
+                        f"moisture={soil_moisture_pct:.1f}%" if soil_moisture_pct else
+                        f"✅ Soil data: clay={clay_pct:.1f}%, sand={sand_pct:.1f}%, "
+                        f"SOC={soc_g_kg:.1f}g/kg, pH={ph_val:.1f}, type={soil_type}")
+
+            return {
+                'source': 'OpenLandMap/SoilGrids + ERA5-Land',
+                'soil_clay_pct': float(clay_pct),
+                'soil_sand_pct': float(sand_pct),
+                'soil_organic_carbon': float(soc_g_kg),
+                'soil_ph': float(ph_val),
+                'soil_type': soil_type,
+                'soil_moisture_pct': float(soil_moisture_pct) if soil_moisture_pct is not None else None,
+                'texture_class_code': tex_class,
+            }
+
         except Exception as e:
-            logger.error(f"Error saving CSV data: {e}")
-    
+            logger.error(f"Error fetching soil data: {e}")
+            return {'error': str(e)}
+
     def _schedule_geotiff_exports(self, results: Dict, timestamp: datetime) -> List[str]:
         """
         Schedule GeoTIFF exports to Google Drive (optional)
@@ -767,7 +779,7 @@ class EarthEnginePipeline:
     def schedule_model_training(self):
         """Schedule ML model training with fresh data"""
         try:
-            from train_model import train_bloom_model
+            from train_model_pytorch import train_bloom_model
             
             logger.info("Scheduling model training with fresh data")
             
@@ -998,7 +1010,7 @@ if __name__ == "__main__":
             for task in live_data['export_tasks']:
                 print(f"  • {task}")
         
-        print(f"\n📁 Data saved to: {LIVE_DATA_DIR}")
+        print(f"\n📁 Data persisted to PostgreSQL")
         
     except Exception as e:
         print(f"❌ Pipeline test failed: {e}")

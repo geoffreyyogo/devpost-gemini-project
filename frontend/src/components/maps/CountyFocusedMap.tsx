@@ -1,13 +1,14 @@
 /**
- * County Focused Map Component
- * Reuses KenyaClimateMap but zoomed to farmer's specific county
+ * County / Sub-County Focused Map Component
+ * Shows farmer's exact sub-county with satellite data overlay.
+ * Falls back to county-level view when sub-county is not provided.
  */
 
 'use client'
 
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Loader2, MapPin, Sprout, Thermometer, CloudRain, Droplets, Activity, Flower2 } from 'lucide-react'
+import { Loader2, MapPin, Sprout, Thermometer, CloudRain, Droplets, Activity, Flower2, Wind, Gauge } from 'lucide-react'
 
 // Dynamic import to avoid SSR issues with Leaflet
 const MapContainer = dynamic(
@@ -36,6 +37,9 @@ import type { CountyMarker } from '@/lib/mapApi'
 
 interface CountyFocusedMapProps {
   countyName: string
+  subCounty?: string
+  farmLat?: number
+  farmLon?: number
 }
 
 // Kenya county coordinates (approximate centers)
@@ -88,7 +92,7 @@ const COUNTY_COORDS: Record<string, [number, number]> = {
   'Nyamira': [-0.5667, 34.9333],
 }
 
-export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
+export function CountyFocusedMap({ countyName, subCounty, farmLat, farmLon }: CountyFocusedMapProps) {
   const [markers, setMarkers] = useState<CountyMarker[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -96,9 +100,8 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
   useEffect(() => {
     async function loadMapData() {
       try {
-        console.log('Loading map data for county:', countyName)
+        console.log('Loading map data for:', subCounty || countyName)
         const data = await getLiveMapData()
-        console.log('Map data loaded:', data)
         
         // Find the specific county marker
         const countyMarker = data.markers.find(
@@ -108,7 +111,6 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
         if (countyMarker) {
           setMarkers([countyMarker])
         } else {
-          // If not found in API, still show the map with all markers
           console.log('County not found in API, showing all markers')
           setMarkers(data.markers || [])
         }
@@ -122,7 +124,7 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
     }
 
     loadMapData()
-  }, [countyName])
+  }, [countyName, subCounty])
 
   if (loading) {
     return (
@@ -144,9 +146,13 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
     )
   }
 
-  // Get center coordinates for the county
-  const center: [number, number] = COUNTY_COORDS[countyName] || [-0.0236, 37.9062]
-  const zoom = 9 // Zoom in to county level
+  // Determine map center: prefer farm coords > county fallback > Kenya center
+  const hasFarmCoords = farmLat && farmLon && farmLat !== 0 && farmLon !== 0
+  const center: [number, number] = hasFarmCoords
+    ? [farmLat!, farmLon!]
+    : COUNTY_COORDS[countyName] || [-0.0236, 37.9062]
+  // Zoom to sub-county level when we have precise coordinates, else county level
+  const zoom = hasFarmCoords ? 12 : 9
 
   const getMarkerColor = (bloomProbabilityStr: string, temperatureStr: string) => {
     // Support both numeric percentages (e.g. 52.3) and strings like "52%"
@@ -210,23 +216,25 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
             <CircleMarker
               key={marker.name + index}
               center={[marker.lat, marker.lon]}
-              radius={isMainCounty ? 20 : 12} // Larger for main county
+              radius={isMainCounty ? 20 : 12}
               fillColor={getMarkerColor(marker.bloom_probability, marker.temperature)}
-              color={isMainCounty ? "#1e40af" : "#ffffff"} // Blue border for main county
+              color={isMainCounty ? "#1e40af" : "#ffffff"}
               weight={isMainCounty ? 4 : 2}
               opacity={1}
               fillOpacity={isMainCounty ? 0.9 : 0.6}
             >
               <Popup maxWidth={350} className="custom-popup">
                 <div className="min-w-[280px]">
-                  {/* Header with County Name */}
+                  {/* Header */}
                   <div className="bg-gradient-to-r from-green-600 to-green-700 dark:from-green-700 dark:to-green-800 px-4 py-4 -m-3 mb-3 rounded-t-lg">
                     <h3 className="font-bold text-white text-lg flex items-center gap-2 mb-1.5">
                       <MapPin className="h-5 w-5" />
-                      {marker.name}
-                      {isMainCounty && <span className="ml-auto text-xs bg-blue-500 px-2 py-1 rounded">Your County</span>}
+                      {isMainCounty && subCounty ? `${subCounty}, ${marker.name}` : marker.name}
+                      {isMainCounty && <span className="ml-auto text-xs bg-blue-500 px-2 py-1 rounded">Your Area</span>}
                     </h3>
-                    <p className="text-xs text-green-100">NASA Satellite Data</p>
+                    <p className="text-xs text-green-100">
+                      {isMainCounty && subCounty ? 'Sub-County Satellite Data' : 'NASA Satellite Data'}
+                    </p>
                   </div>
 
                   <div className="p-4 bg-white dark:bg-gray-900">
@@ -316,6 +324,33 @@ export function CountyFocusedMap({ countyName }: CountyFocusedMapProps) {
             </CircleMarker>
           )
         })}
+
+        {/* Farm location pin */}
+        {hasFarmCoords && (
+          <CircleMarker
+            center={[farmLat!, farmLon!]}
+            radius={8}
+            fillColor="#3b82f6"
+            color="#1e3a8a"
+            weight={3}
+            opacity={1}
+            fillOpacity={1}
+          >
+            <Popup>
+              <div className="text-center p-2">
+                <p className="font-bold text-sm flex items-center gap-1 justify-center">
+                  <MapPin className="h-4 w-4 text-blue-600" /> Your Farm
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {subCounty ? `${subCounty}, ${countyName}` : countyName}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {farmLat!.toFixed(4)}°, {farmLon!.toFixed(4)}°
+                </p>
+              </div>
+            </Popup>
+          </CircleMarker>
+        )}
       </MapContainer>
     </div>
   )
