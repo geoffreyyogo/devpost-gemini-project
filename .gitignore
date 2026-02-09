@@ -55,6 +55,7 @@ credentials/
 .Trashes
 ehthumbs.db
 Thumbs.db
+*:Zone.Identifier
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -76,3 +77,19 @@ Thumbs.db
 # Keep README.md tracked
 *.md
 !README.md
+
+# Architecture docs
+/architecture/
+
+# Large binary files (3D models, ML weights)
+*.glb
+*.safetensors
+*.pt
+*.onnx
+
+# Next.js build output
+frontend/.next/
+
+# Duplicate root-level public/ (frontend/public/ is the real one)
+/public/
+
