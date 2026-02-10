@@ -43,7 +43,6 @@ xarray==2024.1.0
 # ── SMS: Africa's Talking ───────────────────────────────────────────
 requests==2.31.0
 
-# ── Utilities ────────────────────────────────────────────────────────
 python-dotenv==1.0.0
 schedule==1.2.0
 python-dateutil==2.8.0
@@ -51,6 +50,8 @@ bcrypt==4.1.0
 certifi==2023.7.0
 Pillow==10.0.0
 httpx==0.27.0
+# Build tools for source packages
+setuptools
 
 # ── Testing ──────────────────────────────────────────────────────────
 pytest==8.0.0
