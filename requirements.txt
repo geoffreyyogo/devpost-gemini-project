@@ -20,7 +20,7 @@ sqlalchemy[asyncio]==2.0.29
 # ── IoT / MQTT ──────────────────────────────────────────────────────
 paho-mqtt==2.1.0
 
-torch==2.0.0
+torch==2.0.1
 # To install CUDA-enabled builds in a GPU environment, use:
 # pip install torch==2.0.0+cu117 torchvision==0.15.0 --index-url https://download.pytorch.org/whl/cu117
 torchvision==0.15.2
