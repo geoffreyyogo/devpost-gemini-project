@@ -539,8 +539,8 @@ class DiseaseDetectionService:
             return None
 
     def get_training_samples(
-        self, unused_only: bool = True, min_confidence: float = 0.6,
-        min_correlation: float = 0.33, limit: int = 500,
+        self, unused_only: bool = True, min_confidence: Optional[float] = 0.6,
+        min_correlation: Optional[float] = 0.33, limit: int = 500,
     ) -> List[Dict]:
         """
         Retrieve multimodal training samples for model retraining.
@@ -552,25 +552,29 @@ class DiseaseDetectionService:
             limit: Max samples to return
         """
         try:
-            from database.connection import get_sync_session
-            from database.models import MultimodalTrainingSample
+            from server.database.connection import get_sync_session
+            from server.database.models import MultimodalTrainingSample
             from sqlmodel import select
 
             with get_sync_session() as session:
                 stmt = select(MultimodalTrainingSample)
                 if unused_only:
                     stmt = stmt.where(MultimodalTrainingSample.used_in_training == False)
-                stmt = stmt.where(
-                    MultimodalTrainingSample.cnn_confidence.isnot(None)
-                ).where(
-                    MultimodalTrainingSample.cnn_confidence >= min_confidence
-                ).where(
-                    MultimodalTrainingSample.correlation_score.isnot(None)
-                ).where(
-                    MultimodalTrainingSample.correlation_score >= min_correlation
-                ).order_by(
-                    MultimodalTrainingSample.created_at.desc()
-                ).limit(limit)
+                from sqlalchemy import and_
+                # Defensive: ensure columns are not None (should be SQLAlchemy InstrumentedAttribute)
+                cnn_conf = getattr(MultimodalTrainingSample, 'cnn_confidence', None)
+                corr_score = getattr(MultimodalTrainingSample, 'correlation_score', None)
+                if min_confidence is not None and cnn_conf is not None:
+                    stmt = stmt.where(and_(
+                        cnn_conf.isnot(None),
+                        cnn_conf >= min_confidence
+                    ))
+                if min_correlation is not None and corr_score is not None:
+                    stmt = stmt.where(and_(
+                        corr_score.isnot(None),
+                        corr_score >= min_correlation
+                    ))
+                stmt = stmt.order_by(MultimodalTrainingSample.created_at.desc()).limit(limit)
 
                 samples = session.exec(stmt).all()
                 return [

@@ -1,7 +1,0 @@
-Requirement already satisfied: africastalking in ./venv/lib/python3.12/site-packages (1.2.6)
-Requirement already satisfied: requests>=v2.18.4 in ./venv/lib/python3.12/site-packages (from africastalking) (2.31.0)
-Requirement already satisfied: schema>=0.6.7 in ./venv/lib/python3.12/site-packages (from africastalking) (0.7.7)
-Requirement already satisfied: charset-normalizer<4,>=2 in ./venv/lib/python3.12/site-packages (from requests>=v2.18.4->africastalking) (3.4.3)
-Requirement already satisfied: idna<4,>=2.5 in ./venv/lib/python3.12/site-packages (from requests>=v2.18.4->africastalking) (3.10)
-Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.12/site-packages (from requests>=v2.18.4->africastalking) (2.5.0)
-Requirement already satisfied: certifi>=2017.4.17 in ./venv/lib/python3.12/site-packages (from requests>=v2.18.4->africastalking) (2025.8.3)

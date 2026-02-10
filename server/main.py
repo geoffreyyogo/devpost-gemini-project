@@ -1,7 +1,12 @@
+
 """
 Smart Shamba - FastAPI Server
 Exposes RESTful API endpoints for Next.js frontend consumption
 """
+
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from fastapi import FastAPI, HTTPException, Depends, status, Header, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +18,6 @@ from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 from collections import defaultdict
-import logging
 import os
 import json
 import time
@@ -344,12 +348,7 @@ cors_origins = [
     "http://127.0.0.1:3001",
     "http://172.18.54.46:3000",
     "http://172.18.54.46:3001",
-    "https://bloomwatch.co.ke",
-    "https://www.bloomwatch.co.ke",
-    "https://bloomwatch-nextjs.onrender.com",
-    "https://bloomwatch-nextjs-oomk.onrender.com",
-    "https://bloomwatch-app.onrender.com",
-    "https://smartfarm-app.onrender.com"
+    "https://smart-shamba-app.onrender.com"
 ]
 
 # Add CORS origins from environment variable if available
@@ -1346,31 +1345,39 @@ async def get_dashboard(farmer: Dict = Depends(get_current_farmer)):
         ndvi_history = []
         
         historical_rows = climate_data.get('history', [])
+        # Defensive: ensure historical_rows is iterable (not float)
+        if not isinstance(historical_rows, (list, tuple)):
+            historical_rows = []
         if historical_rows:
             # Use real historical data from gee_county_data table
             for row in historical_rows:
+                if not isinstance(row, dict):
+                    continue
                 obs_date = row.get('observation_date')
                 if obs_date:
                     date_str = obs_date if isinstance(obs_date, str) else obs_date.isoformat()
                 else:
                     continue
-                
                 ndvi_val = row.get('ndvi')
                 if ndvi_val is not None:
-                    ndvi_history.append({
-                        "date": date_str,
-                        "ndvi": round(float(ndvi_val), 4)
-                    })
-                
+                    try:
+                        ndvi_history.append({
+                            "date": date_str,
+                            "ndvi": round(float(ndvi_val), 4)
+                        })
+                    except Exception:
+                        continue
                 temp = row.get('temperature_mean_c')
                 rain = row.get('rainfall_mm')
                 if temp is not None or rain is not None:
-                    climate_history.append({
-                        "date": date_str,
-                        "temperature": round(float(temp), 1) if temp is not None else None,
-                        "rainfall": round(float(rain), 1) if rain is not None else None,
-                    })
-            
+                    try:
+                        climate_history.append({
+                            "date": date_str,
+                            "temperature": round(float(temp), 1) if temp is not None else None,
+                            "rainfall": round(float(rain), 1) if rain is not None else None,
+                        })
+                    except Exception:
+                        continue
             # Sort by date ascending for chart rendering
             ndvi_history.sort(key=lambda x: x['date'])
             climate_history.sort(key=lambda x: x['date'])
@@ -1411,8 +1418,11 @@ async def get_dashboard(farmer: Dict = Depends(get_current_farmer)):
         
         # Calculate NDVI average from real history if available
         if ndvi_history:
-            ndvi_values = [r['ndvi'] for r in ndvi_history if r.get('ndvi') is not None]
-            ndvi_average = sum(ndvi_values) / len(ndvi_values) if ndvi_values else float(climate_data.get('ndvi', 0.6))
+            ndvi_values = [r['ndvi'] for r in ndvi_history if isinstance(r, dict) and r.get('ndvi') is not None]
+            if ndvi_values and isinstance(ndvi_values, list):
+                ndvi_average = sum(ndvi_values) / len(ndvi_values)
+            else:
+                ndvi_average = float(climate_data.get('ndvi', 0.6))
         else:
             ndvi_average = float(climate_data.get('ndvi', 0.6))
         

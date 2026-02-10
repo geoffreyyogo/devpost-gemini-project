@@ -1,8 +1,8 @@
-# BloomWatch Kenya - Frontend (Next.js)
+# Smart Shamba - Frontend (Next.js)
 
 ## Overview
 
-This is the complete Next.js + TypeScript + Tailwind CSS conversion of the BloomWatch Kenya Streamlit application. Built with modern React best practices and a security-first approach.
+This is the complete Next.js + TypeScript + Tailwind CSS for Smart ShambaBuilt with modern React best practices and a security-first approach.
 
 ## Tech Stack
 
