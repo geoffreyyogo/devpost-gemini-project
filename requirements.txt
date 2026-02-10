@@ -21,7 +21,7 @@ sqlalchemy[asyncio]==2.0.29
 paho-mqtt==2.1.0
 
 # ── Machine Learning: PyTorch + Vision + Serialisation ───────────────
-torch==2.0.0
+torch==2.0.0+cu117
 torchvision==0.15.0
 safetensors==0.4.0
 numpy==1.26.0
