@@ -5,8 +5,11 @@ Exposes RESTful API endpoints for Next.js frontend consumption
 """
 
 import logging
+import sys
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logger.info("=== [STARTUP] main.py loaded ===")
+print("=== [STARTUP] main.py loaded ===", file=sys.stderr)
 
 from fastapi import FastAPI, HTTPException, Depends, status, Header, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -211,47 +214,51 @@ from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan event handler"""
-    # Startup
-    logger.info("=" * 60)
-    logger.info("🌾 Smart Shamba FastAPI Server")
-    logger.info("=" * 60)
-    logger.info(f"PostgreSQL Connected: {db_service.is_connected()}")
-    logger.info(f"Flora AI Available: {flora_service is not None}")
-    logger.info(f"USSD Service Ready: {ussd_service is not None}")
-    logger.info(f"Data Loader Ready: {data_loader is not None}")
-    logger.info("=" * 60)
-    logger.info("Server ready to accept requests")
-    logger.info("API Documentation: http://localhost:8000/api/docs")
-    logger.info("=" * 60)
-    
-    # Start background NASA data fetch task
-    background_task = asyncio.create_task(fetch_nasa_data_background())
-    logger.info("🛰️  Background NASA data fetcher started")
-    
-    # Start scheduler service for weekly data fetches
-    if scheduler_service:
-        await scheduler_service.start()
-        logger.info("📅 Scheduler service started (weekly data fetch enabled)")
-    
-    # Start MQTT IoT subscriber (non-blocking)
-    if iot_service:
-        iot_service.start_mqtt()
-        # Setup TimescaleDB continuous aggregates
-        try:
-            iot_service.setup_continuous_aggregates()
-        except Exception as e:
-            logger.warning(f"Continuous aggregates setup: {e}")
-    
-    yield
-    
-    # Shutdown
-    logger.info("Shutting down Smart Shamba API...")
-    background_task.cancel()
-    if iot_service:
-        iot_service.stop_mqtt()
-    if scheduler_service:
-        await scheduler_service.stop()
-        logger.info("Scheduler service stopped")
+    try:
+        logger.info("=== [LIFESPAN] Startup event triggered ===")
+        print("=== [LIFESPAN] Startup event triggered ===", file=sys.stderr)
+        # Startup
+        logger.info("=" * 60)
+        logger.info("🌾 Smart Shamba FastAPI Server")
+        logger.info("=" * 60)
+        logger.info(f"PostgreSQL Connected: {db_service.is_connected()}")
+        logger.info(f"Flora AI Available: {flora_service is not None}")
+        logger.info(f"USSD Service Ready: {ussd_service is not None}")
+        logger.info(f"Data Loader Ready: {data_loader is not None}")
+        logger.info("=" * 60)
+        logger.info("Server ready to accept requests")
+        logger.info("API Documentation: http://localhost:8000/api/docs")
+        logger.info("=" * 60)
+        print("=== [LIFESPAN] Startup logging complete ===", file=sys.stderr)
+        # Start background NASA data fetch task
+        background_task = asyncio.create_task(fetch_nasa_data_background())
+        logger.info("🛰️  Background NASA data fetcher started")
+        # Start scheduler service for weekly data fetches
+        if scheduler_service:
+            await scheduler_service.start()
+            logger.info("📅 Scheduler service started (weekly data fetch enabled)")
+        # Start MQTT IoT subscriber (non-blocking)
+        if iot_service:
+            iot_service.start_mqtt()
+            # Setup TimescaleDB continuous aggregates
+            try:
+                iot_service.setup_continuous_aggregates()
+            except Exception as e:
+                logger.warning(f"Continuous aggregates setup: {e}")
+        print("=== [LIFESPAN] Startup complete, yielding control ===", file=sys.stderr)
+        yield
+        # Shutdown
+        logger.info("Shutting down Smart Shamba API...")
+        background_task.cancel()
+        if iot_service:
+            iot_service.stop_mqtt()
+        if scheduler_service:
+            await scheduler_service.stop()
+            logger.info("Scheduler service stopped")
+    except Exception as e:
+        logger.error(f"[LIFESPAN] Exception during startup: {e}")
+        print(f"[LIFESPAN] Exception during startup: {e}", file=sys.stderr)
+        raise
 
 # Initialize FastAPI app with lifespan
 app = FastAPI(
