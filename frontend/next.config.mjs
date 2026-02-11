@@ -3,9 +3,11 @@ const nextConfig = {
   reactStrictMode: false, // Disabled due to Leaflet map initialization conflicts
   // swcMinify is now default in Next.js 15+ and deprecated
 
+  output: 'standalone', // Required for Docker standalone build
+
   // Environment variables
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || '/api', // Use relative path for Traefik
     NEXT_PUBLIC_APP_NAME: 'Smart Shamba',
   },
 

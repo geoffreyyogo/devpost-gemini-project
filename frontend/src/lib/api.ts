@@ -382,6 +382,8 @@ class ApiClient {
         message,
         history,
         conversation_id: conversationId,
+      }, {
+        timeout: 90000, // Chat AI calls can take longer than normal API requests
       })
       return {
         reply: response.data.data?.reply || 'Sorry, I could not process your request.',

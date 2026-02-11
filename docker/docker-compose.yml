@@ -45,6 +45,57 @@ services:
       timeout: 10s
       retries: 3
 
+  # ── Redis (Caching) ────────────────────────────────────────────────
+  redis:
+    image: redis:alpine
+    container_name: shamba-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── RabbitMQ (Message Queue) ───────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: shamba-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Traefik (Load Balancer) ────────────────────────────────────────
+  traefik:
+    image: traefik:v2.10
+    container_name: shamba-traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+
   # ── FastAPI Backend ────────────────────────────────────────────────
   backend:
     build:
@@ -57,6 +108,16 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ../.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
     environment:
       # Database
       POSTGRES_HOST: db
@@ -94,9 +155,13 @@ services:
       backend:
         condition: service_healthy
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
-    ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      NEXT_PUBLIC_API_URL: http://localhost:80/api  # Accessed via Traefik now
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+    # ports:  <-- Optional: keep for direct dev access, or comment out to force Traefik
+    #   - "${FRONTEND_PORT:-3000}:3000"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
       interval: 30s
@@ -107,3 +172,5 @@ volumes:
   pgdata:
   mosquitto_data:
   mosquitto_log:
+  redis_data:
+  rabbitmq_data:

@@ -85,6 +85,11 @@ except ImportError:
 class FloraAIService:
     """AI agricultural assistant powered by Gemini + pgvector RAG."""
 
+    # Timeout (seconds) for each Gemini HTTP request.
+    # Vertex AI can hang for minutes before returning 499 CANCELLED;
+    # this ensures we fail fast and fall back to the API key client.
+    _GEMINI_TIMEOUT_SECS: int = 30
+
     def __init__(self, db_service=None, weather_service=None):
         self.api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         self.use_vertex = os.getenv("GOOGLE_GENAI_USE_VERTEXAI", "").lower() in ("true", "1", "yes")
@@ -97,12 +102,18 @@ class FloraAIService:
         # Keep both clients so we can fallback at call-time
         self._vertex_client = None
         self._apikey_client = None
+        # Track consecutive Vertex AI failures to proactively swap backend
+        self._vertex_fail_count = 0
+        self._VERTEX_FAIL_THRESHOLD = 2
+
+        # HTTP options — each client uses its own default api_version
+        _http_opts = genai_types.HttpOptions()  # type: ignore[union-attr]
 
         if not GEMINI_AVAILABLE:
             self.client = None
             logger.warning("⚠ google-genai not installed.")
         else:
-            self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+            self.model_name = os.getenv("GEMINI_MODEL", "gemini-3.0-flash-001")
 
             # --- Try Vertex AI first ---
             if self.use_vertex and self.vertex_project:
@@ -111,6 +122,7 @@ class FloraAIService:
                         vertexai=True,
                         project=self.vertex_project,
                         location=self.vertex_location,
+                        http_options=_http_opts,
                     )
                     self.client = self._vertex_client
                     self.backend = 'vertex'
@@ -123,7 +135,11 @@ class FloraAIService:
             # --- Try Gemini API key (primary or fallback) ---
             if self.api_key:
                 try:
-                    self._apikey_client = genai.Client(api_key=self.api_key, vertexai=False)  # type: ignore[union-attr]
+                    self._apikey_client = genai.Client(  # type: ignore[union-attr]
+                        api_key=self.api_key,
+                        vertexai=False,
+                        http_options=_http_opts,
+                    )
                     if not self.gemini_available:
                         self.client = self._apikey_client
                         self.backend = 'api_key'
@@ -304,6 +320,131 @@ class FloraAIService:
             if re.search(rf'\b{re.escape(crop)}\b', text_lower):
                 result["crops"].append(crop)
 
+        # --- Match livestock ---
+        livestock_keywords = [
+            "cattle", "cows", "bulls", "dairy", "goats", "sheep", "poultry",
+            "chickens", "pigs", "rabbits", "donkeys", "camels", "bees",
+            "fish", "tilapia", "catfish", "ducks", "turkeys", "quail",
+            "ng'ombe", "mbuzi", "kondoo", "kuku", "nguruwe", "sungura",  # Swahili
+        ]
+        result["livestock"] = []
+        for animal in livestock_keywords:
+            if re.search(rf'\b{re.escape(animal)}\b', text_lower):
+                result["livestock"].append(animal)
+
+        # --- Extract farm size ---
+        size_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:acres?|hectares?|ha)\b', text_lower)
+        result["farm_size"] = size_match.group(0) if size_match else None
+
+        return result
+
+    # ------------------------------------------------------------------ #
+    #  Conversation context building — unified for all paths
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _format_conversation_turns(
+        chat_history: List[Dict], max_turns: int = 10
+    ) -> str:
+        """Format chat history into a structured conversation transcript.
+
+        Handles both frontend format ({role, content}) and DB format
+        ({role, message, response}).  Returns at most *max_turns* of the
+        most recent messages.
+        """
+        if not chat_history:
+            return "(no previous messages)"
+
+        recent = chat_history[-max_turns:]
+        lines: List[str] = []
+        for turn in recent:
+            role = turn.get("role", "user")
+            # Frontend sends 'content'; DB stores 'message' + 'response'
+            text = turn.get("content") or turn.get("message") or turn.get("parts") or ""
+            label = "Farmer" if role == "user" else "Flora"
+            # Truncate very long messages to keep prompt manageable
+            if len(text) > 400:
+                text = text[:400] + "…"
+            lines.append(f"{label}: {text}")
+            # If DB format has a response on the same row, add it
+            resp = turn.get("response")
+            if resp:
+                if len(resp) > 400:
+                    resp = resp[:400] + "…"
+                lines.append(f"Flora: {resp}")
+        return "\n".join(lines)
+
+    def _build_conversation_context(
+        self,
+        chat_history: Optional[List[Dict]],
+        user_message: str,
+        farmer_data: Optional[Dict] = None,
+        past_conversations: Optional[List[Dict]] = None,
+    ) -> Dict:
+        """Build comprehensive conversational context for the LLM.
+
+        Returns a dict with:
+          - conversation_turns:  str  (formatted recent messages)
+          - accumulated_profile: Dict (inferred profile for unauth users,
+                                       or enriched farmer_data for auth)
+          - past_sessions:       str  (auth only: summaries of recent chats)
+        """
+        result: Dict = {
+            "conversation_turns": self._format_conversation_turns(
+                chat_history or []
+            ),
+            "accumulated_profile": {},
+            "past_sessions": "",
+        }
+
+        # -------- Accumulate profile from conversation (unauth) -------- #
+        if not farmer_data:
+            accumulated: Dict = {
+                "county": None, "county_id": None, "sub_county": None,
+                "coordinates": None,
+                "crops": [], "livestock": [], "farm_size": None,
+            }
+            # Scan all history messages + current message for details
+            all_texts = [m.get("content") or m.get("message") or ""
+                         for m in (chat_history or [])]
+            all_texts.append(user_message)
+            for text in all_texts:
+                info = self._extract_location_from_text(text)
+                if not accumulated["county"] and info["county"]:
+                    accumulated["county"] = info["county"]
+                    accumulated["county_id"] = info["county_id"]
+                    accumulated["coordinates"] = info["coordinates"]
+                    accumulated["sub_county"] = info.get("sub_county")
+                for crop in info.get("crops", []):
+                    if crop not in accumulated["crops"]:
+                        accumulated["crops"].append(crop)
+                for animal in info.get("livestock", []):
+                    if animal not in accumulated["livestock"]:
+                        accumulated["livestock"].append(animal)
+                if not accumulated["farm_size"] and info.get("farm_size"):
+                    accumulated["farm_size"] = info["farm_size"]
+            result["accumulated_profile"] = accumulated
+
+        # ---------- Past conversation summaries (auth users) ---------- #
+        if past_conversations:
+            summaries: List[str] = []
+            for conv in past_conversations[:3]:
+                title = conv.get("title", "")
+                last_msg = conv.get("last_message", "")
+                last_resp = conv.get("last_response", "")
+                updated = conv.get("updated_at", "")
+                summary = f"• [{updated[:10] if updated else ''}] {title}"
+                if last_msg:
+                    summary += f" — last Q: {last_msg[:80]}"
+                if last_resp:
+                    summary += f" → A: {last_resp[:80]}"
+                summaries.append(summary)
+            if summaries:
+                result["past_sessions"] = (
+                    "\n\n**PREVIOUS CONVERSATIONS (for context continuity):**\n"
+                    + "\n".join(summaries)
+                )
+
         return result
 
     # ------------------------------------------------------------------ #
@@ -318,9 +459,15 @@ class FloraAIService:
         use_internet: bool = True,
         channel: str = "web",
         weather_data: Optional[Dict] = None,
+        chat_history: Optional[List[Dict]] = None,
+        past_conversations: Optional[List[Dict]] = None,
     ) -> Dict:
         """
         Answer a farmer's question using Gemini + RAG context.
+
+        Args:
+            chat_history:       Current conversation messages for context.
+            past_conversations: Auth user's recent conversation summaries.
 
         Returns:
             Dict with keys:
@@ -337,10 +484,28 @@ class FloraAIService:
             if rag_snippets:
                 rag_context = "\n\n**KNOWLEDGE BASE (pgvector RAG):**\n" + "\n---\n".join(rag_snippets)
 
-            context = self._build_context(farmer_data, weather_data=weather_data) + rag_context
+            data_context = self._build_context(farmer_data, weather_data=weather_data) + rag_context
             system_prompt = self._create_system_prompt(language, farmer_data, channel)
 
-            prompt = f"{system_prompt}\n\n{context}\n\nFarmer's Question: {question}"
+            # Build conversation context for continuity
+            conv_ctx = self._build_conversation_context(
+                chat_history, question, farmer_data, past_conversations,
+            )
+            conversation_block = ""
+            if conv_ctx["conversation_turns"] != "(no previous messages)":
+                conversation_block = (
+                    f"\n\n**CONVERSATION HISTORY (refer to this for context):**\n"
+                    f"{conv_ctx['conversation_turns']}"
+                )
+            past_sessions_block = conv_ctx.get("past_sessions", "")
+
+            prompt = (
+                f"{system_prompt}\n\n"
+                f"{data_context}"
+                f"{past_sessions_block}"
+                f"{conversation_block}\n\n"
+                f"Farmer's Question: {question}"
+            )
 
             raw_answer = self._call_gemini(prompt, max_tokens=8192)
 
@@ -366,9 +531,10 @@ class FloraAIService:
                      temperature: float = 0.7, thinking: bool = True) -> str:
         """
         Call Gemini with automatic fallback:
-          1. Try current client (Vertex AI or API key)
-          2. If Vertex AI fails at runtime → fallback to API key client
-          3. If both fail → raise so caller can use template fallback
+          1. If Vertex AI has failed repeatedly, skip straight to API key
+          2. Try current client (Vertex AI or API key) with a timeout
+          3. If Vertex AI fails at runtime → fallback to API key client
+          4. If both fail → return empty so caller can use template fallback
 
         Args:
             thinking: Enable Gemini 2.5 thinking mode. Disable for
@@ -378,6 +544,8 @@ class FloraAIService:
         Returns:
             Raw response text from Gemini.
         """
+        import concurrent.futures
+
         config_kwargs: Dict = {
             "temperature": temperature,
             "max_output_tokens": max_tokens,
@@ -386,20 +554,48 @@ class FloraAIService:
             config_kwargs["thinking_config"] = genai_types.ThinkingConfig(thinking_budget=1024)  # type: ignore[union-attr]
         config = genai_types.GenerateContentConfig(**config_kwargs)  # type: ignore[union-attr]
 
-        # --- Attempt 1: primary client ---
+        # --- Proactive swap: skip Vertex if it keeps failing ---
+        if (self.backend == 'vertex'
+                and self._vertex_fail_count >= self._VERTEX_FAIL_THRESHOLD
+                and self._apikey_client):
+            logger.info(f"Vertex AI failed {self._vertex_fail_count}× — using API key directly")
+            self.client = self._apikey_client
+            self.backend = 'api_key'
+
+        # --- Attempt 1: primary client (with timeout for Vertex) ---
         try:
-            response = self.client.models.generate_content(  # type: ignore[union-attr]
-                model=self.model_name,
-                contents=prompt,
-                config=config,
-            )
+            if self.backend == 'vertex':
+                # Wrap in a thread with timeout to avoid Vertex AI hangs
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                    future = pool.submit(
+                        self.client.models.generate_content,   # type: ignore[union-attr]
+                        model=self.model_name,
+                        contents=prompt,
+                        config=config,
+                    )
+                    response = future.result(timeout=self._GEMINI_TIMEOUT_SECS)
+            else:
+                response = self.client.models.generate_content(  # type: ignore[union-attr]
+                    model=self.model_name,
+                    contents=prompt,
+                    config=config,
+                )
             text = self._extract_response_text(response)
             logger.debug(f"Gemini response: finish={getattr(getattr(response, 'candidates', [None])[0], 'finish_reason', '?')}, extracted={len(text)} chars")
             if text:
+                # Reset failure counter on success
+                if self.backend == 'vertex':
+                    self._vertex_fail_count = 0
                 return text
             logger.warning(f"Primary client ({self.backend}) returned empty text")
+        except concurrent.futures.TimeoutError:
+            logger.warning(f"Primary Gemini call timed out ({self._GEMINI_TIMEOUT_SECS}s) — backend={self.backend}")
+            if self.backend == 'vertex':
+                self._vertex_fail_count += 1
         except Exception as primary_err:
             logger.warning(f"Primary Gemini call failed ({self.backend}): {primary_err}")
+            if self.backend == 'vertex':
+                self._vertex_fail_count += 1
 
         # --- Attempt 2: fallback to API key if primary was Vertex ---
         if self.backend == 'vertex' and self._apikey_client:
@@ -562,7 +758,8 @@ class FloraAIService:
     # ---- Smart triage via lightweight Gemini call ----
 
     _TRIAGE_PROMPT = (
-        'You are a message classifier. Given a user message, output EXACTLY one '
+        'You are a message classifier for an agricultural chatbot. Given a user '
+        'message AND the recent conversation history, output EXACTLY one '
         'JSON object (no markdown fences) with these keys:\n'
         '  "intent": one of "greeting", "farming", "general", "gibberish"\n'
         '  "language": the ISO-639-1 code of the language the user wrote in '
@@ -571,14 +768,22 @@ class FloraAIService:
         '- "greeting": any salutation, hello, goodbye, thanks, how-are-you, pleasantries.\n'
         '- "farming": anything about agriculture, crops, soil, weather, livestock, pests, '
         'fertilizer, harvesting, planting, bloom, NDVI, markets, agrovet, farming tools, '
-        'irrigation, seeds, or related topics.\n'
-        '- "general": a coherent question/statement NOT about farming (e.g. math, geography, '
-        'coding, recipes, history, jokes, health).\n'
+        'irrigation, seeds, or related topics. ALSO includes follow-up messages that '
+        'continue a farming discussion (e.g. "list them", "tell me more", "can you '
+        'elaborate?", "what about that?", "the subcounties") — USE THE CONVERSATION '
+        'HISTORY to determine if the follow-up is farming-related.\n'
+        '- "general": a coherent question/statement NOT about farming AND NOT a follow-up '
+        'to a farming discussion (e.g. math, coding, recipes, jokes).\n'
         '- "gibberish": incoherent text, random letters, keyboard smash, or impossible to '
         'interpret even with generous typo correction.\n\n'
         'IMPORTANT: Be very generous with typos and misspellings — most users are on '
         'mobile phones. "maiz helth" → farming, "helo" → greeting, "weathr tomoro" → farming.\n\n'
-        'Message: "{message}"'
+        'IMPORTANT: When the message is ambiguous or short ("list them", "yes", "tell me '
+        'more"), ALWAYS refer to the conversation history to determine intent. If the '
+        'previous discussion was about farming, classify the follow-up as "farming".\n\n'
+        'Conversation history:\n{history}\n\n'
+        'Current message: "{message}"\n'
+        'Current time: {current_time}'
     )
 
     _CONVERSATIONAL_PROMPT = (
@@ -588,9 +793,13 @@ class FloraAIService:
         'The user sent: "{message}"\n'
         'Detected intent: {intent}\n'
         'Detected language: {language}\n'
+        'Current time: {current_time}\n'
         '{farmer_context}\n'
-        'Conversation history (last 4 messages, if any):\n{history}\n\n'
+        'Conversation history:\n{history}\n\n'
         'INSTRUCTIONS:\n'
+        '- CAREFULLY read the conversation history above. The user may be referring '
+        'to something discussed earlier. Resolve references like "them", "that", '
+        '"it", "those" using the conversation context.\n'
         '- Respond in the SAME language the user wrote in. If they mix languages, mirror '
         'that style.\n'
         '- Match response depth to message depth: short greeting → short warm reply; '
@@ -607,14 +816,27 @@ class FloraAIService:
         '- Be concise, natural, and professional.\n'
     )
 
-    def _triage_message(self, message: str) -> Dict:
+    def _triage_message(self, message: str,
+                        chat_history: Optional[List[Dict]] = None) -> Dict:
         """Classify a message using a fast Gemini call (low tokens, no RAG).
+
+        Args:
+            chat_history: Recent conversation for resolving follow-up messages.
 
         Returns:
             {"intent": "greeting"|"farming"|"general"|"gibberish", "language": "en"|...}
         """
         try:
-            prompt = self._TRIAGE_PROMPT.replace("{message}", message[:300])
+            # Include last 3 turns of history so the model can resolve
+            # follow-up messages like "list them" or "tell me more"
+            history_str = self._format_conversation_turns(
+                chat_history or [], max_turns=3
+            )
+            now_str = datetime.now().strftime("%A, %B %d, %Y %H:%M")
+            prompt = (self._TRIAGE_PROMPT
+                      .replace("{message}", message[:300])
+                      .replace("{history}", history_str)
+                      .replace("{current_time}", now_str))
             raw = self._call_gemini(prompt, max_tokens=256, temperature=0.1, thinking=False)
             raw = raw.strip()
 
@@ -677,13 +899,8 @@ class FloraAIService:
         name = (farmer_data or {}).get("name", "").split(" ")[0] if farmer_data else ""
         farmer_ctx = f"Farmer name: {name}" if name else "User is not logged in."
 
-        history_str = ""
-        if chat_history:
-            recent = chat_history[-4:]
-            history_str = "\n".join(
-                f"{'User' if m.get('role') == 'user' else 'Flora'}: {m.get('content', '')}"
-                for m in recent
-            )
+        history_str = self._format_conversation_turns(chat_history or [], max_turns=10)
+        now_str = datetime.now().strftime("%A, %B %d, %Y %H:%M")
 
         prompt = (
             self._CONVERSATIONAL_PROMPT
@@ -691,7 +908,8 @@ class FloraAIService:
             .replace("{intent}", intent)
             .replace("{language}", language)
             .replace("{farmer_context}", farmer_ctx)
-            .replace("{history}", history_str or "(none)")
+            .replace("{history}", history_str)
+            .replace("{current_time}", now_str)
         )
 
         try:
@@ -708,13 +926,17 @@ class FloraAIService:
 
     _UNAUTH_CONTEXT_PROMPT = (
         'You are Flora, a warm and knowledgeable AI assistant on the Smart Shamba '
-        'agricultural platform in Kenya.\n\n'
+        'agricultural platform in Kenya.\n'
+        'Current time: {current_time}\n\n'
         'The user is NOT logged in and has asked a farming question, but you don\'t '
         'know their location or crop details yet.\n\n'
         'User message: "{message}"\n'
         'Detected language: {language}\n'
-        'Conversation history (last 4 messages, if any):\n{history}\n\n'
+        'Conversation history:\n{history}\n\n'
         'INSTRUCTIONS:\n'
+        '- CAREFULLY read the conversation history above. The user may be continuing '
+        'a previous discussion. Resolve ANY references like "them", "that", "those" '
+        'using the conversation context.\n'
         '- First, provide a helpful GENERAL answer to their question based on your '
         'agricultural expertise. Don\'t refuse or deflect — give real advice.\n'
         '- Then, naturally mention that you could give much more specific, data-driven '
@@ -739,19 +961,15 @@ class FloraAIService:
     ) -> Dict:
         """Handle farming questions from unauth users with no detected location/crop.
         Provides general advice and gently asks for farm context."""
-        history_str = ""
-        if chat_history:
-            recent = chat_history[-4:]
-            history_str = "\n".join(
-                f"{'User' if m.get('role') == 'user' else 'Flora'}: {m.get('content', '')}"
-                for m in recent
-            )
+        history_str = self._format_conversation_turns(chat_history or [], max_turns=10)
+        now_str = datetime.now().strftime("%A, %B %d, %Y %H:%M")
 
         prompt = (
             self._UNAUTH_CONTEXT_PROMPT
             .replace("{message}", message)
             .replace("{language}", language)
-            .replace("{history}", history_str or "(none)")
+            .replace("{history}", history_str)
+            .replace("{current_time}", now_str)
         )
 
         try:
@@ -799,14 +1017,20 @@ class FloraAIService:
         chat_history: Optional[List[Dict]] = None,
         channel: str = "web",
         weather_data: Optional[Dict] = None,
+        past_conversations: Optional[List[Dict]] = None,
     ) -> Dict:
         """Generate a conversational response for the chat endpoint.
-        
+
+        This is the main entry point, called by /api/chat. It:
+          1. Triages the message (with conversation context)
+          2. For non-farming intents → conversational reply
+          3. For farming intents → builds comprehensive context → RAG pipeline
+
         Returns:
             Dict with 'reply' (str) and 'reasoning' (str|None) keys.
         """
-        # ----- Smart triage: classify intent via lightweight Gemini call -----
-        triage = self._triage_message(user_message)
+        # ----- Smart triage: classify intent WITH conversation context -----
+        triage = self._triage_message(user_message, chat_history=chat_history)
         intent = triage["intent"]
         detected_lang = triage["language"]
         logger.info(f"Triage: intent={intent}, language={detected_lang}, msg={user_message[:80]}")
@@ -821,59 +1045,50 @@ class FloraAIService:
         # ----- Farming intent: full RAG pipeline -----
         language = detected_lang or (farmer_data or {}).get("language", "en")
 
-        # Build extra bloom context
+        # Build bloom context string (if available)
         extra = ""
         if bloom_data:
             extra += f"\n\nBLOOM DATA: {json.dumps(bloom_data, default=str)[:500]}"
-        if chat_history:
-            recent = chat_history[-4:]  # Last 4 messages for conversation context
-            history_str = "\n".join(
-                f"{'User' if m.get('role') == 'user' else 'Flora'}: {m.get('content', '')}"
-                for m in recent
-            )
-            extra += f"\n\nRECENT CONVERSATION:\n{history_str}"
 
-        # ----- Unauth user: extract location/crop from message + history -----
+        # ----- Build comprehensive context (unauth or auth) -----
+        conv_ctx = self._build_conversation_context(
+            chat_history, user_message, farmer_data, past_conversations,
+        )
+
+        # ----- Unauth user: use accumulated profile from conversation -----
         if not farmer_data:
-            # Try to build a temporary context from the user's message & history
-            inferred = self._extract_location_from_text(user_message)
-            # Also scan chat history for previously mentioned locations/crops
-            if chat_history:
-                for msg in chat_history:
-                    content = msg.get("content", "")
-                    hist_info = self._extract_location_from_text(content)
-                    # Fill in any missing details from history
-                    if not inferred["county"] and hist_info["county"]:
-                        inferred["county"] = hist_info["county"]
-                        inferred["county_id"] = hist_info["county_id"]
-                        inferred["coordinates"] = hist_info["coordinates"]
-                        inferred["sub_county"] = hist_info.get("sub_county")
-                    if not inferred["crops"] and hist_info["crops"]:
-                        inferred["crops"] = hist_info["crops"]
+            accumulated = conv_ctx.get("accumulated_profile", {})
 
-            if inferred["county"] or inferred["crops"]:
-                # Build a lightweight farmer_data from inferred info
+            if accumulated.get("county") or accumulated.get("crops") or accumulated.get("livestock"):
+                # Build a lightweight farmer_data from accumulated info
                 farmer_data = {
                     "name": "",
-                    "county": inferred["county"] or "",
-                    "sub_county": inferred.get("sub_county") or "",
+                    "county": accumulated.get("county") or "",
+                    "sub_county": accumulated.get("sub_county") or "",
                     "region": "",
-                    "crops": inferred["crops"],
-                    "farm_size": "",
+                    "crops": accumulated.get("crops", []),
+                    "livestock": accumulated.get("livestock", []),
+                    "farm_size": accumulated.get("farm_size") or "",
                     "language": language,
                     "phone": "",
-                    "_inferred": True,  # Flag so system prompt can note this
+                    "_inferred": True,
                 }
                 # Look up region from county config
-                if inferred["county_id"] and inferred["county_id"] in KENYA_COUNTIES:
-                    farmer_data["region"] = KENYA_COUNTIES[inferred["county_id"]].get("region", "")
-                logger.info(f"Unauth user: inferred county={inferred['county']}, crops={inferred['crops']}")
+                county_id = accumulated.get("county_id")
+                if county_id and county_id in KENYA_COUNTIES:
+                    farmer_data["region"] = KENYA_COUNTIES[county_id].get("region", "")
+                logger.info(
+                    f"Unauth user: inferred county={accumulated.get('county')}, "
+                    f"crops={accumulated.get('crops')}, "
+                    f"livestock={accumulated.get('livestock')}, "
+                    f"farm_size={accumulated.get('farm_size')}"
+                )
 
                 # Fetch weather for the inferred location
-                if not weather_data and self.weather_service and inferred.get("coordinates"):
+                if not weather_data and self.weather_service and accumulated.get("coordinates"):
                     try:
                         import asyncio
-                        coords = inferred["coordinates"]
+                        coords = accumulated["coordinates"]
                         loop = asyncio.get_event_loop()
                         if not loop.is_running():
                             weather_data = loop.run_until_complete(
@@ -886,7 +1101,7 @@ class FloraAIService:
                     except Exception as wx:
                         logger.debug(f"Weather fetch for inferred location failed: {wx}")
             else:
-                # No location or crop detected at all — ask the user for context
+                # No location or crop detected — ask the user for context
                 logger.info("Unauth user: no location/crop detected — prompting for details")
                 return self._prompt_unauth_for_details(
                     user_message, language, chat_history
@@ -899,6 +1114,8 @@ class FloraAIService:
             use_internet=True,
             channel=channel,
             weather_data=weather_data,
+            chat_history=chat_history,
+            past_conversations=past_conversations,
         )
 
     # ------------------------------------------------------------------ #
@@ -971,13 +1188,15 @@ class FloraAIService:
           [WEB_DETAILED]       — full web-dashboard response
           [SYSTEM_ACTION]      — JSON for backend triggers (agrovet query, follow-up)
         """
+        now_str = datetime.now().strftime("%A, %B %d, %Y %H:%M")
         base = (
             "**ROLE:**\n"
             'You are "Flora", the Smart Shamba Chief Agronomist Agent for Smart Shamba. '
             "Your goal is to provide personalized, data-driven agricultural advice by "
             "synthesizing inputs from NASA satellite imagery (Sentinel-2, Landsat, MODIS), "
             "ground IoT sensors (ESP32), weather forecasts, and a curated agricultural "
-            "knowledge base.\n\n"
+            "knowledge base.\n"
+            f"Current time: {now_str}\n\n"
 
             "**CAPABILITIES:**\n"
             "1. Interpret NDVI (crop health), NDWI (water stress), LST (temperature), "

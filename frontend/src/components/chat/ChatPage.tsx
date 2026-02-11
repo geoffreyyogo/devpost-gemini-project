@@ -12,14 +12,14 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
-import type { Conversation, ConversationMessage } from '@/types'
+import type { Conversation, ConversationMessage, ChatMessage } from '@/types'
 
 // Channel icon helper
 function ChannelBadge({ via }: { via: string }) {
   const icons: Record<string, { icon: typeof Globe; label: string; color: string }> = {
-    web:  { icon: Globe, label: 'Web', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+    web: { icon: Globe, label: 'Web', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
     ussd: { icon: Phone, label: 'USSD', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
-    sms:  { icon: Smartphone, label: 'SMS', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
+    sms: { icon: Smartphone, label: 'SMS', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
   }
   const info = icons[via] || icons.web
   const Icon = info.icon
@@ -150,7 +150,31 @@ export function ChatPage() {
         result = res
         clearImage()
       } else {
-        result = await api.sendChatMessage(userMsg, [], activeConvId || undefined)
+        // Build history from local messages for context
+        // Build history from local messages for context
+        const chatHistory: ChatMessage[] = messages.flatMap(m => {
+          const items: ChatMessage[] = [
+            {
+              role: 'user',
+              content: m.message,
+              timestamp: m.timestamp
+            }
+          ]
+
+          if (m.response) {
+            // Use a slightly later timestamp or same if needed
+            // For history context, exact order matters most
+            const responseTs = new Date(new Date(m.timestamp).getTime() + 1000).toISOString()
+            items.push({
+              role: 'assistant',
+              content: m.response,
+              timestamp: responseTs
+            })
+          }
+          return items
+        })
+
+        result = await api.sendChatMessage(userMsg, chatHistory, activeConvId || undefined)
       }
 
       // If this was a new conversation (no activeConvId), set the returned one
@@ -295,11 +319,10 @@ export function ChatPage() {
               <div
                 key={conv.id}
                 onClick={() => { setActiveConvId(conv.id); setShowSidebar(false) }}
-                className={`group flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all text-sm ${
-                  activeConvId === conv.id
-                    ? 'bg-green-100 dark:bg-green-900/40 border border-green-200 dark:border-green-800'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
+                className={`group flex items-start gap-2 p-2.5 rounded-lg cursor-pointer transition-all text-sm ${activeConvId === conv.id
+                  ? 'bg-green-100 dark:bg-green-900/40 border border-green-200 dark:border-green-800'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
               >
                 <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0 text-gray-400" />
                 <div className="flex-1 min-w-0">
